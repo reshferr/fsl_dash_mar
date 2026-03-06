@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSL — Dashboard de Lançamentos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-body: 'Inter', sans-serif;
+    --font-num: 'Montserrat', sans-serif;
+    --font-size-base: 14px;
+    --tr: 0.25s cubic-bezier(0.4,0,0.2,1);
+    --r: 12px;
+    --r-sm: 8px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #0e0e11;
+    --surface: #17171c;
+    --card: #1e1e25;
+    --card-h: #25252e;
+    --nav: rgba(14,14,17,0.93);
+    --bd: rgba(255,255,255,0.07);
+    --bd-a: rgba(255,255,255,0.15);
+    --tx: #f0f0f3;
+    --tx2: #8a8a9a;
+    --tx3: #555560;
+    --acc: #7c5cfc;
+    --acc-g: rgba(124,92,252,0.15);
+    --acc2: #e05f8e;
+    --acc3: #34d399;
+    --acc4: #fbbf24;
+    --acc5: #60a5fa;
+    --acc6: #f97316;
+    --pos: #34d399;
+    --neg: #f87171;
+    --warn: #fbbf24;
+    --tag: rgba(124,92,252,0.12);
+    --tag-tx: #a78bfa;
+    --scroll: #2a2a35;
+    --grid: rgba(255,255,255,0.04);
+    --sh: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  [data-theme="light"] {
+    --bg: #f0f0f5;
+    --surface: #ffffff;
+    --card: #ffffff;
+    --card-h: #fafafa;
+    --nav: rgba(240,240,245,0.94);
+    --bd: rgba(0,0,0,0.07);
+    --bd-a: rgba(0,0,0,0.14);
+    --tx: #111118;
+    --tx2: #5a5a72;
+    --tx3: #aaaabc;
+    --acc: #6240f0;
+    --acc-g: rgba(98,64,240,0.1);
+    --acc2: #d04070;
+    --acc3: #059669;
+    --acc4: #d97706;
+    --acc5: #2563eb;
+    --acc6: #ea580c;
+    --pos: #059669;
+    --neg: #dc2626;
+    --warn: #d97706;
+    --tag: rgba(98,64,240,0.08);
+    --tag-tx: #6240f0;
+    --scroll: #dddde8;
+    --grid: rgba(0,0,0,0.05);
+    --sh: 0 2px 16px rgba(0,0,0,0.08);
+  }
+
+  [data-theme="beige"] {
+    --bg: #f2ebe0;
+    --surface: #fdf8f0;
+    --card: #fdf8f0;
+    --card-h: #f8f1e5;
+    --nav: rgba(242,235,224,0.95);
+    --bd: rgba(160,130,90,0.18);
+    --bd-a: rgba(120,90,50,0.28);
+    --tx: #2c2416;
+    --tx2: #7a6545;
+    --tx3: #b8a882;
+    --acc: #8b5e3c;
+    --acc-g: rgba(139,94,60,0.1);
+    --acc2: #c07850;
+    --acc3: #4a7c59;
+    --acc4: #b87820;
+    --acc5: #4a6a8a;
+    --acc6: #9a4040;
+    --pos: #4a7c59;
+    --neg: #a04040;
+    --warn: #b87820;
+    --tag: rgba(139,94,60,0.1);
+    --tag-tx: #8b5e3c;
+    --scroll: #d5c9b0;
+    --grid: rgba(100,80,40,0.06);
+    --sh: 0 2px 16px rgba(80,60,20,0.1);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { font-size:var(--font-size-base); scroll-behavior:smooth; }
+  body {
+    font-family:var(--font-body);
+    background:var(--bg);
+    color:var(--tx);
+    min-height:100vh;
+    transition:background var(--tr),color var(--tr);
+    -webkit-font-smoothing:antialiased;
+  }
+  ::-webkit-scrollbar { width:5px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--scroll); border-radius:3px; }
+
+  /* TOPBAR */
+  #topbar {
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:var(--nav);
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--bd);
+    transition:background var(--tr),border-color var(--tr);
+  }
+  .topbar-inner {
+    display:flex;align-items:center;justify-content:space-between;
+    max-width:1440px;margin:0 auto;padding:0 32px;
+    height:60px;gap:24px;
+  }
+  .logo {
+    font-family:var(--font-num);font-weight:800;font-size:16px;
+    letter-spacing:-0.03em;color:var(--tx);white-space:nowrap;user-select:none;
+  }
+  .logo em { color:var(--acc);font-style:normal; }
+
+  .tab-nav { display:flex;align-items:center;gap:2px;flex:1;justify-content:center; }
+  .tab-btn {
+    display:flex;align-items:center;gap:6px;
+    padding:7px 18px;border-radius:999px;border:none;
+    background:transparent;color:var(--tx2);
+    font-family:var(--font-body);font-size:13px;font-weight:500;
+    cursor:pointer;transition:all var(--tr);white-space:nowrap;
+  }
+  .tab-btn:hover:not(.locked) { background:var(--card);color:var(--tx); }
+  .tab-btn.active { background:var(--acc-g);color:var(--acc);font-weight:600; }
+  .tab-btn.locked { cursor:not-allowed;opacity:0.38; }
+
+  .theme-sw { position:relative; }
+  .theme-btn {
+    display:flex;align-items:center;gap:8px;
+    padding:7px 14px;border-radius:999px;
+    border:1px solid var(--bd);background:var(--card);
+    color:var(--tx2);font-family:var(--font-body);font-size:13px;
+    font-weight:500;cursor:pointer;transition:all var(--tr);white-space:nowrap;
+  }
+  .theme-btn:hover { border-color:var(--bd-a);color:var(--tx); }
+  .caret { font-size:10px;transition:transform var(--tr); }
+  .theme-sw.open .caret { transform:rotate(180deg); }
+  .theme-drop {
+    position:absolute;top:calc(100% + 8px);right:0;
+    background:var(--card);border:1px solid var(--bd);
+    border-radius:var(--r-sm);padding:5px;min-width:150px;
+    box-shadow:var(--sh);
+    opacity:0;pointer-events:none;transform:translateY(-8px);
+    transition:all var(--tr);z-index:200;
+  }
+  .theme-sw.open .theme-drop { opacity:1;pointer-events:all;transform:translateY(0); }
+  .t-opt {
+    display:flex;align-items:center;gap:10px;
+    padding:8px 12px;border-radius:6px;cursor:pointer;
+    font-size:13px;color:var(--tx2);transition:all var(--tr);font-family:var(--font-body);
+  }
+  .t-opt:hover { background:var(--surface);color:var(--tx); }
+  .t-opt.active { color:var(--acc);font-weight:600; }
+  .t-dot { width:10px;height:10px;border-radius:50%;flex-shrink:0; }
+
+  main { max-width:1440px;margin:0 auto;padding:80px 32px 80px; }
+  .panel { display:none; }
+  .panel.active { display:block;animation:fu 0.3s ease forwards; }
+  @keyframes fu { from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)} }
+
+  .page-head { margin-bottom:28px; }
+  .page-title {
+    font-family:var(--font-num);font-size:22px;font-weight:800;
+    letter-spacing:-0.04em;color:var(--tx);margin-bottom:4px;
+  }
+  .page-sub { font-size:12px;color:var(--tx3); }
+  .data-live {
+    display:inline-flex;align-items:center;gap:6px;
+    margin-top:8px;font-size:11px;color:var(--tx3);
+  }
+  .live-dot {
+    width:6px;height:6px;border-radius:50%;
+    background:var(--pos);animation:pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+  #loader {
+    display:flex;flex-direction:column;align-items:center;
+    justify-content:center;padding:100px 0;gap:14px;
+  }
+  .spinner {
+    width:28px;height:28px;border-radius:50%;
+    border:2px solid var(--bd);border-top-color:var(--acc);
+    animation:spin 0.7s linear infinite;
+  }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  #loader p { font-size:12px;color:var(--tx3); }
+  #err { display:none;text-align:center;padding:60px;color:var(--neg);font-size:13px;line-height:1.7; }
+
+  /* KPIs */
+  .kpi-grid {
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    gap:14px;margin-bottom:24px;
+  }
+  .kpi {
+    background:var(--card);border:1px solid var(--bd);border-radius:var(--r);
+    padding:20px 22px;box-shadow:var(--sh);
+    transition:background var(--tr),border-color var(--tr),transform 0.2s;
+    position:relative;overflow:hidden;cursor:default;
+  }
+  .kpi::after {
+    content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+    background:var(--acc);transform:scaleX(0);transform-origin:left;
+    transition:transform 0.3s ease;
+  }
+  .kpi:hover::after { transform:scaleX(1); }
+  .kpi:hover { transform:translateY(-2px);background:var(--card-h); }
+  .kpi-lbl {
+    font-size:11px;font-weight:600;color:var(--tx3);
+    text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;
+  }
+  .kpi-val {
+    font-family:var(--font-num);font-size:34px;font-weight:800;
+    letter-spacing:-0.04em;color:var(--tx);line-height:1;margin-bottom:6px;
+  }
+  .kpi-val.sm { font-size:20px;line-height:1.3; }
+  .kpi-delta {
+    display:inline-flex;align-items:center;gap:3px;
+    font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;
+  }
+  .d-up { background:rgba(52,211,153,0.12);color:var(--pos); }
+  .d-neu { background:var(--tag);color:var(--tag-tx); }
+
+  .g2 { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px; }
+  .g3 { display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px; }
+  .gf { margin-bottom:16px; }
+  @media(max-width:900px){.g2,.g3{grid-template-columns:1fr;}}
+
+  .card {
+    background:var(--card);border:1px solid var(--bd);border-radius:var(--r);
+    padding:24px;box-shadow:var(--sh);
+    transition:background var(--tr),border-color var(--tr);
+  }
+  .card-title {
+    font-size:11px;font-weight:700;color:var(--tx3);
+    text-transform:uppercase;letter-spacing:0.09em;margin-bottom:20px;
+  }
+
+  /* Bar chart */
+  .bars { display:flex;flex-direction:column;gap:11px; }
+  .bar-row { display:grid;grid-template-columns:140px 1fr 64px;align-items:center;gap:12px; }
+  .bar-lbl { font-size:12px;color:var(--tx2);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .bar-trk { height:9px;background:var(--grid);border-radius:5px;overflow:hidden; }
+  .bar-fill { height:100%;border-radius:5px;transition:width 1s cubic-bezier(0.4,0,0.2,1); }
+  .bar-v { font-family:var(--font-num);font-size:12px;font-weight:700;color:var(--tx); }
+
+  /* Stacked bar */
+  .stack-chart { display:flex;flex-direction:column;gap:14px; }
+  .stack-row { display:flex;flex-direction:column;gap:5px; }
+  .stack-curso { font-size:12px;color:var(--tx2); }
+  .stack-bar { display:flex;height:10px;border-radius:5px;overflow:hidden;gap:1px; }
+  .stack-seg { height:100%;min-width:2px;transition:flex 0.9s cubic-bezier(0.4,0,0.2,1); }
+  .stack-legend {
+    display:flex;flex-wrap:wrap;gap:6px 14px;
+    margin-top:16px;padding-top:16px;border-top:1px solid var(--bd);
+  }
+  .leg-item { display:flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2); }
+  .leg-dot { width:8px;height:8px;border-radius:2px;flex-shrink:0; }
+
+  /* Donut */
+  .donut-wrap { display:flex;align-items:center;gap:20px; }
+  .donut-legend { display:flex;flex-direction:column;gap:8px;flex:1;min-width:0; }
+  .dleg { display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tx2); }
+  .dleg-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+  .dleg-pct { font-family:var(--font-num);font-weight:700;font-size:13px;color:var(--tx);margin-left:auto;padding-left:8px;white-space:nowrap; }
+  .dleg-name { flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+
+  /* Taxa bars */
+  .prog-wrap { display:flex;align-items:center;gap:10px; }
+  .prog-trk { flex:1;height:7px;background:var(--grid);border-radius:4px;overflow:hidden;min-width:50px; }
+  .prog-fill { height:100%;border-radius:4px;transition:width 1s ease; }
+  .prog-val { font-family:var(--font-num);font-size:12px;font-weight:700;min-width:52px;text-align:right; }
+
+  /* Table */
+  .tbl-wrap { overflow-x:auto;border-radius:var(--r-sm); }
+  .dtbl { width:100%;border-collapse:collapse;font-size:13px; }
+  .dtbl th {
+    padding:10px 14px;text-align:left;font-size:11px;font-weight:700;
+    color:var(--tx3);text-transform:uppercase;letter-spacing:0.07em;
+    border-bottom:1px solid var(--bd);white-space:nowrap;
+    background:var(--surface);position:sticky;top:0;
+  }
+  .dtbl td {
+    padding:11px 14px;border-bottom:1px solid var(--bd);
+    color:var(--tx2);vertical-align:middle;white-space:nowrap;
+  }
+  .dtbl tr:last-child td { border-bottom:none; }
+  .dtbl tbody tr { background:var(--card);transition:background var(--tr); }
+  .dtbl tbody tr:hover { background:var(--card-h); }
+  .dtbl .nc { font-family:var(--font-num);font-weight:700;color:var(--tx);text-align:right; }
+  .dtbl .nm { font-weight:600;color:var(--tx); }
+
+  /* Locked */
+  .locked-p {
+    display:flex;flex-direction:column;align-items:center;
+    justify-content:center;min-height:55vh;gap:12px;text-align:center;
+  }
+  .lock-ico { font-size:32px;opacity:0.3; }
+  .lock-t { font-family:var(--font-num);font-size:17px;font-weight:800;color:var(--tx3);letter-spacing:-0.02em; }
+  .lock-s { font-size:12px;color:var(--tx3);max-width:260px;line-height:1.7; }
+
+  #btt {
+    position:fixed;bottom:28px;right:28px;z-index:99;
+    width:40px;height:40px;border-radius:50%;
+    background:var(--acc);color:#fff;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    box-shadow:0 4px 16px rgba(0,0,0,0.25);
+    opacity:0;pointer-events:none;transform:translateY(10px);
+    transition:all var(--tr);
+  }
+  #btt.on { opacity:1;pointer-events:all;transform:translateY(0); }
+  #btt:hover { transform:translateY(-3px); }
+
+  #toast {
+    position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(16px);
+    background:var(--card);border:1px solid var(--bd);color:var(--tx2);
+    padding:9px 20px;border-radius:999px;font-size:12px;z-index:999;
+    opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;
+    box-shadow:var(--sh);
+  }
+
+  @media(max-width:600px){
+    .topbar-inner{padding:0 16px;}
+    main{padding:72px 16px 72px;}
+    .kpi-grid{grid-template-columns:1fr 1fr;}
+    .bar-row{grid-template-columns:72px 1fr 48px;}
+    .bar-lbl{font-size:11px;}
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<header id="topbar">
+  <div class="topbar-inner">
+    <div class="logo">FSL <em>·</em> Lançamentos</div>
+    <nav class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('perf',this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Performance
+      </button>
+      <button class="tab-btn locked" onclick="showToast('CRM ainda não está disponível 🔒')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        CRM
+      </button>
+      <button class="tab-btn locked" onclick="showToast('Design ainda não está disponível 🔒')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+        Design
+      </button>
+    </nav>
+    <div class="theme-sw" id="tsw">
+      <button class="theme-btn" onclick="toggleTheme()">
+        <span id="tlbl">🌑 Dark</span>
+        <span class="caret">▾</span>
+      </button>
+      <div class="theme-drop">
+        <div class="t-opt active" id="to-dark"  onclick="setTheme('dark')"><span class="t-dot" style="background:#7c5cfc"></span>Dark</div>
+        <div class="t-opt"        id="to-light" onclick="setTheme('light')"><span class="t-dot" style="background:#6240f0"></span>Light</div>
+        <div class="t-opt"        id="to-beige" onclick="setTheme('beige')"><span class="t-dot" style="background:#c07850"></span>Bege</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="loader"><div class="spinner"></div><p>Carregando dados da planilha…</p></div>
+  <div id="err">Não foi possível carregar os dados.<br>Verifique se a planilha está publicada e tente novamente.</div>
+
+  <!-- PERFORMANCE -->
+  <div class="panel" id="panel-perf">
+    <div class="page-head">
+      <h1 class="page-title">Performance de Lançamentos</h1>
+      <p class="page-sub">Faculdade Sírio-Libanês</p>
+      <div class="data-live">
+        <div class="live-dot"></div>
+        <span id="ts-label">Conectado à planilha ao vivo</span>
+      </div>
+    </div>
+
+    <div class="kpi-grid" id="kpi-grid"></div>
+
+    <div class="g3">
+      <div class="card">
+        <div class="card-title">Total de Leads por Curso</div>
+        <div class="bars" id="bars-total"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Share de Mercado</div>
+        <div class="donut-wrap">
+          <svg id="donut-svg" width="110" height="110" viewBox="0 0 42 42" style="flex-shrink:0">
+            <circle cx="21" cy="21" r="15.915" fill="none" stroke="var(--grid)" stroke-width="5.5"/>
+            <g id="donut-segs"></g>
+          </svg>
+          <div class="donut-legend" id="donut-leg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Distribuição por Escolaridade</div>
+        <div class="stack-chart" id="stack-chart"></div>
+        <div class="stack-legend" id="stack-leg"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Taxa de Qualificação por Curso</div>
+        <div style="display:flex;flex-direction:column;gap:16px" id="taxa-bars"></div>
+      </div>
+    </div>
+
+    <div class="gf card">
+      <div class="card-title">Tabela Completa de Dados</div>
+      <div class="tbl-wrap" style="margin-top:16px;max-height:420px;overflow-y:auto">
+        <table class="dtbl">
+          <thead id="tbl-head"></thead>
+          <tbody id="tbl-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-crm">
+    <div class="locked-p"><div class="lock-ico">🔒</div><div class="lock-t">CRM em breve</div><p class="lock-s">Este painel está em desenvolvimento e será liberado em breve.</p></div>
+  </div>
+  <div class="panel" id="panel-design">
+    <div class="locked-p"><div class="lock-ico">🔒</div><div class="lock-t">Design em breve</div><p class="lock-s">Este painel está em desenvolvimento e será liberado em breve.</p></div>
+  </div>
+</main>
+
+<button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div id="toast"></div>
+
+<script>
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT6iHhSHZBcAWYSw8wlRwyX7r6_jUnaULqG4uyt9dDG578kCD_N-j0NanrwJZvoDOyFidHmc_vaMAVj/pub?output=csv';
+
+// Colunas exatas de escolaridade conforme a planilha
+const ESC_COLS = [
+  'Pós-graduação Completa',
+  'Ensino Superior Incompleto',
+  'Ensino Superior Completo',
+  'Pós-graduação Incompleto',
+  'Ensino Médio Completo',
+  'Ensino Médio Incompleto',
+];
+const ESC_COLORS = ['#7c5cfc','#e05f8e','#34d399','#fbbf24','#60a5fa','#f97316'];
+const ESC_SHORT  = ['Pós Grad. C.','Sup. Inc.','Sup. C.','Pós Grad. Inc.','E. Médio C.','E. Médio Inc.'];
+
+let hdrs = [], rows = [];
+
+// ── FETCH ─────────────────────────────────────────────
+async function load() {
+  try {
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const txt = await res.text();
+    parseCSV(txt);
+  } catch(e) {
+    console.error(e);
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('err').style.display = 'block';
+  }
+}
+
+function parseLine(l) {
+  const out=[]; let cur='', q=false;
+  for(let i=0;i<l.length;i++){
+    const c=l[i];
+    if(c==='"'){q=!q;}
+    else if(c===','&&!q){out.push(cur.trim());cur='';}
+    else cur+=c;
+  }
+  out.push(cur.trim());
+  return out;
+}
+
+function parseCSV(txt) {
+  const lines = txt.trim().split('\n');
+  hdrs = parseLine(lines[0]);
+  rows = lines.slice(1).filter(l=>l.trim()).map(l=>{
+    const v=parseLine(l);
+    const o={};
+    hdrs.forEach((h,i)=>{ o[h]=(v[i]||'').trim(); });
+    return o;
+  });
+
+  // Remove totais
+  const data = rows.filter(r=>{
+    const first=(r[hdrs[0]]||'').toUpperCase();
+    return !first.startsWith('TOTAL') && first !== '';
+  });
+
+  document.getElementById('loader').style.display = 'none';
+  document.getElementById('panel-perf').classList.add('active');
+
+  const now = new Date();
+  document.getElementById('ts-label').textContent =
+    `Atualizado em ${now.toLocaleDateString('pt-BR')} às ${now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+
+  render(data);
+}
+
+// ── HELPERS ───────────────────────────────────────────
+function n(v) {
+  if(!v) return 0;
+  return parseFloat(v.replace(/[^\d.,-]/g,'').replace(',','.')) || 0;
+}
+function fmt(v) {
+  if(v>=1000000) return (v/1e6).toFixed(1).replace('.',',')+'M';
+  if(v>=1000) return (v/1000).toFixed(1).replace('.',',')+'k';
+  return Math.round(v).toLocaleString('pt-BR');
+}
+function cleanNome(s) {
+  return (s||'').replace(/\[Formulário\]\s*/i,'').trim();
+}
+
+// ── RENDER ────────────────────────────────────────────
+function render(data) {
+  // Detecta colunas-chave
+  const cCurso = hdrs[0]; // primeira coluna = Cursos
+  const cTotal = hdrs.find(h => h.trim().toUpperCase() === 'TOTAL') ||
+                 hdrs.find(h => h.toLowerCase().includes('total'));
+  const cTaxa  = hdrs.find(h => h.toLowerCase().includes('qualif') || h.toLowerCase().includes('tx de'));
+  const cShare = hdrs.find(h => h.toLowerCase().includes('share'));
+  const escActual = ESC_COLS.map(e => hdrs.find(h => h.trim() === e) || null);
+
+  // ── KPIs ──────────────────────────────────────────
+  const totalLeads = data.reduce((s,r)=>s+n(r[cTotal]),0);
+  const avgTaxa    = data.length
+    ? (data.reduce((s,r)=>s+n(r[cTaxa]),0)/data.length) : 0;
+  const numCursos  = data.length;
+  const topRow     = cTotal
+    ? [...data].sort((a,b)=>n(b[cTotal])-n(a[cTotal]))[0]
+    : data[0];
+  const topNome    = cleanNome(topRow?.[cCurso] || '—');
+
+  document.getElementById('kpi-grid').innerHTML = [
+    { l:'Total de Leads',         v:fmt(totalLeads),              d:null },
+    { l:'Cursos Ativos',          v:numCursos,                    d:null },
+    { l:'Taxa de Qual. Média',    v:avgTaxa.toFixed(2)+'%',       d:'▲ Alta qualificação', dc:'d-up' },
+    { l:'Maior Lançamento',       v:topNome, sm:true,             d:fmt(n(topRow?.[cTotal]))+ ' leads', dc:'d-neu' },
+  ].map(k=>`
+    <div class="kpi">
+      <div class="kpi-lbl">${k.l}</div>
+      <div class="kpi-val${k.sm?' sm':''}">${k.v}</div>
+      ${k.d?`<span class="kpi-delta ${k.dc||'d-neu'}">${k.d}</span>`:''}
+    </div>`).join('');
+
+  // ── BARRAS — total por curso ──────────────────────
+  if(cTotal) {
+    const sorted = [...data].sort((a,b)=>n(b[cTotal])-n(a[cTotal]));
+    const mx = n(sorted[0]?.[cTotal]) || 1;
+    const C = ESC_COLORS;
+    document.getElementById('bars-total').innerHTML = sorted.map((r,i)=>{
+      const nome = cleanNome(r[cCurso]);
+      const v = n(r[cTotal]);
+      const w = (v/mx*100).toFixed(1);
+      return `<div class="bar-row">
+        <div class="bar-lbl" title="${nome}">${nome.length>18?nome.slice(0,17)+'…':nome}</div>
+        <div class="bar-trk">
+          <div class="bar-fill" style="width:0%;background:${C[i%C.length]}" data-w="${w}"></div>
+        </div>
+        <div class="bar-v">${fmt(v)}</div>
+      </div>`;
+    }).join('');
+    raf(()=>document.querySelectorAll('.bar-fill[data-w]').forEach(el=>el.style.width=el.dataset.w+'%'));
+  }
+
+  // ── DONUT — share ─────────────────────────────────
+  if(cShare) {
+    const filtered = data.filter(r=>n(r[cShare])>0);
+    const C = ESC_COLORS;
+    const total = filtered.reduce((s,r)=>s+n(r[cShare]),0)||1;
+    let off = 0;
+    const segs = document.getElementById('donut-segs');
+    const leg  = document.getElementById('donut-leg');
+    segs.innerHTML = ''; leg.innerHTML = '';
+    filtered.forEach((r,i)=>{
+      const pct  = n(r[cShare])/total;
+      const dash = pct*100;
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx','21'); c.setAttribute('cy','21'); c.setAttribute('r','15.915');
+      c.setAttribute('fill','none'); c.setAttribute('stroke',C[i%C.length]);
+      c.setAttribute('stroke-width','5.5');
+      c.setAttribute('stroke-dasharray',`${dash} ${100-dash}`);
+      c.setAttribute('stroke-dashoffset',`${25-off}`);
+      segs.appendChild(c);
+      off += dash;
+      const nome = cleanNome(r[cCurso]);
+      leg.innerHTML += `<div class="dleg">
+        <span class="dleg-dot" style="background:${C[i%C.length]}"></span>
+        <span class="dleg-name" title="${nome}">${nome.length>15?nome.slice(0,14)+'…':nome}</span>
+        <span class="dleg-pct">${n(r[cShare]).toFixed(1)}%</span>
+      </div>`;
+    });
+  }
+
+  // ── STACKED — escolaridade ────────────────────────
+  const hasEsc = escActual.some(Boolean);
+  if(hasEsc) {
+    document.getElementById('stack-chart').innerHTML = data.map(r=>{
+      const nome = cleanNome(r[cCurso]);
+      const vals = escActual.map(c=>c?n(r[c]):0);
+      const tot  = vals.reduce((s,v)=>s+v,0)||1;
+      const segs = vals.map((v,i)=>
+        `<div class="stack-seg" style="flex:${(v/tot*100).toFixed(1)};background:${ESC_COLORS[i]}"></div>`
+      ).join('');
+      return `<div class="stack-row">
+        <div class="stack-curso">${nome.length>26?nome.slice(0,25)+'…':nome}</div>
+        <div class="stack-bar">${segs}</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('stack-leg').innerHTML = ESC_SHORT.map((s,i)=>`
+      <div class="leg-item">
+        <span class="leg-dot" style="background:${ESC_COLORS[i]}"></span>${s}
+      </div>`).join('');
+  }
+
+  // ── TAXA DE QUALIFICAÇÃO ──────────────────────────
+  if(cTaxa) {
+    const sorted = [...data].sort((a,b)=>n(b[cTaxa])-n(a[cTaxa]));
+    document.getElementById('taxa-bars').innerHTML = sorted.map(r=>{
+      const nome = cleanNome(r[cCurso]);
+      const v = n(r[cTaxa]);
+      const color = v>=92 ? 'var(--pos)' : v>=88 ? 'var(--acc)' : 'var(--warn)';
+      return `<div>
+        <div style="font-size:12px;color:var(--tx2);margin-bottom:6px;font-weight:500">
+          ${nome.length>24?nome.slice(0,23)+'…':nome}
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-trk">
+            <div class="prog-fill" style="width:0%;background:${color}" data-w="${Math.min(v,100).toFixed(2)}"></div>
+          </div>
+          <span class="prog-val" style="color:${color}">${v.toFixed(2)}%</span>
+        </div>
+      </div>`;
+    }).join('');
+    raf(()=>document.querySelectorAll('.prog-fill[data-w]').forEach(el=>el.style.width=el.dataset.w+'%'), 100);
+  }
+
+  // ── TABELA ────────────────────────────────────────
+  const numCols = new Set([cTotal, cTaxa, cShare, ...escActual.filter(Boolean)]);
+  const colOrder = [
+    cCurso,
+    ...escActual.filter(Boolean),
+    cTotal, cTaxa, cShare
+  ].filter(Boolean);
+
+  document.getElementById('tbl-head').innerHTML = `<tr>${
+    colOrder.map(c=>`<th>${c}</th>`).join('')
+  }</tr>`;
+
+  document.getElementById('tbl-body').innerHTML = data.map(r=>`<tr>${
+    colOrder.map(c=>{
+      const v = r[c]||'—';
+      const isNum = numCols.has(c) && v !== '—';
+      const isCurso = c === cCurso;
+      const display = isCurso ? cleanNome(v) : v;
+      return `<td class="${isNum?'nc':isCurso?'nm':''}">${display}</td>`;
+    }).join('')
+  }</tr>`).join('');
+}
+
+// ── UTILS ─────────────────────────────────────────────
+function raf(fn, delay=80) { setTimeout(()=>requestAnimationFrame(fn), delay); }
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>{
+    t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(16px)';
+  }, 2400);
+}
+
+const TL = {dark:'🌑 Dark', light:'☀️ Light', beige:'🍂 Bege'};
+function setTheme(t) {
+  document.body.setAttribute('data-theme',t);
+  document.getElementById('tlbl').textContent = TL[t];
+  document.querySelectorAll('.t-opt').forEach(o=>o.classList.remove('active'));
+  document.getElementById('to-'+t).classList.add('active');
+  document.getElementById('tsw').classList.remove('open');
+  localStorage.setItem('fsl-t',t);
+}
+function toggleTheme() { document.getElementById('tsw').classList.toggle('open'); }
+document.addEventListener('click', e=>{
+  const sw = document.getElementById('tsw');
+  if(!sw.contains(e.target)) sw.classList.remove('open');
+});
+
+const btt = document.getElementById('btt');
+window.addEventListener('scroll',()=>btt.classList.toggle('on',window.scrollY>350),{passive:true});
+
+// INIT
+const st = localStorage.getItem('fsl-t');
+if(st) setTheme(st);
+load();
+</script>
+</body>
+</html>
