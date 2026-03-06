@@ -6,16 +6,15 @@
 <title>FSL — Dashboard de Lançamentos</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root { --f: 'Inter',sans-serif; --fn: 'Montserrat',sans-serif; --base:15px; --tr:.25s cubic-bezier(.4,0,.2,1); --r:12px; --rs:8px; }
-
-  [data-theme="dark"]  { --bg:#0e0e11;--sf:#17171c;--cd:#1e1e25;--cdh:#25252e;--nav:rgba(14,14,17,.93);--bd:rgba(255,255,255,.07);--bda:rgba(255,255,255,.15);--tx:#f0f0f3;--tx2:#8a8a9a;--tx3:#555560;--acc:#7c5cfc;--accg:rgba(124,92,252,.15);--c1:#7c5cfc;--c2:#e05f8e;--c3:#34d399;--c4:#fbbf24;--c5:#60a5fa;--c6:#f97316;--pos:#34d399;--neg:#f87171;--wrn:#fbbf24;--tag:rgba(124,92,252,.12);--tagt:#a78bfa;--scr:#2a2a35;--grd:rgba(255,255,255,.04);--sh:0 4px 24px rgba(0,0,0,.4); }
-  [data-theme="light"] { --bg:#f0f0f5;--sf:#fff;--cd:#fff;--cdh:#fafafa;--nav:rgba(240,240,245,.94);--bd:rgba(0,0,0,.07);--bda:rgba(0,0,0,.14);--tx:#111118;--tx2:#5a5a72;--tx3:#aaaabc;--acc:#6240f0;--accg:rgba(98,64,240,.1);--c1:#6240f0;--c2:#d04070;--c3:#059669;--c4:#d97706;--c5:#2563eb;--c6:#ea580c;--pos:#059669;--neg:#dc2626;--wrn:#d97706;--tag:rgba(98,64,240,.08);--tagt:#6240f0;--scr:#dddde8;--grd:rgba(0,0,0,.05);--sh:0 2px 16px rgba(0,0,0,.08); }
-  [data-theme="beige"] { --bg:#f2ebe0;--sf:#fdf8f0;--cd:#fdf8f0;--cdh:#f8f1e5;--nav:rgba(242,235,224,.95);--bd:rgba(160,130,90,.18);--bda:rgba(120,90,50,.28);--tx:#2c2416;--tx2:#7a6545;--tx3:#b8a882;--acc:#8b5e3c;--accg:rgba(139,94,60,.1);--c1:#8b5e3c;--c2:#c07850;--c3:#4a7c59;--c4:#b87820;--c5:#4a6a8a;--c6:#9a4040;--pos:#4a7c59;--neg:#a04040;--wrn:#b87820;--tag:rgba(139,94,60,.1);--tagt:#8b5e3c;--scr:#d5c9b0;--grd:rgba(100,80,40,.06);--sh:0 2px 16px rgba(80,60,20,.1); }
+  :root{--f:'Inter',sans-serif;--fn:'Montserrat',sans-serif;--base:15px;--tr:.25s cubic-bezier(.4,0,.2,1);--r:12px;--rs:8px;}
+  [data-theme="dark"]{--bg:#0e0e11;--sf:#17171c;--cd:#1e1e25;--cdh:#25252e;--nav:rgba(14,14,17,.93);--bd:rgba(255,255,255,.07);--bda:rgba(255,255,255,.15);--tx:#f0f0f3;--tx2:#8a8a9a;--tx3:#555560;--acc:#7c5cfc;--accg:rgba(124,92,252,.15);--c1:#7c5cfc;--c2:#e05f8e;--c3:#34d399;--c4:#fbbf24;--c5:#60a5fa;--c6:#f97316;--pos:#34d399;--neg:#f87171;--wrn:#fbbf24;--tag:rgba(124,92,252,.12);--tagt:#a78bfa;--scr:#2a2a35;--grd:rgba(255,255,255,.04);--sh:0 4px 24px rgba(0,0,0,.4);}
+  [data-theme="light"]{--bg:#f0f0f5;--sf:#fff;--cd:#fff;--cdh:#fafafa;--nav:rgba(240,240,245,.94);--bd:rgba(0,0,0,.07);--bda:rgba(0,0,0,.14);--tx:#111118;--tx2:#5a5a72;--tx3:#aaaabc;--acc:#6240f0;--accg:rgba(98,64,240,.1);--c1:#6240f0;--c2:#d04070;--c3:#059669;--c4:#d97706;--c5:#2563eb;--c6:#ea580c;--pos:#059669;--neg:#dc2626;--wrn:#d97706;--tag:rgba(98,64,240,.08);--tagt:#6240f0;--scr:#dddde8;--grd:rgba(0,0,0,.05);--sh:0 2px 16px rgba(0,0,0,.08);}
+  [data-theme="beige"]{--bg:#f2ebe0;--sf:#fdf8f0;--cd:#fdf8f0;--cdh:#f8f1e5;--nav:rgba(242,235,224,.95);--bd:rgba(160,130,90,.18);--bda:rgba(120,90,50,.28);--tx:#2c2416;--tx2:#7a6545;--tx3:#b8a882;--acc:#8b5e3c;--accg:rgba(139,94,60,.1);--c1:#8b5e3c;--c2:#c07850;--c3:#4a7c59;--c4:#b87820;--c5:#4a6a8a;--c6:#9a4040;--pos:#4a7c59;--neg:#a04040;--wrn:#b87820;--tag:rgba(139,94,60,.1);--tagt:#8b5e3c;--scr:#d5c9b0;--grd:rgba(100,80,40,.06);--sh:0 2px 16px rgba(80,60,20,.1);}
 
   *{margin:0;padding:0;box-sizing:border-box;}
   html{font-size:var(--base);scroll-behavior:smooth;}
   body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100vh;transition:background var(--tr),color var(--tr);-webkit-font-smoothing:antialiased;}
-  ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:var(--scr);border-radius:3px;}
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--scr);border-radius:3px;}
 
   /* TOPBAR */
   #topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav);backdrop-filter:blur(18px);border-bottom:1px solid var(--bd);transition:background var(--tr),border-color var(--tr);}
@@ -58,13 +57,14 @@
   #err{display:none;text-align:center;padding:60px;color:var(--neg);font-size:14px;line-height:1.8;}
 
   /* GRIDS */
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;}
   .g5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:14px;}
   .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
   .g31{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
   .gf{margin-bottom:16px;}
-  @media(max-width:1200px){.g5{grid-template-columns:repeat(3,1fr);}}
-  @media(max-width:900px){.g5{grid-template-columns:repeat(2,1fr);}.g2,.g31{grid-template-columns:1fr;}}
-  @media(max-width:500px){.g5{grid-template-columns:1fr;}}
+  @media(max-width:1200px){.g5{grid-template-columns:repeat(3,1fr);}.g4{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:900px){.g2,.g31{grid-template-columns:1fr;}.g5,.g4{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:500px){.g5,.g4{grid-template-columns:1fr;}}
 
   /* KPI */
   .kpi{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh);transition:background var(--tr),border-color var(--tr),transform .2s;position:relative;overflow:hidden;cursor:default;}
@@ -74,50 +74,58 @@
   .kl{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
   .kv{font-family:var(--fn);font-size:32px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;margin-bottom:6px;}
   .kv.md{font-size:22px;}
+  .kv.sm{font-size:16px;line-height:1.4;font-weight:700;}
   .kdelta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;margin-top:4px;}
   .dup{background:rgba(52,211,153,.12);color:var(--pos);}
   .ddn{background:rgba(248,113,113,.12);color:var(--neg);}
   .dne{background:var(--tag);color:var(--tagt);}
 
   /* KPI BEST */
-  .kbest .kbnome{font-family:var(--fn);font-size:15px;font-weight:700;color:var(--tx);line-height:1.3;margin-bottom:10px;}
-  .kbest .kbstats{display:flex;gap:16px;align-items:flex-end;}
+  .kbest .kbnome{font-family:var(--fn);font-size:14px;font-weight:700;color:var(--tx);line-height:1.35;margin-bottom:10px;}
+  .kbstats{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;}
   .kbblock{display:flex;flex-direction:column;gap:2px;}
-  .kbbv{font-family:var(--fn);font-size:22px;font-weight:800;color:var(--tx);letter-spacing:-.03em;}
+  .kbbv{font-family:var(--fn);font-size:20px;font-weight:800;color:var(--tx);letter-spacing:-.03em;}
   .kbbl{font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;}
-  .kbdiv{width:1px;height:32px;background:var(--bd);align-self:center;}
+  .kbdiv{width:1px;height:28px;background:var(--bd);align-self:center;}
+
+  /* KPI CURSO MAIS LEADS */
+  .ktop-curso .ktc-sub{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;}
+  .ktop-curso .ktc-nome{font-family:var(--fn);font-size:14px;font-weight:700;color:var(--tx);line-height:1.35;margin-bottom:8px;}
+  .ktop-curso .ktc-val{font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.03em;color:var(--tx);}
+  .ktop-curso .ktc-lbl{font-size:11px;color:var(--tx3);margin-top:2px;}
 
   /* CARD */
   .card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:24px;box-shadow:var(--sh);transition:background var(--tr),border-color var(--tr);}
   .ctitle{font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:20px;}
 
-  /* PAINEL DELTA/LEADS */
-  .leads-panel{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:24px;box-shadow:var(--sh);margin-bottom:16px;}
-  .lp-header{display:flex;align-items:center;gap:20px;margin-bottom:20px;flex-wrap:wrap;}
-  .lp-total-block{}
-  .lp-total-lbl{font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
-  .lp-total-val{font-family:var(--fn);font-size:40px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;}
-  .lp-badges{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;}
-  .lp-badge-new{display:inline-flex;align-items:center;gap:5px;font-family:var(--fn);font-size:13px;font-weight:700;color:var(--pos);background:rgba(52,211,153,.1);padding:4px 12px;border-radius:999px;}
-  .lp-daycols{display:flex;gap:0;margin-left:auto;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;}
-  .lp-day{padding:14px 24px;text-align:center;border-right:1px solid var(--bd);}
-  .lp-day:last-child{border-right:none;}
-  .lp-day-lbl{font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;}
-  .lp-day-val{font-family:var(--fn);font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--tx);}
-  .lp-day-cpl{font-size:12px;color:var(--tx3);margin-top:3px;}
-
-  /* CURSO ROWS */
-  .curso-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:4px;}
-  .curso-box{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:14px 16px;border-left:3px solid var(--acc);transition:background var(--tr);}
-  .curso-box:hover{background:var(--cdh);}
+  /* CURSO GRID */
+  .curso-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+  .cbox{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:14px 16px;border-left:3px solid var(--acc);transition:background var(--tr);}
+  .cbox:hover{background:var(--cdh);}
   .cb-nome{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:10px;line-height:1.3;}
-  .cb-stats{display:flex;align-items:center;gap:12px;justify-content:space-between;}
-  .cb-total{font-family:var(--fn);font-size:24px;font-weight:800;color:var(--tx);letter-spacing:-.03em;}
-  .cb-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
-  .cb-new{font-family:var(--fn);font-size:12px;font-weight:700;color:var(--pos);background:rgba(52,211,153,.1);padding:2px 8px;border-radius:999px;}
-  .cb-dias{display:flex;gap:8px;}
-  .cb-dia{font-size:12px;color:var(--tx3);}
-  .cb-dia b{color:var(--tx2);}
+  .cb-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .cb-total{font-family:var(--fn);font-size:26px;font-weight:800;color:var(--tx);letter-spacing:-.03em;}
+  .cb-hoje{font-family:var(--fn);font-size:13px;font-weight:700;color:var(--pos);background:rgba(52,211,153,.12);padding:3px 10px;border-radius:999px;}
+
+  /* CPL PANEL */
+  .cpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+  .cpl-box{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:16px 18px;transition:background var(--tr);}
+  .cpl-box:hover{background:var(--cdh);}
+  .cpl-nome{font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:12px;line-height:1.3;}
+  .cpl-row{display:flex;gap:20px;}
+  .cpl-block{display:flex;flex-direction:column;gap:3px;}
+  .cpl-lbl{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;}
+  .cpl-val{font-family:var(--fn);font-size:18px;font-weight:800;letter-spacing:-.03em;color:var(--tx);}
+  .cpl-div{width:1px;background:var(--bd);align-self:stretch;}
+  .cpl-note{font-size:10px;color:var(--tx3);margin-top:8px;font-style:italic;}
+
+  /* LISTA LEADS */
+  .leads-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--bd);gap:12px;}
+  .leads-row:last-child{border-bottom:none;}
+  .lr-nome{display:flex;align-items:center;gap:10px;flex:1;font-size:14px;font-weight:500;color:var(--tx);}
+  .lr-stripe{width:4px;height:16px;border-radius:2px;flex-shrink:0;}
+  .lr-total{font-family:var(--fn);font-size:18px;font-weight:800;color:var(--tx);letter-spacing:-.02em;}
+  .lr-hoje{font-family:var(--fn);font-size:12px;font-weight:700;color:var(--pos);background:rgba(52,211,153,.1);padding:2px 8px;border-radius:999px;white-space:nowrap;}
 
   /* DONUT */
   .dwrap{display:flex;align-items:center;gap:20px;}
@@ -128,38 +136,28 @@
   .dlname{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
   /* ESCOLARIDADE */
-  .esc-wrap{}
-  .esc-controls{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
-  .escsel{appearance:none;-webkit-appearance:none;background:var(--sf);border:1px solid var(--bda);border-radius:999px;color:var(--tx);font-family:var(--f);font-size:14px;font-weight:500;padding:8px 36px 8px 16px;cursor:pointer;outline:none;transition:all var(--tr);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a8a9a' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+  .escsel{appearance:none;-webkit-appearance:none;background:var(--sf);border:1px solid var(--bda);border-radius:999px;color:var(--tx);font-family:var(--f);font-size:14px;font-weight:500;padding:8px 36px 8px 16px;cursor:pointer;outline:none;transition:all var(--tr);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a8a9a' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;margin-bottom:24px;}
   .escsel:focus{border-color:var(--acc);}
-
-  .esc-layout{display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:start;}
+  .esc-layout{display:grid;grid-template-columns:210px 1fr;gap:40px;align-items:start;}
   @media(max-width:800px){.esc-layout{grid-template-columns:1fr;}}
-
-  /* RING lado esq */
   .esc-left{display:flex;flex-direction:column;align-items:center;gap:14px;}
-  .ring-cont{position:relative;width:160px;height:160px;flex-shrink:0;}
+  .ring-cont{position:relative;width:160px;height:160px;}
   .ring-cont svg{position:absolute;top:0;left:0;}
   .ring-lbl{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
   .ring-pct{font-family:var(--fn);font-size:22px;font-weight:800;color:var(--tx);letter-spacing:-.03em;display:block;}
   .ring-sub{font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;}
-  .ring-legend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .ring-legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
   .rli{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2);}
   .rlidot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-
-  /* DIREITA: blocos + barra única */
   .esc-right{display:flex;flex-direction:column;gap:20px;}
-  .esc-blocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+  .esc-blocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;}
   .esc-block{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:12px 14px;}
   .ebl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
-  .ebv{font-family:var(--fn);font-size:22px;font-weight:800;color:var(--tx);letter-spacing:-.03em;}
+  .ebv{font-family:var(--fn);font-size:20px;font-weight:800;color:var(--tx);letter-spacing:-.03em;}
   .ebp{font-size:12px;color:var(--tx3);margin-top:2px;}
-
-  /* BARRA ÚNICA SHARE */
-  .esc-share-section{margin-top:4px;}
   .esc-share-title{font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:12px;}
   .singlebar{height:14px;border-radius:7px;overflow:hidden;display:flex;gap:1px;margin-bottom:10px;}
-  .sb-seg{height:100%;transition:flex .9s cubic-bezier(.4,0,.2,1);}
+  .sb-seg{height:100%;}
   .sb-legend{display:flex;flex-wrap:wrap;gap:6px 16px;}
   .sbleg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2);}
   .sbleg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
@@ -195,6 +193,9 @@
   #btt.on{opacity:1;pointer-events:all;transform:translateY(0);}
   #btt:hover{transform:translateY(-3px);}
   #toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--cd);border:1px solid var(--bd);color:var(--tx2);padding:9px 20px;border-radius:999px;font-size:13px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--sh);}
+
+  /* DEBUG */
+  #debug-box{display:none;background:var(--sf);border:1px solid var(--bda);border-radius:var(--rs);padding:14px 18px;margin-bottom:16px;font-size:12px;color:var(--tx2);font-family:monospace;line-height:1.8;white-space:pre-wrap;word-break:break-all;}
 </style>
 </head>
 <body data-theme="dark">
@@ -217,9 +218,7 @@
       </button>
     </nav>
     <div class="tsw" id="tsw">
-      <button class="tsbtn" onclick="toggleTheme()">
-        <span id="tlbl">🌑 Dark</span><span class="cr">▾</span>
-      </button>
+      <button class="tsbtn" onclick="toggleTheme()"><span id="tlbl">🌑 Dark</span><span class="cr">▾</span></button>
       <div class="tsdrop">
         <div class="topt act" id="to-dark"  onclick="setTheme('dark')"><span class="tdot" style="background:#7c5cfc"></span>Dark</div>
         <div class="topt"     id="to-light" onclick="setTheme('light')"><span class="tdot" style="background:#6240f0"></span>Light</div>
@@ -231,46 +230,25 @@
 
 <main>
   <div id="loader"><div class="spin"></div><p>Carregando dados…</p></div>
-  <div id="err">Não foi possível carregar os dados.<br><small>Verifique se a planilha está publicada como CSV e tente novamente.</small></div>
+  <div id="err">Não foi possível carregar os dados.<br><small>Verifique se a planilha está publicada como CSV.</small></div>
 
   <div class="panel" id="panel-perf">
     <div class="ph">
       <h1 class="ptitle">Performance de Lançamentos</h1>
       <p class="psub">Faculdade Sírio-Libanês</p>
-      <div class="dlive"><div class="ldot"></div><span id="tslabel">Conectado à planilha</span></div>
+      <div class="dlive"><div class="ldot"></div><span id="tslabel">—</span></div>
     </div>
 
-    <!-- KPI ROW principal -->
+    <!-- debug (oculto, ativar com ?debug=1) -->
+    <div id="debug-box"></div>
+
+    <!-- KPI ROW: métricas principais -->
     <div class="g5" id="kpi-row"></div>
 
-    <!-- PAINEL DE LEADS com variação diária -->
-    <div class="leads-panel" id="leads-panel">
-      <div class="lp-header">
-        <div class="lp-total-block">
-          <div class="lp-total-lbl">Total de Leads</div>
-          <div class="lp-total-val" id="lp-total">—</div>
-          <div class="lp-badges">
-            <span class="lp-badge-new" id="lp-new" style="display:none">+0 desde ontem</span>
-          </div>
-        </div>
-        <div class="lp-daycols">
-          <div class="lp-day">
-            <div class="lp-day-lbl">Ontem</div>
-            <div class="lp-day-val" id="lp-ontem">—</div>
-            <div class="lp-day-cpl" id="lp-cpl-ontem">CPL R$ 60,00</div>
-          </div>
-          <div class="lp-day">
-            <div class="lp-day-lbl">Hoje</div>
-            <div class="lp-day-val" id="lp-hoje">—</div>
-            <div class="lp-day-cpl" id="lp-cpl-hoje">CPL R$ 60,00</div>
-          </div>
-        </div>
-      </div>
-      <div class="ctitle" style="margin-bottom:14px">Leads por Curso</div>
-      <div class="curso-grid" id="curso-grid"></div>
-    </div>
+    <!-- PAINEL DIÁRIO: leads hoje / ontem / top cursos -->
+    <div class="g4 gf" id="kpi-diario"></div>
 
-    <!-- LEADS POR CURSO (lista) + SHARE -->
+    <!-- PAINEL DE LEADS POR CURSO (com +hoje) -->
     <div class="g31">
       <div class="card">
         <div class="ctitle">Total de Leads por Curso</div>
@@ -288,14 +266,24 @@
       </div>
     </div>
 
+    <!-- BOXES POR CURSO (total + hoje) -->
+    <div class="gf card">
+      <div class="ctitle">Leads por Curso</div>
+      <div class="curso-grid" id="curso-grid" style="margin-top:4px"></div>
+    </div>
+
+    <!-- CPL POR CURSO -->
+    <div class="gf card">
+      <div class="ctitle">CPL por Curso <span style="font-weight:400;font-size:10px;color:var(--wrn);margin-left:6px">★ dados simulados</span></div>
+      <div class="cpl-grid" id="cpl-grid" style="margin-top:4px"></div>
+    </div>
+
     <!-- ESCOLARIDADE -->
     <div class="gf card">
       <div class="ctitle">Distribuição por Escolaridade</div>
-      <div class="esc-controls">
-        <select class="escsel" id="escsel" onchange="renderEsc()">
-          <option value="__all__">Todos os cursos</option>
-        </select>
-      </div>
+      <select class="escsel" id="escsel" onchange="renderEsc()">
+        <option value="__all__">Todos os cursos</option>
+      </select>
       <div class="esc-layout">
         <div class="esc-left">
           <div class="ring-cont">
@@ -319,7 +307,7 @@
         </div>
         <div class="esc-right">
           <div class="esc-blocks" id="esc-blocks"></div>
-          <div class="esc-share-section">
+          <div>
             <div class="esc-share-title">Share por Escolaridade</div>
             <div class="singlebar" id="singlebar"></div>
             <div class="sb-legend" id="sb-legend"></div>
@@ -328,7 +316,7 @@
       </div>
     </div>
 
-    <!-- TAXA DE QUALIFICAÇÃO -->
+    <!-- TAXA -->
     <div class="gf card">
       <div class="ctitle">Taxa de Qualificação por Curso</div>
       <div class="taxa-list" id="taxa-list" style="margin-top:4px"></div>
@@ -351,163 +339,235 @@
 <div id="toast"></div>
 
 <script>
-// ─────────────────────────────────────────────────────────────
-// CONFIGURAÇÃO — substitua DB_GID pelo gid correto da aba MAIN|DB
-// Para encontrar: abra a planilha → clique na aba MAIN|DB → copie o número após #gid= na URL
-// ─────────────────────────────────────────────────────────────
+// ── CONFIG ──────────────────────────────────────────────
 const PUB_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT6iHhSHZBcAWYSw8wlRwyX7r6_jUnaULqG4uyt9dDG578kCD_N-j0NanrwJZvoDOyFidHmc_vaMAVj/pub?output=csv';
 const DB_GID   = '256138654';
-const CPL_FIXO = 60; // R$ — atualizar quando tiver o valor real
+const CPL_FIXO = 60; // placeholder geral
+
+// CPL simulado por curso (geral e hoje)
+const CPL_SIMULADO = {
+  'Gerontologia':           { geral: 58.40, hoje: 54.20 },
+  'Gestão Corp':            { geral: 72.10, hoje: 68.80 },
+  'Inteligência A':         { geral: 63.50, hoje: 61.00 },
+  'Neurociência':           { geral: 55.90, hoje: 52.30 },
+  'Gestão de Cl':           { geral: 67.80, hoje: 70.40 },
+  'Gestão de Pr':           { geral: 48.60, hoje: 45.90 },
+};
 
 const ESC_COLS  = ['Pós-graduação Completa','Ensino Superior Incompleto','Ensino Superior Completo','Pós-graduação Incompleto','Ensino Médio Completo','Ensino Médio Incompleto'];
 const ESC_SHORT = ['Pós C.','Sup. Inc.','Sup. C.','Pós Inc.','EM C.','EM Inc.'];
 const COLORS    = ['#7c5cfc','#e05f8e','#34d399','#fbbf24','#60a5fa','#f97316'];
 
-let sumHdrs=[], sumData=[], dbRows=[];
+let sumHdrs=[], sumData=[], dbRows=[], dbHdrs=[];
+const DEBUG = location.search.includes('debug=1');
 
-// ── FETCH ──────────────────────────────────────────────────
+// ── FETCH ──────────────────────────────────────────────
 async function load() {
   try {
-    const r1 = await fetch(PUB_BASE);
-    if (!r1.ok) throw new Error('CSV principal falhou');
+    const [r1, r2] = await Promise.all([
+      fetch(PUB_BASE),
+      fetch(`${PUB_BASE}&gid=${DB_GID}`)
+    ]);
+
+    if (!r1.ok) throw new Error('CSV principal falhou: ' + r1.status);
     parseSummary(await r1.text());
 
-    // Carrega MAIN|DB
-    try {
-      const r2 = await fetch(`${PUB_BASE}&gid=${DB_GID}`);
-      if (r2.ok) parseDB(await r2.text());
-      else console.warn('MAIN|DB: HTTP', r2.status);
-    } catch(e) { console.warn('DB não carregado:', e); }
+    if (r2.ok) {
+      const txt2 = await r2.text();
+      parseDB(txt2);
+    } else {
+      dbg('AVISO: MAIN|DB retornou HTTP ' + r2.status);
+    }
 
     renderAll();
   } catch(e) {
     console.error(e);
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('err').style.display = 'block';
+    document.getElementById('loader').style.display='none';
+    document.getElementById('err').style.display='block';
+    document.getElementById('err').innerHTML += `<br><small style="opacity:.5">${e.message}</small>`;
   }
 }
 
-
-// ── PARSE ──────────────────────────────────────────────────
+// ── PARSE SUMMARY ──────────────────────────────────────
 function parseLine(l) {
-  const out=[]; let cur='', q=false;
+  const out=[]; let cur='',q=false;
   for(let i=0;i<l.length;i++){
     const c=l[i];
     if(c==='"'){q=!q;}else if(c===','&&!q){out.push(cur.trim());cur='';}else cur+=c;
   }
-  out.push(cur.trim());
-  return out;
+  out.push(cur.trim()); return out;
 }
 
 function parseSummary(txt) {
-  const lines = txt.trim().split('\n');
-  sumHdrs = parseLine(lines[0]);
-  const rows = lines.slice(1).filter(l=>l.trim()).map(l=>{
-    const v=parseLine(l); const o={};
+  const lines=txt.trim().split('\n');
+  sumHdrs=parseLine(lines[0]);
+  dbg('SUMMARY headers: '+sumHdrs.join(' | '));
+  const rows=lines.slice(1).filter(l=>l.trim()).map(l=>{
+    const v=parseLine(l),o={};
     sumHdrs.forEach((h,i)=>{ o[h]=(v[i]||'').trim(); });
     return o;
   });
-  sumData = rows.filter(r=>{
+  sumData=rows.filter(r=>{
     const f=(r[sumHdrs[0]]||'').toUpperCase();
-    return !f.startsWith('TOTAL') && f!=='';
+    return !f.startsWith('TOTAL')&&f!=='';
   });
+  dbg(`SUMMARY: ${sumData.length} cursos carregados`);
 }
 
+// ── PARSE DB ───────────────────────────────────────────
 function parseDB(txt) {
-  const lines = txt.trim().split('\n');
-  const dbHdrs = parseLine(lines[0]);
-  dbRows = lines.slice(1).filter(l=>l.trim()).map(l=>{
-    const v=parseLine(l); const o={};
+  const lines=txt.trim().split('\n');
+  if(lines.length<2){ dbg('DB vazia ou sem dados'); return; }
+  dbHdrs=parseLine(lines[0]);
+  dbg('DB headers: '+dbHdrs.join(' | '));
+  dbRows=lines.slice(1).filter(l=>l.trim()).map(l=>{
+    const v=parseLine(l),o={};
     dbHdrs.forEach((h,i)=>{ o[h]=(v[i]||'').trim(); });
     return o;
   });
-  console.log(`DB carregada: ${dbRows.length} linhas. Colunas: ${dbHdrs.join(', ')}`);
+  dbg(`DB: ${dbRows.length} linhas carregadas`);
+  if(dbRows.length>0) dbg('DB linha 1: '+JSON.stringify(dbRows[0]));
 }
 
-// ── HELPERS ─────────────────────────────────────────────────
-function n(v){ if(!v)return 0; return parseFloat((v+'').replace(/[^\d.,-]/g,'').replace(',','.'))||0; }
-function fmt(v){ return Math.round(v).toLocaleString('pt-BR'); }
-function fmtBRL(v){ return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
-function clean(s){ return (s||'').replace(/\[Formulário\]\s*/i,'').trim(); }
-function raf(fn,d=80){ setTimeout(()=>requestAnimationFrame(fn),d); }
+// ── PARSE DATA robusto ─────────────────────────────────
+// Testa todos os formatos possíveis do Google Sheets/Forms
+function parseDate(raw) {
+  if(!raw) return null;
+  raw=raw.trim();
 
-// ── DB: calcula contagem por dia ──────────────────────────
+  // Formato Google Forms BR: "28/05/2025 14:32:10" ou "28/05/2025"
+  let m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(m) {
+    const d=new Date(+m[3], +m[2]-1, +m[1]);
+    if(!isNaN(d)) return d;
+  }
+  // ISO: 2025-05-28 ou 2025-05-28T14:32
+  m = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m) {
+    const d=new Date(+m[1], +m[2]-1, +m[3]);
+    if(!isNaN(d)) return d;
+  }
+  // US: 05/28/2025
+  m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(m) {
+    const d=new Date(+m[3], +m[1]-1, +m[2]);
+    if(!isNaN(d)) return d;
+  }
+  // Fallback nativo
+  const d=new Date(raw);
+  return isNaN(d)?null:d;
+}
+
+function sameDayUTC(a, b) {
+  return a.getFullYear()===b.getFullYear() &&
+         a.getMonth()===b.getMonth() &&
+         a.getDate()===b.getDate();
+}
+
+// ── CALC DB ────────────────────────────────────────────
 function calcDB() {
-  if (!dbRows.length) return { hoje:0, ontem:0, byCurso:{} };
+  const result = { hoje:0, ontem:0, byCurso:{}, colTs:null, colCurso:null };
+  if(!dbRows.length) { dbg('calcDB: sem linhas'); return result; }
 
-  const dbH = Object.keys(dbRows[0]);
-  // Detecta coluna de timestamp — Google Forms usa "Carimbo de data/hora"
-  const cTs = dbH.find(h=>
-    h.toLowerCase().includes('carimbo') ||
-    h.toLowerCase().includes('timestamp') ||
-    h.toLowerCase().includes('data/hora') ||
-    h.toLowerCase().includes('data e hora')
-  ) || dbH.find(h=>h.toLowerCase().includes('data') || h.toLowerCase().includes('hora'));
+  // Detecta coluna timestamp — testa todos os headers
+  const tsCandidate = dbHdrs.find(h=>{
+    const l=h.toLowerCase();
+    return l.includes('carimbo')||l.includes('timestamp')||
+           l.includes('data/hora')||l.includes('data e hora')||
+           (l.includes('data')&&l.includes('hora'));
+  }) || dbHdrs[0]; // fallback: primeira coluna (Forms sempre coloca timestamp na col 0)
 
-  // Detecta coluna de curso — Google Forms usa o título da pergunta
-  const cCu = dbH.find(h=>
-    h.toLowerCase().includes('curso') ||
-    h.toLowerCase().includes('qual curso') ||
-    h.toLowerCase().includes('formulário') ||
-    h.toLowerCase().includes('produto')
-  );
+  // Detecta coluna curso
+  const cursoCandidate = dbHdrs.find(h=>{
+    const l=h.toLowerCase();
+    return l.includes('curso')||l.includes('qual curso')||l.includes('formulário')||l.includes('produto');
+  });
 
-  if (!cTs) { console.warn('Coluna de data não encontrada no DB. Colunas:', dbH); return { hoje:0, ontem:0, byCurso:{} }; }
+  result.colTs    = tsCandidate;
+  result.colCurso = cursoCandidate;
+  dbg(`calcDB usando: timestamp="${tsCandidate}" | curso="${cursoCandidate||'(nenhum)'}"`);
 
   const hoje  = new Date(); hoje.setHours(0,0,0,0);
   const ontem = new Date(hoje); ontem.setDate(ontem.getDate()-1);
 
-  let countHoje=0, countOntem=0;
-  const byCurso = {};
+  // Amostra das primeiras datas para debug
+  const amostra = dbRows.slice(0,3).map(r=>r[tsCandidate]).join(' | ');
+  dbg(`Amostra datas DB: ${amostra}`);
 
-  dbRows.forEach(r => {
-    const raw = r[cTs]||'';
-    // Tenta parsear data no formato brasileiro dd/mm/yyyy HH:MM:SS
-    let d;
-    const brMatch = raw.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-    if (brMatch) {
-      d = new Date(`${brMatch[3]}-${brMatch[2].padStart(2,'0')}-${brMatch[1].padStart(2,'0')}`);
-    } else {
-      d = new Date(raw);
-    }
-
-    if (isNaN(d)) return;
+  let parseOk=0, parseErr=0;
+  dbRows.forEach(r=>{
+    const raw=r[tsCandidate]||'';
+    const d=parseDate(raw);
+    if(!d){ parseErr++; return; }
+    parseOk++;
     d.setHours(0,0,0,0);
 
-    const isHoje  = d.getTime() === hoje.getTime();
-    const isOntem = d.getTime() === ontem.getTime();
+    const isH=sameDayUTC(d,hoje);
+    const isO=sameDayUTC(d,ontem);
 
-    if (isHoje)  countHoje++;
-    if (isOntem) countOntem++;
+    if(isH) result.hoje++;
+    if(isO) result.ontem++;
 
     // Por curso
-    const cursoRaw = cCu ? (r[cCu]||'Outros') : 'Outros';
-    if (!byCurso[cursoRaw]) byCurso[cursoRaw]={ hoje:0, ontem:0 };
-    if (isHoje)  byCurso[cursoRaw].hoje++;
-    if (isOntem) byCurso[cursoRaw].ontem++;
+    const cursoRaw = cursoCandidate ? (r[cursoCandidate]||'__sem_curso__') : '__sem_curso__';
+    if(!result.byCurso[cursoRaw]) result.byCurso[cursoRaw]={hoje:0,ontem:0};
+    if(isH) result.byCurso[cursoRaw].hoje++;
+    if(isO) result.byCurso[cursoRaw].ontem++;
   });
 
-  return { hoje: countHoje, ontem: countOntem, byCurso };
+  dbg(`calcDB: parseOk=${parseOk} parseErr=${parseErr} hoje=${result.hoje} ontem=${result.ontem}`);
+  dbg('byCurso: '+JSON.stringify(result.byCurso));
+  return result;
 }
 
-// ── RENDER ALL ───────────────────────────────────────────────
+// ── HELPERS ────────────────────────────────────────────
+function n(v){ if(!v)return 0; return parseFloat((v+'').replace(/[^\d.,-]/g,'').replace(',','.'))||0; }
+function fmt(v){ return Math.round(v).toLocaleString('pt-BR'); }
+function fmtR(v){ return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function clean(s){ return (s||'').replace(/\[Formulário\]\s*/i,'').trim(); }
+function raf(fn,d=80){ setTimeout(()=>requestAnimationFrame(fn),d); }
+function dbg(msg){ if(!DEBUG)return; const b=document.getElementById('debug-box'); b.style.display='block'; b.textContent+=msg+'\n'; }
+
+// Faz match entre nome limpo do summary e chave do byCurso
+function matchCurso(nome, byCurso) {
+  const nn=nome.toLowerCase().replace(/\s+/g,' ').trim();
+  return Object.keys(byCurso).find(k=>{
+    const kn=clean(k).toLowerCase().replace(/\s+/g,' ').trim();
+    if(kn===nn) return true;
+    const min=Math.min(nn.length,kn.length,14);
+    return min>=6&&(nn.slice(0,min)===kn.slice(0,min));
+  });
+}
+
+// ── CPL: busca valor simulado por nome parcial ─────────
+function getCPL(nome) {
+  const nn=nome.toLowerCase();
+  const key=Object.keys(CPL_SIMULADO).find(k=>nn.includes(k.toLowerCase())||k.toLowerCase().includes(nn.slice(0,8).toLowerCase()));
+  if(key) return CPL_SIMULADO[key];
+  // Gera valores pseudo-aleatórios determinísticos baseados no nome
+  const seed=nome.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const geral=40+(seed%40)+((seed*7)%100)/100;
+  const hoje =geral-5+(seed%10)/10;
+  return { geral, hoje };
+}
+
+// ── RENDER ALL ─────────────────────────────────────────
 function renderAll() {
-  document.getElementById('loader').style.display = 'none';
+  document.getElementById('loader').style.display='none';
   document.getElementById('panel-perf').classList.add('on');
 
-  const now = new Date();
-  document.getElementById('tslabel').textContent =
+  const now=new Date();
+  document.getElementById('tslabel').textContent=
     `Atualizado em ${now.toLocaleDateString('pt-BR')} às ${now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
 
-  const cCurso = sumHdrs[0];
-  const cTotal = sumHdrs.find(h=>h.trim().toUpperCase()==='TOTAL')||sumHdrs.find(h=>h.toLowerCase().includes('total'));
-  const cTaxa  = sumHdrs.find(h=>h.toLowerCase().includes('qualif')||h.toLowerCase().includes('tx de'));
-  const cShare = sumHdrs.find(h=>h.toLowerCase()==='share'||h.toLowerCase().includes('share'));
-  const escA   = ESC_COLS.map(e=>sumHdrs.find(h=>h.trim()===e)||null);
+  const cCurso=sumHdrs[0];
+  const cTotal=sumHdrs.find(h=>h.trim().toUpperCase()==='TOTAL')||sumHdrs.find(h=>h.toLowerCase().includes('total'));
+  const cTaxa =sumHdrs.find(h=>h.toLowerCase().includes('qualif')||h.toLowerCase().includes('tx de'));
+  const cShare=sumHdrs.find(h=>h.toLowerCase()==='share'||h.toLowerCase().includes('share'));
 
-  const totalLeads = sumData.reduce((s,r)=>s+n(r[cTotal]),0);
-  const totalQual  = sumData.reduce((s,r)=>{ const t=n(r[cTotal]); return s+Math.round(t*n(r[cTaxa])/100); },0);
-  const avgTaxa    = sumData.length ? sumData.reduce((s,r)=>s+n(r[cTaxa]),0)/sumData.length : 0;
+  const totalLeads=sumData.reduce((s,r)=>s+n(r[cTotal]),0);
+  const totalQual =sumData.reduce((s,r)=>s+Math.round(n(r[cTotal])*n(r[cTaxa])/100),0);
+  const avgTaxa   =sumData.length?sumData.reduce((s,r)=>s+n(r[cTaxa]),0)/sumData.length:0;
 
   // Melhor curso (50% leads + 50% taxa)
   const mx1=Math.max(...sumData.map(r=>n(r[cTotal])))||1;
@@ -518,16 +578,16 @@ function renderAll() {
     return sb-sa;
   })[0];
 
-  // CPL geral = CPL_FIXO (placeholder)
-  const cplGeral = CPL_FIXO;
+  const db=calcDB();
+  const hasDB=dbRows.length>0;
 
-  // ── KPI ROW ──
-  document.getElementById('kpi-row').innerHTML = [
-    { l:'Total de Leads',      v:fmt(totalLeads),            d:null },
-    { l:'Leads Qualificados',  v:fmt(totalQual),             d:`${((totalQual/totalLeads)*100).toFixed(1)}% do total`, dc:'dne' },
-    { l:'Taxa de Qualificação',v:avgTaxa.toFixed(2)+'%',     d: avgTaxa>=90?'▲ Alta':'→ Regular', dc:avgTaxa>=90?'dup':'dne' },
-    { l:'CPL Geral',           v:fmtBRL(cplGeral),           d:'Custo por lead', dc:'dne' },
-    { l:'_best', best:best, cCurso, cTotal, cTaxa }
+  // ── KPI ROW principal ──
+  document.getElementById('kpi-row').innerHTML=[
+    {l:'Total de Leads',     v:fmt(totalLeads), d:null},
+    {l:'Leads Qualificados', v:fmt(totalQual),  d:`${((totalQual/totalLeads)*100).toFixed(1)}% do total`,dc:'dne'},
+    {l:'Taxa de Qualificação',v:avgTaxa.toFixed(2)+'%', d:avgTaxa>=90?'▲ Alta':'→ Regular',dc:avgTaxa>=90?'dup':'dne'},
+    {l:'CPL Geral',          v:fmtR(CPL_FIXO),  d:'Custo por lead', dc:'dne'},
+    {l:'_best', best, cCurso, cTotal, cTaxa}
   ].map(k=>{
     if(k.best){
       const nome=clean(k.best[k.cCurso]);
@@ -548,86 +608,71 @@ function renderAll() {
     </div>`;
   }).join('');
 
-  // ── PAINEL LEADS COM DB ──
-  const db = calcDB();
-  document.getElementById('lp-total').textContent = fmt(totalLeads);
+  // ── KPI DIÁRIO: hoje / ontem / top ontem / top hoje ──
+  const sorted=[...sumData].sort((a,b)=>n(b[cTotal])-n(a[cTotal]));
 
-  const novos = Math.max(0, db.hoje - db.ontem);
-  if (novos > 0 || db.hoje > 0) {
-    const badge = document.getElementById('lp-new');
-    badge.textContent = `+${fmt(novos)} desde ontem`;
-    badge.style.display = 'inline-flex';
+  // Top por leads hoje e ontem (via byCurso)
+  let topOntemNome='—', topOntemVal=0, topHojeNome='—', topHojeVal=0;
+  if(hasDB && Object.keys(db.byCurso).length) {
+    const byCursoArr=Object.entries(db.byCurso);
+    const tO=byCursoArr.sort((a,b)=>b[1].ontem-a[1].ontem)[0];
+    const tH=byCursoArr.sort((a,b)=>b[1].hoje-a[1].hoje)[0];
+    if(tO){ topOntemNome=clean(tO[0]); topOntemVal=tO[1].ontem; }
+    if(tH){ topHojeNome=clean(tH[0]); topHojeVal=tH[1].hoje; }
   }
 
-  document.getElementById('lp-ontem').textContent = dbRows.length ? fmt(db.ontem) : '—';
-  document.getElementById('lp-hoje').textContent  = dbRows.length ? fmt(db.hoje)  : '—';
-
-  const cplOntem = db.ontem > 0 ? fmtBRL(CPL_FIXO) : `${fmtBRL(CPL_FIXO)} (ref.)`;
-  const cplHoje  = db.hoje  > 0 ? fmtBRL(CPL_FIXO) : `${fmtBRL(CPL_FIXO)} (ref.)`;
-  document.getElementById('lp-cpl-ontem').textContent = `CPL ${cplOntem}`;
-  document.getElementById('lp-cpl-hoje').textContent  = `CPL ${cplHoje}`;
-
-  // Boxes por curso
-  const sorted = [...sumData].sort((a,b)=>n(b[cTotal])-n(a[cTotal]));
-
-  document.getElementById('curso-grid').innerHTML = sorted.map((r,i)=>{
-    const nome  = clean(r[cCurso]);
-    const total = n(r[cTotal]);
-
-    // Match de curso no DB — compara pelo nome limpo (sem [Formulário])
-    const nomeNorm = nome.toLowerCase().replace(/\s+/g,' ').trim();
-    const dbKey = Object.keys(db.byCurso).find(k => {
-      const kNorm = clean(k).toLowerCase().replace(/\s+/g,' ').trim();
-      // match exato após limpeza, ou substring mútua de pelo menos 10 chars
-      return kNorm === nomeNorm ||
-             (nomeNorm.length >= 10 && kNorm.includes(nomeNorm.slice(0,10))) ||
-             (kNorm.length >= 10 && nomeNorm.includes(kNorm.slice(0,10)));
-    });
-    const dbd = dbKey ? db.byCurso[dbKey] : { hoje:0, ontem:0 };
-    const delta = dbd.hoje - dbd.ontem;
-
-    return `<div class="curso-box" style="border-left-color:${COLORS[i%COLORS.length]}">
-      <div class="cb-nome">${nome}</div>
-      <div class="cb-stats">
-        <div class="cb-total">${fmt(total)}</div>
-        <div class="cb-right">
-          ${delta > 0 ? `<span class="cb-new">+${fmt(delta)} hoje</span>` : ''}
-          ${dbRows.length ? `<div class="cb-dias">
-            <span class="cb-dia">hoje: <b>${fmt(dbd.hoje)}</b></span>
-            <span class="cb-dia">ontem: <b>${fmt(dbd.ontem)}</b></span>
-          </div>` : ''}
-        </div>
-      </div>
+  document.getElementById('kpi-diario').innerHTML=`
+    <div class="kpi">
+      <div class="kl">Leads Hoje</div>
+      <div class="kv">${hasDB?fmt(db.hoje):'—'}</div>
+      ${hasDB&&db.hoje>0?`<span class="kdelta dup">▲ em andamento</span>`:''}
+    </div>
+    <div class="kpi">
+      <div class="kl">Leads Ontem</div>
+      <div class="kv">${hasDB?fmt(db.ontem):'—'}</div>
+    </div>
+    <div class="kpi ktop-curso">
+      <div class="kl">Top Curso Ontem</div>
+      <div class="ktc-nome">${topOntemNome}</div>
+      <div class="ktc-val">${hasDB&&topOntemVal>0?fmt(topOntemVal):'—'}</div>
+      <div class="ktc-lbl">leads ontem</div>
+    </div>
+    <div class="kpi ktop-curso">
+      <div class="kl">Top Curso Hoje</div>
+      <div class="ktc-nome">${topHojeNome}</div>
+      <div class="ktc-val">${hasDB&&topHojeVal>0?fmt(topHojeVal):'—'}</div>
+      <div class="ktc-lbl">leads hoje</div>
     </div>`;
-  }).join('');
 
   // ── LISTA DE LEADS ──
-  document.getElementById('leads-lista').innerHTML = sorted.map((r,i)=>{
-    const nome  = clean(r[cCurso]);
-    const total = n(r[cTotal]);
-    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--bd)">
-      <div style="display:flex;align-items:center;gap:10px;flex:1">
-        <span style="width:4px;height:16px;background:${COLORS[i%COLORS.length]};border-radius:2px;flex-shrink:0"></span>
-        <span style="font-size:14px;font-weight:500;color:var(--tx)">${nome}</span>
+  document.getElementById('leads-lista').innerHTML=sorted.map((r,i)=>{
+    const nome=clean(r[cCurso]);
+    const total=n(r[cTotal]);
+    const dbKey=matchCurso(nome,db.byCurso);
+    const dbd=dbKey?db.byCurso[dbKey]:{hoje:0,ontem:0};
+    return `<div class="leads-row">
+      <div class="lr-nome">
+        <span class="lr-stripe" style="background:${COLORS[i%COLORS.length]}"></span>
+        ${nome}
       </div>
-      <span style="font-family:var(--fn);font-size:18px;font-weight:800;color:var(--tx);letter-spacing:-.02em">${fmt(total)}</span>
+      ${hasDB&&dbd.hoje>0?`<span class="lr-hoje">+${fmt(dbd.hoje)} hoje</span>`:''}
+      <span class="lr-total">${fmt(total)}</span>
     </div>`;
-  }).join('') + `<div style="padding-top:14px;text-align:right">
+  }).join('')+`<div style="padding-top:14px;text-align:right;border-top:1px solid var(--bd);margin-top:4px">
     <span style="font-family:var(--fn);font-size:13px;font-weight:700;color:var(--tx3)">TOTAL: ${fmt(totalLeads)}</span>
   </div>`;
 
   // ── DONUT SHARE ──
-  if (cShare) {
-    const filt = sumData.filter(r=>n(r[cShare])>0);
-    const segs = document.getElementById('donut-segs');
-    const leg  = document.getElementById('donut-leg');
-    segs.innerHTML=''; leg.innerHTML='';
-    const tot  = filt.reduce((s,r)=>s+n(r[cShare]),0)||1;
+  if(cShare){
+    const filt=sumData.filter(r=>n(r[cShare])>0);
+    const segs=document.getElementById('donut-segs');
+    const leg=document.getElementById('donut-leg');
+    segs.innerHTML='';leg.innerHTML='';
+    const tot=filt.reduce((s,r)=>s+n(r[cShare]),0)||1;
     let off=0;
     filt.forEach((r,i)=>{
-      const pct=n(r[cShare])/tot;
-      const dash=pct*100;
-      mkSeg(segs, dash, off, COLORS[i%COLORS.length]);
+      const dash=n(r[cShare])/tot*100;
+      mkSeg(segs,dash,off,COLORS[i%COLORS.length]);
       off+=dash;
       const nome=clean(r[cCurso]);
       leg.innerHTML+=`<div class="dl">
@@ -638,9 +683,47 @@ function renderAll() {
     });
   }
 
+  // ── BOXES POR CURSO ──
+  document.getElementById('curso-grid').innerHTML=sorted.map((r,i)=>{
+    const nome=clean(r[cCurso]);
+    const total=n(r[cTotal]);
+    const dbKey=matchCurso(nome,db.byCurso);
+    const dbd=dbKey?db.byCurso[dbKey]:{hoje:0};
+    return `<div class="cbox" style="border-left-color:${COLORS[i%COLORS.length]}">
+      <div class="cb-nome">${nome}</div>
+      <div class="cb-row">
+        <div class="cb-total">${fmt(total)}</div>
+        ${hasDB&&dbd.hoje>0?`<span class="cb-hoje">+${fmt(dbd.hoje)} hoje</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── CPL POR CURSO ──
+  document.getElementById('cpl-grid').innerHTML=sorted.map(r=>{
+    const nome=clean(r[cCurso]);
+    const cpl=getCPL(nome);
+    const delta=cpl.hoje-cpl.geral;
+    const cor=delta<=0?'var(--pos)':'var(--neg)';
+    return `<div class="cpl-box">
+      <div class="cpl-nome">${nome}</div>
+      <div class="cpl-row">
+        <div class="cpl-block">
+          <div class="cpl-lbl">CPL Geral</div>
+          <div class="cpl-val">${fmtR(cpl.geral)}</div>
+        </div>
+        <div class="cpl-div"></div>
+        <div class="cpl-block">
+          <div class="cpl-lbl">CPL Hoje</div>
+          <div class="cpl-val" style="color:${cor}">${fmtR(cpl.hoje)}</div>
+        </div>
+      </div>
+      <div class="cpl-note">${delta<=0?`▼ ${fmtR(Math.abs(delta))} abaixo da média`:`▲ ${fmtR(Math.abs(delta))} acima da média`}</div>
+    </div>`;
+  }).join('');
+
   // ── ESCOLARIDADE SELECT ──
-  const sel = document.getElementById('escsel');
-  sel.innerHTML = '<option value="__all__">Todos os cursos</option>';
+  const sel=document.getElementById('escsel');
+  sel.innerHTML='<option value="__all__">Todos os cursos</option>';
   sumData.forEach(r=>{
     const o=document.createElement('option');
     o.value=r[cCurso]; o.textContent=clean(r[cCurso]); sel.appendChild(o);
@@ -648,9 +731,9 @@ function renderAll() {
   renderEsc();
 
   // ── TAXA LIST ──
-  if (cTaxa) {
+  if(cTaxa){
     const s=[...sumData].sort((a,b)=>n(b[cTaxa])-n(a[cTaxa]));
-    document.getElementById('taxa-list').innerHTML = s.map(r=>{
+    document.getElementById('taxa-list').innerHTML=s.map(r=>{
       const nome=clean(r[cCurso]);
       const v=n(r[cTaxa]);
       const col=v>=93?'var(--pos)':v>=89?'var(--acc)':'var(--wrn)';
@@ -664,14 +747,13 @@ function renderAll() {
         </div>
       </div>`;
     }).join('');
-    raf(()=>document.querySelectorAll('.taxa-fill[data-w]').forEach(el=>el.style.width=el.dataset.w+'%'),100);
+    raf(()=>document.querySelectorAll('.taxa-fill[data-w]').forEach(el=>el.style.width=el.dataset.w+'%'),120);
   }
 
   // ── TABELA ──
-  const escD = sumHdrs.filter(h=>ESC_COLS.includes(h.trim()));
-  const numS = new Set([cTotal,cTaxa,cShare,...escD]);
-  const cols = [cCurso,cTotal,...escD,cTaxa,cShare].filter(Boolean);
-
+  const escD=sumHdrs.filter(h=>ESC_COLS.includes(h.trim()));
+  const numS=new Set([cTotal,cTaxa,cShare,...escD]);
+  const cols=[cCurso,cTotal,...escD,cTaxa,cShare].filter(Boolean);
   document.getElementById('tbl-head').innerHTML=`<tr>${cols.map(c=>`<th class="${numS.has(c)?'r':''}">${c}</th>`).join('')}</tr>`;
   document.getElementById('tbl-body').innerHTML=sorted.map((r,i)=>`
     <tr style="border-left:3px solid ${COLORS[i%COLORS.length]}">${
@@ -682,33 +764,30 @@ function renderAll() {
     }).join('')}</tr>`).join('');
 }
 
-// ── ESCOLARIDADE RENDER ───────────────────────────────────────
+// ── ESCOLARIDADE ───────────────────────────────────────
 function renderEsc() {
-  const chosen = document.getElementById('escsel').value;
-  const cCurso = sumHdrs[0];
-  const cTotal = sumHdrs.find(h=>h.trim().toUpperCase()==='TOTAL')||sumHdrs.find(h=>h.toLowerCase().includes('total'));
-  const cTaxa  = sumHdrs.find(h=>h.toLowerCase().includes('qualif')||h.toLowerCase().includes('tx de'));
-  const escA   = ESC_COLS.map(e=>sumHdrs.find(h=>h.trim()===e)||null);
+  const chosen=document.getElementById('escsel').value;
+  const cCurso=sumHdrs[0];
+  const cTotal=sumHdrs.find(h=>h.trim().toUpperCase()==='TOTAL')||sumHdrs.find(h=>h.toLowerCase().includes('total'));
+  const cTaxa =sumHdrs.find(h=>h.toLowerCase().includes('qualif')||h.toLowerCase().includes('tx de'));
+  const escA  =ESC_COLS.map(e=>sumHdrs.find(h=>h.trim()===e)||null);
+  const subset=chosen==='__all__'?sumData:sumData.filter(r=>r[cCurso]===chosen);
+  const totLeads=subset.reduce((s,r)=>s+n(r[cTotal]),0)||1;
+  const avgTaxa=subset.length?subset.reduce((s,r)=>s+n(r[cTaxa]),0)/subset.length:0;
 
-  const subset = chosen==='__all__' ? sumData : sumData.filter(r=>r[cCurso]===chosen);
-  const totLeads = subset.reduce((s,r)=>s+n(r[cTotal]),0)||1;
-  const avgTaxa  = subset.length ? subset.reduce((s,r)=>s+n(r[cTaxa]),0)/subset.length : 0;
-
-  // Ring qualificação
-  const segs = document.getElementById('ring-segs');
+  // Ring
+  const segs=document.getElementById('ring-segs');
   segs.innerHTML='';
-  const pctQ = Math.min(avgTaxa, 100);
-  mkSeg(segs, pctQ, 0, 'var(--pos)', 5, 42);
-  document.getElementById('ring-taxa').textContent  = avgTaxa.toFixed(1)+'%';
-  document.getElementById('ring-total').textContent = fmt(totLeads);
+  mkSeg(segs,Math.min(avgTaxa,100),0,'var(--pos)',5,42);
+  document.getElementById('ring-taxa').textContent=avgTaxa.toFixed(1)+'%';
+  document.getElementById('ring-total').textContent=fmt(totLeads);
 
   // Blocos
-  const totEsc = escA.map(c=>c?subset.reduce((s,r)=>s+n(r[c]),0):0);
-  const totAll = totEsc.reduce((s,v)=>s+v,0)||1;
-
-  document.getElementById('esc-blocks').innerHTML = ESC_COLS.map((lbl,i)=>{
-    if(!escA[i]) return '';
-    const v=totEsc[i], pct=(v/totAll*100).toFixed(1);
+  const totEsc=escA.map(c=>c?subset.reduce((s,r)=>s+n(r[c]),0):0);
+  const totAll=totEsc.reduce((s,v)=>s+v,0)||1;
+  document.getElementById('esc-blocks').innerHTML=ESC_COLS.map((lbl,i)=>{
+    if(!escA[i])return '';
+    const v=totEsc[i],pct=(v/totAll*100).toFixed(1);
     return `<div class="esc-block">
       <div class="ebl" style="color:${COLORS[i]}">${ESC_SHORT[i]}</div>
       <div class="ebv">${fmt(v)}</div>
@@ -716,34 +795,30 @@ function renderEsc() {
     </div>`;
   }).join('');
 
-  // Barra única share
-  const singlebar = document.getElementById('singlebar');
-  const sbleg     = document.getElementById('sb-legend');
-  singlebar.innerHTML=''; sbleg.innerHTML='';
-
+  // Barra única
+  const sb=document.getElementById('singlebar');
+  const sl=document.getElementById('sb-legend');
+  sb.innerHTML='';sl.innerHTML='';
   totEsc.forEach((v,i)=>{
-    if(!escA[i]||v===0) return;
+    if(!escA[i]||v===0)return;
     const pct=(v/totAll*100).toFixed(2);
-    singlebar.innerHTML+=`<div class="sb-seg" style="flex:${pct};background:${COLORS[i]}"></div>`;
-    sbleg.innerHTML+=`<div class="sbleg">
-      <span class="sbleg-dot" style="background:${COLORS[i]}"></span>
-      ${ESC_SHORT[i]}<span class="sbleg-pct">${parseFloat(pct).toFixed(1)}%</span>
-    </div>`;
+    sb.innerHTML+=`<div class="sb-seg" style="flex:${pct};background:${COLORS[i]}"></div>`;
+    sl.innerHTML+=`<div class="sbleg"><span class="sbleg-dot" style="background:${COLORS[i]}"></span>${ESC_SHORT[i]}<span class="sbleg-pct">${parseFloat(pct).toFixed(1)}%</span></div>`;
   });
 }
 
-// ── SVG DONUT SEG ─────────────────────────────────────────────
-function mkSeg(parent, dash, off, color, sw=5.5, size=42) {
+// ── SVG SEG ────────────────────────────────────────────
+function mkSeg(parent,dash,off,color,sw=5.5,size=42){
   const r=(size/2-sw/2).toFixed(3);
   const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
-  c.setAttribute('cx',size/2); c.setAttribute('cy',size/2); c.setAttribute('r',r);
-  c.setAttribute('fill','none'); c.setAttribute('stroke',color); c.setAttribute('stroke-width',sw);
+  c.setAttribute('cx',size/2);c.setAttribute('cy',size/2);c.setAttribute('r',r);
+  c.setAttribute('fill','none');c.setAttribute('stroke',color);c.setAttribute('stroke-width',sw);
   c.setAttribute('stroke-dasharray',`${dash} ${100-dash}`);
   c.setAttribute('stroke-dashoffset',`${25-off}`);
   parent.appendChild(c);
 }
 
-// ── UI ──────────────────────────────────────────────────────
+// ── UI ─────────────────────────────────────────────────
 function switchTab(id,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('act'));
@@ -752,9 +827,9 @@ function switchTab(id,btn){
 }
 function showToast(msg){
   const t=document.getElementById('toast');
-  t.textContent=msg; t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+  t.textContent=msg;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
   clearTimeout(t._t);
-  t._t=setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(16px)'; },2400);
+  t._t=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(16px)';},2400);
 }
 const TL={dark:'🌑 Dark',light:'☀️ Light',beige:'🍂 Bege'};
 function setTheme(t){
@@ -765,11 +840,11 @@ function setTheme(t){
   document.getElementById('tsw').classList.remove('open');
   localStorage.setItem('fsl-t',t);
 }
-function toggleTheme(){ document.getElementById('tsw').classList.toggle('open'); }
-document.addEventListener('click',e=>{ const s=document.getElementById('tsw'); if(!s.contains(e.target))s.classList.remove('open'); });
+function toggleTheme(){document.getElementById('tsw').classList.toggle('open');}
+document.addEventListener('click',e=>{const s=document.getElementById('tsw');if(!s.contains(e.target))s.classList.remove('open');});
 window.addEventListener('scroll',()=>document.getElementById('btt').classList.toggle('on',scrollY>350),{passive:true});
 
-const st=localStorage.getItem('fsl-t'); if(st)setTheme(st);
+const st=localStorage.getItem('fsl-t');if(st)setTheme(st);
 load();
 </script>
 </body>
