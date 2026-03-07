@@ -95,7 +95,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .kd-body{display:flex;align-items:flex-end;justify-content:space-between;gap:5px;}
 .kd-num{font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
 .kd-vb{flex-shrink:0;padding-bottom:1px;}
-.kd-wide{display:flex;flex-direction:column;min-height:90px;}
+.kd-wide{display:flex;flex-direction:column;min-height:140px;}
 /* Top Curso: nome grande, células limpas */
 .tc-nome{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:9px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1;}
 .tc-row{display:flex;gap:5px;}
@@ -206,7 +206,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .meta-cdaily-summary{display:flex;gap:14px;margin-bottom:9px;flex-wrap:wrap;}
 .meta-cdaily-sumitem{font-size:12px;color:var(--tx2);}
 .meta-cdaily-sumval{font-family:var(--fn);font-size:15px;font-weight:800;color:var(--tx);}
-.meta-cdaily-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--rs);border:1px solid var(--bd);max-height:240px;overflow-y:auto;}
+.meta-cdaily-scroll{border-radius:var(--rs);border:1px solid var(--bd);max-height:240px;overflow-y:auto;overflow-x:auto;-webkit-overflow-scrolling:touch;}
 
 /* TAXA — linha compacta com colunas fixas */
 .taxa-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;flex-wrap:wrap;}
@@ -260,13 +260,18 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .cpld-ks{font-size:10px;font-weight:500;color:var(--tx3);}
 .cpld-sec{font-size:9px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px;}
 .cpld-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--rs);border:1px solid var(--bd);max-height:200px;overflow-y:auto;}
-.cpld-tbl{min-width:360px;}
-.cpld-thead{display:grid;grid-template-columns:55px 1fr 55px 55px 1fr 70px;background:var(--cdh);position:sticky;top:0;z-index:1;}
-.cpld-thead>div{font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;padding:7px 10px;}
-.cpld-tr{display:grid;grid-template-columns:55px 1fr 55px 55px 1fr 70px;border-top:1px solid var(--bd);}
-.cpld-td{padding:8px 10px;font-size:11px;font-weight:500;color:var(--tx2);}
-.cpld-td.num{font-family:var(--fn);font-weight:600;color:var(--tx);font-size:11px;}
+.cpld-tbl{width:100%;min-width:340px;}
+.cpld-thead{display:grid;grid-template-columns:58px 80px 50px 60px 68px 68px;background:var(--cdh);position:sticky;top:0;z-index:1;}
+.cpld-thead>div{font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;padding:7px 8px;white-space:nowrap;overflow:hidden;}
+.cpld-tr{display:grid;grid-template-columns:58px 80px 50px 60px 68px 68px;border-top:1px solid var(--bd);}
+.cpld-td{padding:7px 8px;font-size:11px;font-weight:500;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cpld-td.num{font-family:var(--fn);font-weight:600;color:var(--tx);font-size:11px;text-align:right;}
+.cpld-thead>div:not(:first-child){text-align:right;}
 .cpld-td:first-child{color:var(--tx3);font-size:10px;}
+
+/* ESC RADAR */
+.esc-radar-wrap{display:flex;justify-content:center;margin:8px 0 12px;}
+.esc-radar-wrap svg{max-width:260px;width:100%;height:auto;}
 
 /* ESC */
 .escsel{appearance:none;-webkit-appearance:none;background:var(--sf);border:1px solid var(--bda);border-radius:999px;color:var(--tx);font-family:var(--f);font-size:11px;padding:5px 26px 5px 10px;cursor:pointer;outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238888a0' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;}
@@ -318,16 +323,17 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* RESPONSIVE */
-@media(max-width:1100px){.daily-row{grid-template-columns:repeat(4,1fr);}.daily-row .kd-wide{grid-column:1/-1;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
+@media(max-width:1100px){.daily-row{grid-template-columns:repeat(2,1fr) 2fr;}.daily-row .kd-wide{grid-column:3;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
 @media(max-width:900px){.hero-row{grid-template-columns:1fr 1fr;}.daily-row{grid-template-columns:1fr 1fr;}.daily-row .kd-wide{grid-column:1/-1;}.cpld-kpis{grid-template-columns:1fr 1fr;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
 @media(max-width:700px){.g-ls{grid-template-columns:1fr;}.esc-blocks{grid-template-columns:repeat(3,1fr);}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
 
 /* MOBILE: painel taxa — esconde colunas numéricas, mostra só nome+taxa */
 @media(max-width:600px){
-  .txl-hdr-row{grid-template-columns:1fr 72px 28px;gap:6px;}
-  .txl-top{grid-template-columns:1fr 72px 28px;gap:6px;}
+  .txl-hdr-row{grid-template-columns:1fr 60px 28px;gap:6px;padding:4px 10px 8px;}
+  .txl-top{grid-template-columns:1fr 60px 28px;gap:6px;padding:10px 10px;}
   .txl-numcol{display:none;}
   .txl-hdr-col.hide-m{display:none;}
+  .txl-pctcol{font-size:14px;}
   /* CPL row: nome + cpl + var, sem sub-info */
   .cpl-totleads{display:none;}
   .cpl-ml{display:none;}
@@ -406,9 +412,9 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
     </div>
     <div class="top-section">
     <div class="hero-row" id="kpi-row"></div>
-    <div class="daily-row" id="kpi-diario"></div>
     </div>
     <div class="rest-section">
+    <div class="daily-row" id="kpi-diario" style="margin-bottom:10px"></div>
     <div class="g-ls gf">
       <div class="card">
         <div class="lpd-hdr">
@@ -455,6 +461,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
         <div class="esc-k"><div class="esc-kl">Taxa de Qualif.</div><div class="esc-kv" id="esc-qual-val">—</div></div>
       </div>
       <div class="escbar-wrap"><div class="escbar-lbl">Share por escolaridade</div><div class="escbar" id="escbar"></div></div>
+      <div class="esc-radar-wrap" id="esc-radar"></div>
       <div class="esc-blocks" id="esc-blocks"></div>
     </div>
     <div class="gf card">
@@ -473,7 +480,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 const PUB='https://docs.google.com/spreadsheets/d/e/2PACX-1vT6iHhSHZBcAWYSw8wlRwyX7r6_jUnaULqG4uyt9dDG578kCD_N-j0NanrwJZvoDOyFidHmc_vaMAVj/pub?output=csv';
 const DB_GID='256138654';
 const META_GID='1630113902';
-const ESC_COLS=['Pós-graduação Completa','Pós-graduação Incompleto','Ensino Superior Completo','Ensino Superior Incompleto','Ensino Médio Completo','Ensino Médio Incompleto'];
+const ESC_COLS=['Pós-graduação Completa','Pós-graduação Incompleta','Ensino Superior Completo','Ensino Superior Incompleto','Ensino Médio Completo','Ensino Médio Incompleto'];
 const ESC_SH=['Pós-grad. C.','Pós-grad. Inc.','Sup. C.','Sup. Inc.','EM C.','EM Inc.'];
 const COLORS=['#7c5cfc','#e05f8e','#34d399','#fbbf24','#60a5fa','#f97316','#a78bfa','#fb7185'];
 
@@ -692,21 +699,50 @@ function renderAll(){
     khv('Leads Captados',fmt(tL),null,'big')+
     khv('Qualificados',fmt(tQ),null,'big')+
     khv('Qualificação',aT.toFixed(1)+'%',aT>=90?badge('▲ Alta','pos'):badge('→ Regular','warn'),'md')+
-    khv('CPL Geral',fmtR(60),null,'md');
+    khv('CPL Geral',fmtR(60),cplVar!==null?`<span style="font-size:11px;font-weight:700;color:${cplVar<=0?'var(--pos)':'var(--neg)'}">${cplVar<=0?'▼':'▲'}${Math.abs(cplVar).toFixed(1)}%</span>`:null,'md');
 
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
   const cplVb=vBadge(cplVar,true);
 
-  /* build top cursos list for today */
-  const topCursosList=(()=>{
-    if(!hDB)return[];
-    const mH=DBmap.get(hk);if(!mH||mH.size===0)return[];
-    return Array.from(mH.entries()).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([nm,cnt],i)=>{
-      const r=_ss.find(x=>cl(x[_cC])===nm)||_ss[i]||null;
-      const q=r&&_cQ?n(r[_cQ]):null;
-      const cpl=getCPL(nm);
-      return{nm,cnt,q,cpl:cpl.h,color:COLORS[_ss.findIndex(x=>cl(x[_cC])===nm)%COLORS.length]||COLORS[i%COLORS.length]};
-    });
+  /* Performance Boost panel — analysis of what's performing well today */
+  const perfBoostHTML=(()=>{
+    if(!hDB){return`<div style="font-size:11px;color:var(--tx3)">Sem dados de hoje para análise</div>`;}
+    const mH=DBmap.get(hk);
+    const todayList=mH?Array.from(mH.entries()).sort((a,b)=>b[1]-a[1]):[];
+    const topNm=todayList[0]?.[0]||'—';
+    const topCnt=todayList[0]?.[1]||0;
+    const botNm=todayList.length>1?todayList[todayList.length-1][0]:'—';
+    const botCnt=todayList.length>1?todayList[todayList.length-1][1]:0;
+    const topR=_ss.find(r=>cl(r[_cC])===topNm)||_ss[0];
+    const topQ=topR&&_cQ?n(topR[_cQ]):0;
+    const topCpl=topR?getCPL(cl(topR[_cC])):null;
+    const avgLeads=todayList.length>0?todayList.reduce((s,[,v])=>s+v,0)/todayList.length:0;
+    /* pace vs yesterday */
+    const d1Tots=DBdates.filter(d=>d!==hk).slice(0,1);
+    const d1Tot=d1Tots.reduce((s,dk)=>s+cntDate(dk),0);
+    const paceVsD1=d1Tot>0?(hC-d1Tot)/d1Tot*100:null;
+    const paceColor=paceVsD1===null?'var(--tx3)':paceVsD1>=0?'var(--pos)':'var(--neg)';
+    /* best qual course */
+    const bestQual=[..._ss].sort((a,b)=>n(b[_cQ])-n(a[_cQ]))[0];
+    const bestQNm=bestQual?cl(bestQual[_cC]):'—';
+    const bestQV=bestQual?n(bestQual[_cQ]):0;
+
+    const stat=(lbl,val,sub,col)=>`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:11px 13px;min-width:0">
+      <div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">${lbl}</div>
+      <div style="font-family:var(--fn);font-size:${typeof val==='string'&&val.length>6?'15':'18'}px;font-weight:800;letter-spacing:-.04em;color:${col||'var(--tx)'};line-height:1.1;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${val}</div>
+      ${sub?`<div style="font-size:9px;color:var(--tx3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub}</div>`:''}
+    </div>`;
+
+    return`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">
+      ${stat('Líder Hoje',fmt(topCnt),topNm,'var(--acc)')}
+      ${stat('Ritmo vs D-1',paceVsD1!==null?(paceVsD1>=0?'▲':'▼')+Math.abs(paceVsD1).toFixed(1)+'%':'—',hC+' leads hoje',paceColor)}
+      ${stat('Média / Curso',fmt(Math.round(avgLeads)),'leads por curso','var(--tx)')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      ${stat('Melhor Qualif.',bestQV.toFixed(1)+'%',bestQNm,'var(--pos)')}
+      ${stat('CPL Hoje',fmtR(topCpl?topCpl.h:0),topNm+' · líder',topCpl&&topCpl.h<topCpl.g?'var(--pos)':'var(--neg)')}
+      ${stat('Menor Volume',fmt(botCnt),botNm,'var(--tx3)')}
+    </div>`;
   })();
 
   document.getElementById('kpi-diario').innerHTML=
@@ -714,27 +750,9 @@ function renderAll(){
     kdv('Leads D-1'+(d1k?` <span class="kd-date">${d1k}</span>`:''),hDB?fmt(d1C):'—','')+
     kdv('CPL Hoje',fmtR(cplHoje),cplVb)+
     kdv('CPL D-1',fmtR(cplD1),'')+
-    `<div class="kd kd-wide">
-      <div class="kd-lbl" style="margin-bottom:8px">Ranking de Cursos · Hoje</div>
-      ${topCursosList.length===0?`<div style="font-size:11px;color:var(--tx3);margin-top:auto">Sem dados de hoje</div>`:
-        `<div style="display:flex;flex-direction:column;gap:5px;flex:1">
-          ${topCursosList.map(({nm,cnt,q,color},i)=>{
-            const maxCnt=topCursosList[0].cnt||1;
-            const barW=(cnt/maxCnt*100).toFixed(1);
-            const isFirst=i===0;
-            return`<div style="display:flex;align-items:center;gap:8px;">
-              <div style="font-family:var(--fn);font-size:10px;font-weight:800;color:${isFirst?'var(--acc)':'var(--tx3)'};width:14px;text-align:center;flex-shrink:0">${i+1}</div>
-              <div style="flex:1;min-width:0">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
-                  <div style="font-size:${isFirst?'12':'11'}px;font-weight:${isFirst?'700':'600'};color:${isFirst?'var(--tx)':'var(--tx2)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px">${nm}</div>
-                  <div style="font-family:var(--fn);font-size:${isFirst?'14':'12'}px;font-weight:800;color:${isFirst?'var(--tx)':'var(--tx2)'};flex-shrink:0;margin-left:6px">${fmt(cnt)}</div>
-                </div>
-                <div style="height:${isFirst?'4':'3'}px;background:var(--grd);border-radius:2px;overflow:hidden"><div style="height:100%;width:${barW}%;background:${color};border-radius:2px;transition:width .8s ease"></div></div>
-              </div>
-            </div>`;
-          }).join('')}
-        </div>`
-      }
+    `<div class="kd kd-wide" style="padding:14px 16px">
+      <div class="kd-lbl" style="margin-bottom:10px;font-size:10px;letter-spacing:.06em">⚡ Performance Boost</div>
+      ${perfBoostHTML}
     </div>`;
 
   buildDatePanel(hDB,hk,d1k,hC,d1C);
@@ -747,7 +765,7 @@ function renderAll(){
   renderEsc();buildTable();
   document.getElementById('panel-perf').classList.add('on');
 }
-function khv(lbl,val,extra,sz){return`<div class="kh"><div class="kh-lbl">${lbl}${extra?`<span>${extra}</span>`:''}</div><div class="kh-val ${sz}">${val}</div></div>`;}
+function khv(lbl,val,extra,sz){return`<div class="kh"><div class="kh-lbl">${lbl}${extra?extra:''}</div><div class="kh-val ${sz}">${val}</div></div>`;}
 function kdv(lbl,val,vb){return`<div class="kd"><div class="kd-lbl">${lbl}</div><div class="kd-body"><div class="kd-num">${val}</div>${vb?`<div class="kd-vb">${vb}</div>`:''}</div></div>`;}
 
 /* DATE PANEL + SHARE */
@@ -782,11 +800,20 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
     return`<div class="lpd-item"><div class="lpd-acc" style="background:${color}"></div><div class="lpd-nome">${nm}</div><div class="lpd-right"><div class="lpd-cnt">${fmt(cnt)}</div>${dH}</div></div>`;
   }).join('');
 
-  /* share card — topo mostra leads do período selecionado + qualificação */
+  /* share card — topo mostra leads do período selecionado + qualificação REAL sincronizada */
   const tLSel=isTotal?_ss.reduce((s,r)=>s+n(r[_cT]),0):rows.reduce((s,x)=>s+x.cnt,0);
-  const tQSel=isTotal
-    ?_ss.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0)
-    :Math.round(tLSel*(_ss.reduce((s,r)=>s+n(r[_cT])*n(r[_cQ]),0)/Math.max(_ss.reduce((s,r)=>s+n(r[_cT]),0),1))/100);
+  /* qualificação: se total usa média geral; se dia específico usa taxa ponderada real por curso */
+  let tQSel;
+  if(isTotal){
+    tQSel=_ss.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0);
+  } else {
+    /* para cada curso, pega os leads do dia e aplica a taxa de qualificação daquele curso */
+    tQSel=rows.reduce((s,{nm,cnt})=>{
+      const r=_ss.find(x=>cl(x[_cC])===nm);
+      const taxa=r&&_cQ?n(r[_cQ]):0;
+      return s+Math.round(cnt*(taxa/100));
+    },0);
+  }
   const qualSel=tLSel>0?(tQSel/tLSel)*100:0;
   const qColor=qualSel>=90?'var(--pos)':'var(--wrn)';
   const qBorder=qualSel>=90?'rgba(52,211,153,.28)':'rgba(251,191,36,.22)';
@@ -847,30 +874,32 @@ function buildMeta(tL,hk,hDB){
   /* diarizado total open state */
   const diarOpen=_metaDiarOpen;
 
+  /* SVG ring helper */
+  const ring=(pct,col,sz,sw)=>{sz=sz||110;sw=sw||10;const rc=(sz/2-sw/2);const circ=2*Math.PI*rc;const fill=Math.min(pct,100)/100*circ;
+    return`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="display:block"><circle cx="${sz/2}" cy="${sz/2}" r="${rc}" fill="none" stroke="var(--grd)" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${rc}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-dasharray="${fill.toFixed(2)} ${(circ-fill).toFixed(2)}" stroke-linecap="round" transform="rotate(-90 ${sz/2} ${sz/2})"/></svg>`;};
+
   sec.innerHTML=`<div class="card">
     <div class="slbl" style="margin-bottom:14px">Meta de Leads</div>
-    <!-- HERO: captados / meta / % de forma limpa -->
-    <div class="meta-hero">
-      <div class="meta-hero-main">
-        <div style="margin-bottom:2px;font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em">Captados</div>
-        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:2px">
-          <div class="meta-hero-cap" style="color:${progColor}">${fmt(realAcum)}</div>
-          <div style="display:flex;align-items:baseline;gap:4px">
-            <div style="font-size:13px;color:var(--tx3);font-weight:400">de</div>
-            <div class="meta-hero-esp">${fmt(metaTotal)}</div>
-            <div style="font-size:11px;color:var(--tx3)">meta</div>
-          </div>
+    <!-- HERO: anel de % + captados em destaque / meta em opacidade -->
+    <div class="meta-hero" style="align-items:center">
+      <!-- Anel -->
+      <div style="position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+        ${ring(pctGeral,progColor,120,10)}
+        <div style="position:absolute;text-align:center">
+          <div style="font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.05em;color:${progColor};line-height:1">${pctGeral.toFixed(0)}<span style="font-size:13px">%</span></div>
+          <div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-top:2px">da meta</div>
         </div>
-        <div style="margin-top:10px;margin-bottom:6px">${progBar(Math.min(pctGeral,100),progColor,7)}</div>
-        <div style="font-size:10px;color:var(--tx3)">Restam <strong style="color:var(--tx);font-weight:700">${fmt(Math.max(metaTotal-realAcum,0))}</strong> leads para bater a meta</div>
       </div>
-      <div class="meta-hero-pct-block" style="background:${progColor==='var(--pos)'?'rgba(52,211,153,.1)':progColor==='var(--wrn)'?'rgba(251,191,36,.1)':'rgba(248,113,113,.1)'};border-color:${progColor==='var(--pos)'?'rgba(52,211,153,.25)':progColor==='var(--wrn)'?'rgba(251,191,36,.25)':'rgba(248,113,113,.25)'}">
-        <div class="meta-hero-pct-v" style="color:${progColor}">${pctGeral.toFixed(0)}<span style="font-size:18px;font-weight:700">%</span></div>
-        <div class="meta-hero-pct-l">da meta</div>
+      <!-- Números -->
+      <div class="meta-hero-main" style="border:none;background:none;padding:0 0 0 4px">
+        <div style="margin-bottom:2px;font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em">Captados</div>
+        <div style="font-family:var(--fn);font-size:42px;font-weight:800;letter-spacing:-.06em;line-height:1;color:${progColor}">${fmt(realAcum)}</div>
+        <div style="margin-top:6px;font-size:13px;font-weight:600;color:var(--tx3);opacity:.55">de <span style="font-family:var(--fn);font-weight:700;letter-spacing:-.03em">${fmt(metaTotal)}</span> meta</div>
+        <div style="margin-top:8px;font-size:10px;color:var(--tx3)">Restam <strong style="color:var(--tx);font-weight:700">${fmt(Math.max(metaTotal-realAcum,0))}</strong></div>
       </div>
     </div>
     <!-- KPI: meta/real do dia (sem descrição) -->
-    <div class="meta-kpis" style="margin-bottom:10px">
+    <div class="meta-kpis" style="margin-bottom:10px;margin-top:14px">
       <div class="meta-kpi hi"><div class="meta-kpi-l">Meta do Dia</div><div class="meta-kpi-v">${fmt(metaHoje)}</div></div>
       <div class="meta-kpi"><div class="meta-kpi-l">Realizado Hoje</div><div class="meta-kpi-v" style="color:${hojeColor}">${fmt(leadsHoje)}</div><div class="meta-kpi-s" style="color:${hojeColor}">${pctHoje.toFixed(0)}% · restam ${fmt(restanteHoje)}</div></div>
     </div>
@@ -930,12 +959,12 @@ function buildMeta(tL,hk,hDB){
             <div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Meta</div><div class="meta-cdaily-sumval">${cMeta>0?fmt(cMeta):'—'}</div></div>
             ${cMeta>0?`<div style="align-self:flex-end;padding-bottom:1px">${badge(pctLabel,pctBadgeCls)}</div>`:''}
           </div>
-          <div class="meta-cdaily-scroll"><div class="meta-diario-tbl">
-            <div class="meta-dthead" style="grid-template-columns:68px 80px 80px 72px;"><div>Data</div><div style="text-align:right">Meta</div><div style="text-align:right">Leads</div><div style="text-align:right">Diff.</div></div>
+          <div class="meta-cdaily-scroll"><div style="min-width:0;width:100%">
+            <div class="meta-dthead" style="grid-template-columns:70px 1fr 1fr 70px;"><div>Data</div><div style="text-align:right">Meta</div><div style="text-align:right">Leads</div><div style="text-align:right">Diff.</div></div>
             ${cDailyEntries.map(([dk,mD])=>{
               const rD=hDB?cntCurso(dk,nm):0;const diff=rD-mD;const dc=diff>=0?'var(--pos)':'var(--neg)';
               const iP=new Date(pdk(dk))<=hkDate;
-              return`<div class="meta-dtr" style="grid-template-columns:68px 80px 80px 72px;${iP?'':'opacity:.4'}">
+              return`<div class="meta-dtr" style="grid-template-columns:70px 1fr 1fr 70px;${iP?'':'opacity:.4'}">
                 <div class="meta-dtd dt">${dkLbl(dk)}</div>
                 <div class="meta-dtd" style="text-align:right">${fmt(mD)}</div>
                 <div class="meta-dtd" style="text-align:right;color:${iP?(rD>0?'var(--tx)':'var(--tx3)'):'var(--tx3)'}">${iP?fmt(rD):'—'}</div>
@@ -1082,7 +1111,7 @@ function toggleCPL(nm){if(_cplOpen.has(nm))_cplOpen.delete(nm);else _cplOpen.add
 /* ESC */
 function renderEsc(){
   const chosen=document.getElementById('escsel').value;
-  const escA=ESC_COLS.map(e=>SH.find(h=>h.trim()===e)||null);
+  const escA=ESC_COLS.map(e=>SH.find(h=>h.trim()===e)||SH.find(h=>h.trim().toLowerCase()===e.toLowerCase())||null);
   const sub=chosen==='__all__'?SD:SD.filter(r=>r[_cC]===chosen);
   const tL=sub.reduce((s,r)=>s+n(r[_cT]),0)||1;
   const tQtot=sub.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0);
@@ -1091,8 +1120,41 @@ function renderEsc(){
   document.getElementById('esc-qual-val').textContent=aT.toFixed(1)+'%';
   const tE=escA.map(c=>c?sub.reduce((s,r)=>s+n(r[c]),0):0);
   const tA=tE.reduce((s,v)=>s+v,0)||1;
+
+  /* Radar chart */
+  const N=ESC_SH.length;
+  const cx=130,cy=120,R=80,labelR=R+22;
+  const pts=ESC_SH.map((_,i)=>{
+    const a=((2*Math.PI*i)/N)-Math.PI/2;
+    const v=tE[i]/tA;
+    return{x:cx+R*v*Math.cos(a),y:cy+R*v*Math.sin(a),lx:cx+labelR*Math.cos(a),ly:cy+labelR*Math.sin(a),a};
+  });
+  /* grid rings */
+  const rings=[.25,.5,.75,1].map(r=>{
+    const rpts=Array.from({length:N},(_,i)=>{const a=((2*Math.PI*i)/N)-Math.PI/2;return`${(cx+R*r*Math.cos(a)).toFixed(1)},${(cy+R*r*Math.sin(a)).toFixed(1)}`;});
+    return`<polygon points="${rpts.join(' ')}" fill="none" stroke="var(--bd)" stroke-width="1"/>`;
+  }).join('');
+  /* axes */
+  const axes=Array.from({length:N},(_,i)=>{const a=((2*Math.PI*i)/N)-Math.PI/2;return`<line x1="${cx}" y1="${cy}" x2="${(cx+R*Math.cos(a)).toFixed(1)}" y2="${(cy+R*Math.sin(a)).toFixed(1)}" stroke="var(--bd)" stroke-width="1"/>`;}).join('');
+  /* data polygon */
+  const poly=pts.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  /* labels */
+  const labels=pts.map((p,i)=>{
+    const anchor=Math.cos(p.a)>0.1?'start':Math.cos(p.a)<-0.1?'end':'middle';
+    return`<text x="${p.lx.toFixed(1)}" y="${(p.ly+4).toFixed(1)}" text-anchor="${anchor}" font-size="9" font-family="Inter,sans-serif" fill="var(--tx2)" font-weight="600">${ESC_SH[i]}</text>`;
+  }).join('');
+
+  document.getElementById('esc-radar').innerHTML=
+    `<svg viewBox="0 0 260 240" xmlns="http://www.w3.org/2000/svg">
+      ${rings}${axes}
+      <polygon points="${poly}" fill="${COLORS[0]}" fill-opacity=".18" stroke="${COLORS[0]}" stroke-width="2" stroke-linejoin="round"/>
+      ${pts.map((p,i)=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="${COLORS[i]}" stroke="var(--cd)" stroke-width="1.5"/>`).join('')}
+      ${labels}
+    </svg>`;
+
   document.getElementById('esc-blocks').innerHTML=ESC_COLS.map((lbl,i)=>{
-    if(!escA[i])return'';const v=tE[i],p=(v/tA*100);
+    if(!escA[i])return`<div class="esc-b" style="opacity:.4"><div class="esc-blbl" style="color:${COLORS[i]}">${ESC_SH[i]}</div><div class="esc-bv" style="font-size:11px;color:var(--tx3)">coluna ausente</div></div>`;
+    const v=tE[i],p=(v/tA*100);
     return`<div class="esc-b"><div class="esc-blbl" style="color:${COLORS[i]}">${ESC_SH[i]}</div><div class="esc-bv">${fmt(v)}</div><div class="esc-bp" style="color:${COLORS[i]}">${p.toFixed(1)}%</div></div>`;
   }).join('');
   const sb=document.getElementById('escbar');sb.innerHTML='';
