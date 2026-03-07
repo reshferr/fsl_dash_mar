@@ -363,7 +363,6 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
             <div class="dd-menu" id="date-dd-menu"></div>
           </div>
         </div>
-        <div id="lpd-total-box"></div>
         <div class="lpd-list" id="lpd-list"></div>
       </div>
       <div class="card">
@@ -478,24 +477,33 @@ function parseDB(txt){
 }
 
 /*
-  Meta sheet layout:
-    Row 1 = headers: col A = "Data" (or similar), cols B..N = course names, col K (or last) = total
-    Rows 2..33 = daily metas per course
-    Row 34 = totals (metaTotal per course, col K = grand total)
+  Meta sheet layout (from screenshot):
+    Row 1 = headers: A=Data, B=Dia da Semana, C=(%), D..J=[Formulário] cursos, K=total col
+    Rows 2..N = daily metas
+    Last row = TOTAL row (has "TOTAL" somewhere in the row, not necessarily col A)
 */
 function parseMeta(txt){
   const lines=txt.trim().split('\n').filter(l=>l.trim());
   if(lines.length<2){META={found:false};return;}
   const hdrs=csvL(lines[0]);
 
-  /* identify total column: header "total" / "geral" / blank after courses, or col index 10 (K) */
+  /* find total column: header named "total"/"geral", or last non-empty col */
   let totalColIdx=hdrs.findIndex((h,i)=>i>0&&(h.toLowerCase().includes('total')||h.toLowerCase().includes('geral')));
-  /* fallback: column index 10 (K) if more than 10 cols */
-  if(totalColIdx<0&&hdrs.length>10)totalColIdx=10;
+  if(totalColIdx<0){
+    /* last non-empty header col */
+    for(let i=hdrs.length-1;i>0;i--){if(hdrs[i].trim()){totalColIdx=i;break;}}
+  }
 
-  /* course columns: non-empty headers after col 0, excluding totalColIdx */
+  /* course columns: skip col 0 (Data), col 1 (Dia semana), col 2 (%), and totalColIdx
+     only cols with non-empty headers and not flagged as meta/dia/semana/% */
+  const skipLabels=/dia|semana|^\s*%\s*$|^\(\s*%\s*\)/i;
   const courseCols=[];
-  hdrs.forEach((h,i)=>{if(i===0||i===totalColIdx)return;if(h.trim())courseCols.push({idx:i,name:h.trim()});});
+  hdrs.forEach((h,i)=>{
+    if(i===0||i===totalColIdx)return;
+    const ht=h.trim();
+    if(!ht||skipLabels.test(ht))return;
+    courseCols.push({idx:i,name:ht});
+  });
 
   META={found:true,cursos:{},totalMeta:0,totalDaily:{},dates:[]};
   courseCols.forEach(({name})=>{META.cursos[name]={metaTotal:0,dailyMetas:{}};});
@@ -503,18 +511,19 @@ function parseMeta(txt){
   const dataRows=lines.slice(1);
   dataRows.forEach((l,ri)=>{
     const v=csvL(l);
+    /* check if any cell in this row says "total" — handles TOTAL in col C/D etc */
+    const rowHasTotal=v.some(c=>/^total$/i.test((c||'').trim()));
     const label=(v[0]||'').trim();
-    /* total row detection: label contains "total/geral" OR it's row index 33 (0-based = line 35 = row 34 in sheet) */
-    const isTotalRow=label.toLowerCase().includes('total')||label.toLowerCase().includes('geral')||ri===33;
+    const isTotalRow=rowHasTotal||label.toLowerCase().includes('total')||label.toLowerCase().includes('geral');
+
     if(isTotalRow){
-      /* grand total */
-      const kIdx=totalColIdx>=0?totalColIdx:Math.min(10,v.length-1);
+      const kIdx=totalColIdx>=0?totalColIdx:v.length-1;
       const fromCols=courseCols.reduce((s,{idx})=>s+n(v[idx]),0);
       META.totalMeta=n(v[kIdx])||fromCols;
       courseCols.forEach(({idx,name})=>{if(n(v[idx])>0)META.cursos[name].metaTotal=n(v[idx]);});
       return;
     }
-    /* date row */
+    /* date row: col 0 must have a date */
     const dm=label.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
     if(!dm)return;
     const yr=dm[3].length===2?'20'+dm[3]:dm[3];
@@ -522,12 +531,11 @@ function parseMeta(txt){
     META.dates.push(dk);
     let daySum=0;
     courseCols.forEach(({idx,name})=>{const val=n(v[idx]);META.cursos[name].dailyMetas[dk]=val;daySum+=val;});
-    const kIdx=totalColIdx>=0?totalColIdx:Math.min(10,v.length-1);
+    const kIdx=totalColIdx>=0?totalColIdx:v.length-1;
     META.totalDaily[dk]=n(v[kIdx])||daySum;
   });
 
   META.dates=Array.from(new Set(META.dates)).sort((a,b)=>pdk(a)-pdk(b));
-  /* synthesize per-course totals if missing */
   courseCols.forEach(({name})=>{
     if(!META.cursos[name].metaTotal)
       META.cursos[name].metaTotal=Object.values(META.cursos[name].dailyMetas).reduce((s,v)=>s+v,0);
@@ -552,19 +560,47 @@ function cntDate(dk){const m=DBmap.get(dk);if(!m)return 0;let t=0;m.forEach(v=>t
 function cntCurso(dk,nome){
   const m=DBmap.get(dk);if(!m)return 0;
   const nn=nome.toLowerCase().trim();
+  /* exact match first */
   for(const[k,v]of m)if(k.toLowerCase().trim()===nn)return v;
-  let best=0;
-  for(const[k,v]of m){const kl=k.toLowerCase().trim();const sl=Math.min(nn.length,kl.length,20);
-    if(sl>=5&&(nn.slice(0,sl)===kl.slice(0,sl)||kl.includes(nn.slice(0,Math.min(nn.length,14)))))best=Math.max(best,v);}
-  return best;
+  /* fuzzy: score each key by longest common prefix / word overlap, pick best unambiguous match */
+  let best=0,bestScore=0;
+  for(const[k,v]of m){
+    const kl=k.toLowerCase().trim();
+    /* prefix score */
+    let pfx=0;while(pfx<nn.length&&pfx<kl.length&&nn[pfx]===kl[pfx])pfx++;
+    /* word overlap score */
+    const nw=new Set(nn.split(/\s+/));const kw=kl.split(/\s+/);
+    const ov=kw.filter(w=>nw.has(w)).length;
+    const score=pfx*2+ov*5;
+    /* must share at least 5 prefix chars AND all words of shorter name must appear */
+    const minLen=Math.min(nn.length,kl.length);
+    if(pfx>=Math.min(5,minLen)&&score>bestScore){bestScore=score;best=v;}
+  }
+  /* reject if score too low (prevents cross-course contamination) */
+  return bestScore>=10?best:0;
 }
 function matchMetaCurso(nm){
   if(!META.found)return null;
-  const sn=nm.toLowerCase().replace(/\s+/g,'');
+  /* nm is already cleaned (no [Formulário]). META keys may still have [Formulário] prefix */
+  const sn=nm.toLowerCase().replace(/\s+/g,' ').trim();
+  /* try exact after cleaning */
   for(const[k,v]of Object.entries(META.cursos)){
-    const kn=k.toLowerCase().replace(/\s+/g,'');
-    if(kn===sn||kn.slice(0,12)===sn.slice(0,12)||sn.slice(0,12)===kn.slice(0,12))return v;
-  }return null;
+    const kc=k.replace(/\[Formulário\]\s*/i,'').toLowerCase().replace(/\s+/g,' ').trim();
+    if(kc===sn)return v;
+  }
+  /* fuzzy: score by word overlap — require at least 2 words matching */
+  const snWords=new Set(sn.split(/\s+/).filter(w=>w.length>2));
+  let best=null,bestScore=0;
+  for(const[k,v]of Object.entries(META.cursos)){
+    const kc=k.replace(/\[Formulário\]\s*/i,'').toLowerCase().replace(/\s+/g,' ').trim();
+    const kcWords=kc.split(/\s+/).filter(w=>w.length>2);
+    const overlap=kcWords.filter(w=>snWords.has(w)).length;
+    /* prefix score */
+    let pfx=0;while(pfx<sn.length&&pfx<kc.length&&sn[pfx]===kc[pfx])pfx++;
+    const score=overlap*10+pfx;
+    if(score>bestScore&&(overlap>=1||pfx>=6)){bestScore=score;best=v;}
+  }
+  return best;
 }
 function raf(fn){setTimeout(()=>requestAnimationFrame(fn),50);}
 function badge(txt,cls){return`<span class="badge ${cls}">${txt}</span>`;}
@@ -643,51 +679,53 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   d1k=d1k??(DBdates.find(d=>d!==hk)||prevDK(hk));
   hC=hC??cntDate(hk);d1C=d1C??cntDate(d1k);
   const isTotal=selDate==='__total__';
+
   document.getElementById('date-dd-lbl').textContent=isTotal?'Total acumulado':(selDate?dkLbl(selDate):'Hoje');
   document.getElementById('date-dd-menu').innerHTML=
     `<div class="dd-item${isTotal?' sel':''}" onclick="selectDate('__total__')">Total acumulado<span class="dd-count">—</span></div><div class="dd-sep"></div>`+
     DBdates.slice(0,20).map(dk=>`<div class="dd-item${dk===selDate?' sel':''}" onclick="selectDate('${dk}')">${dkLbl(dk)}<span class="dd-count">${fmt(cntDate(dk))}</span></div>`).join('');
+
   if(!hDB&&!isTotal){
     document.getElementById('lpd-list').innerHTML='<p class="empty">Sem dados do DB</p>';
-    document.getElementById('share-list').innerHTML='';document.getElementById('lpd-total-box').innerHTML='';document.getElementById('sh-toprow').innerHTML='';return;
+    document.getElementById('share-list').innerHTML='';document.getElementById('sh-toprow').innerHTML='';return;
   }
+
+  /* leads list — filtra pelo dia selecionado */
   const prevKey=(!isTotal&&selDate)?prevDK(selDate):null;
-  const totalDia=isTotal?_ss.reduce((s,r)=>s+n(r[_cT]),0):cntDate(selDate);
-  const qualDia=isTotal
-    ?((_ss.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0)/Math.max(_ss.reduce((s,r)=>s+n(r[_cT]),0),1))*100)
-    :(()=>{const seed=(selDate||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);return Math.min(100,Math.max(60,75+((seed*3)%25)));})();
-  const qColor=qualDia>=90?'var(--pos)':'var(--wrn)';
-  const qBorder=qualDia>=90?'rgba(52,211,153,.28)':'rgba(251,191,36,.22)';
-  const qBg=qualDia>=90?'rgba(52,211,153,.06)':'rgba(251,191,36,.06)';
-  document.getElementById('lpd-total-box').innerHTML=
-    `<div class="lpd-boxrow">
-      <div class="lpd-totbox"><div class="lpd-totlbl">${isTotal?'Total Geral':dkLbl(selDate)}</div><div class="lpd-totval">${fmt(totalDia)}<span class="lpd-totsub"> leads</span></div></div>
-      <div class="lpd-qualbox" style="background:${qBg};border:1px solid ${qBorder}"><div class="lpd-totlbl" style="color:${qColor}">Qualificação</div><div class="lpd-totval" style="color:${qColor}">${qualDia.toFixed(1)}<span class="lpd-totsub">%</span></div></div>
-    </div>`;
   const rows=_ss.map((r,i)=>{
-    const nm=cl(r[_cC]);const cnt=isTotal?n(r[_cT]):cntCurso(selDate,nm);
-    const prev=(!isTotal&&prevKey)?cntCurso(prevKey,nm):0;return{nm,cnt,prev,color:COLORS[i%COLORS.length]};
+    const nm=cl(r[_cC]);
+    const cnt=isTotal?n(r[_cT]):cntCurso(selDate,nm);
+    const prev=(!isTotal&&prevKey)?cntCurso(prevKey,nm):0;
+    return{nm,cnt,prev,color:COLORS[i%COLORS.length]};
   }).sort((a,b)=>b.cnt-a.cnt);
+
   document.getElementById('lpd-list').innerHTML=rows.map(({nm,cnt,prev,color})=>{
     let dH='';
     if(!isTotal&&cnt>0){const d=cnt-prev;dH=d>0?badge('+'+fmt(d),'pos sm'):d<0?badge(fmt(d),'neg sm'):badge('=','neu sm');}
     return`<div class="lpd-item"><div class="lpd-acc" style="background:${color}"></div><div class="lpd-nome">${nm}</div><div class="lpd-right"><div class="lpd-cnt">${fmt(cnt)}</div>${dH}</div></div>`;
   }).join('');
-  /* share card — D-1 + qual no topo */
-  const d1qual=(()=>{const seed=(d1k||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);return Math.min(100,Math.max(60,75+((seed*3)%25)));})();
-  const d1qC=d1qual>=90?'var(--pos)':'var(--wrn)';
+
+  /* share card — topo sempre mostra total geral + qualificação geral (independente do filtro de dia) */
+  const tLGeral=_ss.reduce((s,r)=>s+n(r[_cT]),0);
+  const tQGeral=_ss.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0);
+  const qualGeral=tLGeral>0?(tQGeral/tLGeral)*100:0;
+  const qColor=qualGeral>=90?'var(--pos)':'var(--wrn)';
+  const qBorder=qualGeral>=90?'rgba(52,211,153,.28)':'rgba(251,191,36,.22)';
+  const qBg=qualGeral>=90?'rgba(52,211,153,.06)':'rgba(251,191,36,.06)';
   document.getElementById('sh-toprow').innerHTML=
     `<div class="sh-topcard" style="background:var(--accg);border-color:var(--bda)">
-       <div class="sh-toplbl" style="color:var(--tx3)">D-1 <span style="font-weight:400">${d1k?dkLbl(d1k):''}</span></div>
-       <div class="sh-topval">${hDB?fmt(d1C):'—'}<span class="sh-topunit"> leads</span></div>
+       <div class="sh-toplbl" style="color:var(--tagt)">Total Geral</div>
+       <div class="sh-topval">${fmt(tLGeral)}<span class="sh-topunit"> leads</span></div>
      </div>
-     <div class="sh-topcard" style="background:${d1qC==='var(--pos)'?'rgba(52,211,153,.06)':'rgba(251,191,36,.06)'};border-color:${d1qC==='var(--pos)'?'rgba(52,211,153,.28)':'rgba(251,191,36,.22)'}">
-       <div class="sh-toplbl" style="color:${d1qC}">Qualificação D-1</div>
-       <div class="sh-topval" style="color:${d1qC}">${hDB?d1qual.toFixed(1):'—'}<span class="sh-topunit">%</span></div>
+     <div class="sh-topcard" style="background:${qBg};border-color:${qBorder}">
+       <div class="sh-toplbl" style="color:${qColor}">Qualificação</div>
+       <div class="sh-topval" style="color:${qColor}">${qualGeral.toFixed(1)}<span class="sh-topunit">%</span></div>
      </div>`;
-  const tot=rows.reduce((s,x)=>s+x.cnt,0)||1;
+
+  /* share bars — usa contagem do dia selecionado (ou total) */
+  const shareTot=rows.reduce((s,x)=>s+x.cnt,0)||1;
   document.getElementById('share-list').innerHTML=rows.map(({nm,cnt,color})=>{
-    const pct=cnt/tot*100;
+    const pct=cnt/shareTot*100;
     return`<div class="sh-item"><span class="sh-dot" style="background:${color}"></span><div class="sh-mid"><div class="sh-nome">${nm}</div><div class="sh-bw"><div class="sh-bar" style="background:${color}" data-w="${pct.toFixed(1)}"></div></div></div><div class="sh-pct" style="color:${color}">${pct.toFixed(1)}<span class="sh-sym">%</span></div></div>`;
   }).join('');
   raf(()=>document.querySelectorAll('.sh-bar[data-w]').forEach(el=>el.style.width=el.dataset.w+'%'));
