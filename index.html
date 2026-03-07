@@ -8,8 +8,8 @@
 <style>
 :root{--f:'Inter',sans-serif;--fn:'Montserrat',sans-serif;--tr:.18s ease;--r:14px;--rs:10px;--nh:52px;}
 [data-theme=dark]{--bg:#0c0c10;--sf:#16161c;--cd:#19191f;--cdh:#21212a;--nav:rgba(12,12,16,.97);--bd:rgba(255,255,255,.1);--bda:rgba(255,255,255,.18);--tx:#f0f0f8;--tx2:#9090b8;--tx3:#55557a;--acc:#7c5cfc;--accg:rgba(124,92,252,.16);--pos:#34d399;--neg:#f87171;--wrn:#fbbf24;--tagt:#a78bfa;--grd:rgba(255,255,255,.06);--sh:0 6px 28px rgba(0,0,0,.6);--sh2:0 1px 6px rgba(0,0,0,.35);}
-[data-theme=light]{--bg:#e6e7f0;--sf:#fff;--cd:#fff;--cdh:#f2f2fa;--nav:rgba(230,231,240,.97);--bd:rgba(0,0,0,.09);--bda:rgba(0,0,0,.16);--tx:#0a0a18;--tx2:#3a3a62;--tx3:#8080a8;--acc:#5e38ec;--accg:rgba(94,56,236,.1);--pos:#059669;--neg:#dc2626;--wrn:#d97706;--tagt:#5e38ec;--grd:rgba(0,0,0,.05);--sh:0 2px 14px rgba(0,0,0,.1);--sh2:0 1px 4px rgba(0,0,0,.06);}
-[data-theme=beige]{--bg:#e3dbd0;--sf:#faf3e8;--cd:#faf3e8;--cdh:#ede5d5;--nav:rgba(227,219,208,.97);--bd:rgba(120,88,44,.18);--bda:rgba(100,68,24,.26);--tx:#18100a;--tx2:#5a3c1a;--tx3:#9a7444;--acc:#7a4e28;--accg:rgba(122,78,40,.12);--pos:#2d5c38;--neg:#8a2c2c;--wrn:#9a6010;--tagt:#7a4e28;--grd:rgba(80,55,20,.07);--sh:0 2px 12px rgba(50,30,8,.18);--sh2:0 1px 4px rgba(50,30,8,.1);}
+[data-theme=light]{--bg:#edeef5;--sf:#fff;--cd:#fff;--cdh:#f5f5fb;--nav:rgba(237,238,245,.97);--bd:rgba(0,0,0,.08);--bda:rgba(0,0,0,.13);--tx:#111118;--tx2:#505070;--tx3:#9090b0;--acc:#5e38ec;--accg:rgba(94,56,236,.07);--pos:#1a7a4e;--neg:#b83232;--wrn:#966000;--tagt:#5e38ec;--grd:rgba(0,0,0,.04);--sh:0 2px 14px rgba(0,0,0,.07);--sh2:0 1px 4px rgba(0,0,0,.05);}
+[data-theme=beige]{--bg:#ddd5c8;--sf:#f5ede0;--cd:#f5ede0;--cdh:#e8ddd0;--nav:rgba(221,213,200,.97);--bd:rgba(100,75,40,.16);--bda:rgba(80,55,20,.22);--tx:#1a120a;--tx2:#604830;--tx3:#a08060;--acc:#6b4420;--accg:rgba(107,68,32,.09);--pos:#2a5030;--neg:#6e2020;--wrn:#6e4a00;--tagt:#6b4420;--grd:rgba(80,55,20,.06);--sh:0 2px 12px rgba(40,25,8,.14);--sh2:0 1px 4px rgba(40,25,8,.08);}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{font-size:14px;scroll-behavior:smooth;overflow-x:hidden;width:100%;}
 body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh;-webkit-font-smoothing:antialiased;transition:background var(--tr),color var(--tr);overflow-x:hidden;width:100%;}
@@ -67,39 +67,40 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .pb-track{background:var(--grd);border-radius:999px;overflow:hidden;width:100%;}
 .pb-fill{height:100%;border-radius:999px;transition:width .8s ease;}
 
-/* TOP-SECTION wrapper — leve gradiente de fundo */
-.top-section{position:relative;padding:14px 0 20px;margin-bottom:4px;}
-.top-section::after{content:'';position:absolute;bottom:0;left:-14px;right:-14px;height:1px;background:linear-gradient(90deg,transparent,var(--bd) 20%,var(--bd) 80%,transparent);}
-[data-theme=dark] .top-section{background:linear-gradient(180deg,rgba(124,92,252,.04) 0%,transparent 100%);}
+/* TOP-SECTION wrapper — destaque com gradiente e separador */
+.top-section{position:relative;padding:10px 0 24px;margin-bottom:0;}
+.top-section::after{content:'';position:absolute;bottom:0;left:-14px;right:-14px;height:1px;background:linear-gradient(90deg,transparent 0%,var(--bd) 15%,var(--bda) 50%,var(--bd) 85%,transparent 100%);}
+.rest-section{padding-top:20px;}
+[data-theme=dark] .top-section{background:linear-gradient(180deg,rgba(124,92,252,.055) 0%,transparent 100%);}
 [data-theme=light] .top-section{background:linear-gradient(180deg,rgba(94,56,236,.04) 0%,transparent 100%);}
-[data-theme=beige] .top-section{background:linear-gradient(180deg,rgba(122,78,40,.04) 0%,transparent 100%);}
+[data-theme=beige] .top-section{background:linear-gradient(180deg,rgba(107,68,32,.04) 0%,transparent 100%);}
 
 /* HERO — 4 cards */
 .hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
-.kh{background:linear-gradient(155deg,var(--cd) 60%,var(--cdh));border:1px solid var(--bda);border-radius:var(--r);padding:15px 17px;box-shadow:var(--sh);position:relative;overflow:hidden;}
-.kh::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc),rgba(124,92,252,0));opacity:.7;}
-.kh-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
-.kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;margin-bottom:4px;}
+.kh{background:linear-gradient(155deg,var(--cd) 55%,var(--cdh));border:1px solid var(--bda);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.kh::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc) 0%,transparent 70%);opacity:.6;}
+.kh-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;margin-bottom:5px;}
 .kh-val.big{font-size:30px;}
 .kh-val.md{font-size:22px;}
 .kh-sub{font-size:10px;color:var(--tx2);}
 
 /* DAILY — 5 cards */
-.daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2fr;gap:10px;margin-bottom:10px;}
+.daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2fr;gap:10px;margin-bottom:0;}
 .kd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;box-shadow:var(--sh2);}
 .kd-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
 .kd-date{font-weight:400;text-transform:none;letter-spacing:0;font-size:9px;color:var(--tx3);}
 .kd-body{display:flex;align-items:flex-end;justify-content:space-between;gap:5px;}
 .kd-num{font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
 .kd-vb{flex-shrink:0;padding-bottom:1px;}
-.kd-wide{display:flex;flex-direction:column;}
-.tc-nome{font-size:11px;font-weight:700;color:var(--tx);margin-bottom:8px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
-/* tc-row: cells sutis sem borda marcada */
-.tc-row{display:flex;gap:6px;margin-top:auto;}
-.tc-cell{flex:1;padding:7px 8px;text-align:center;background:var(--grd);border-radius:7px;}
-.tc-cl{font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;}
-.tc-cv{font-family:var(--fn);font-size:17px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;}
-.tc-var{margin-top:3px;}
+.kd-wide{display:flex;flex-direction:column;min-height:90px;}
+/* Top Curso: nome grande, células limpas */
+.tc-nome{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:9px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1;}
+.tc-row{display:flex;gap:5px;}
+.tc-cell{flex:1;padding:8px 6px;text-align:center;background:var(--grd);border-radius:8px;}
+.tc-cl{font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
+.tc-cv{font-family:var(--fn);font-size:16px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;}
+.tc-var{margin-top:3px;min-height:16px;}
 
 /* LEADS + SHARE */
 .g-ls{display:grid;grid-template-columns:3fr 2fr;gap:10px;margin-bottom:10px;}
@@ -134,34 +135,32 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .sh-sym{font-size:10px;font-weight:700;}
 
 /* META DE LEADS */
-.meta-ring{position:relative;flex-shrink:0;}
-.meta-ring svg{display:block;}
-.meta-ring-pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.04em;line-height:1;}
-.meta-ring-sub{font-size:9px;font-weight:600;color:var(--tx3);letter-spacing:.04em;margin-top:2px;}
-/* hero header: captados / esperado / % */
-.meta-hero{display:flex;align-items:center;gap:16px;margin-bottom:14px;flex-wrap:wrap;}
-.meta-hero-num{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
-.meta-hero-cap{font-family:var(--fn);font-size:34px;font-weight:800;letter-spacing:-.06em;color:var(--tx);line-height:1;}
-.meta-hero-sep{font-size:18px;color:var(--tx3);font-weight:300;}
-.meta-hero-esp{font-family:var(--fn);font-size:24px;font-weight:700;letter-spacing:-.04em;color:var(--tx2);line-height:1;}
-.meta-hero-sub{font-size:10px;color:var(--tx3);margin-top:2px;}
-.meta-hero-pct{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:10px 16px;min-width:76px;}
-.meta-hero-pct-v{font-family:var(--fn);font-size:24px;font-weight:800;letter-spacing:-.05em;line-height:1;}
-.meta-hero-pct-l{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-top:3px;}
-/* kpi boxes row */
-.meta-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px;}
-.meta-kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:10px 12px;}
+/* hero: big numbers */
+.meta-hero{display:flex;align-items:stretch;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.meta-hero-main{flex:1;min-width:0;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;}
+.meta-hero-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+.meta-hero-cap{font-family:var(--fn);font-size:38px;font-weight:800;letter-spacing:-.06em;line-height:1;}
+.meta-hero-sep{font-size:20px;color:var(--tx3);font-weight:300;}
+.meta-hero-esp{font-family:var(--fn);font-size:26px;font-weight:700;letter-spacing:-.04em;color:var(--tx2);line-height:1;}
+.meta-hero-sublabel{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;}
+.meta-hero-pct-block{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:90px;border-radius:var(--r);padding:14px 16px;border:1px solid var(--bda);}
+.meta-hero-pct-v{font-family:var(--fn);font-size:32px;font-weight:800;letter-spacing:-.06em;line-height:1;margin-bottom:4px;}
+.meta-hero-pct-l{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;}
+/* kpi boxes: 2 columns */
+.meta-kpis{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.meta-kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:11px 13px;}
 .meta-kpi.hi{background:var(--accg);border-color:var(--bda);}
-.meta-kpi-l{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;}
+.meta-kpi-l{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;}
 .meta-kpi.hi .meta-kpi-l{color:var(--tagt);}
-.meta-kpi-v{font-family:var(--fn);font-size:19px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;margin-bottom:2px;}
+.meta-kpi-v{font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;margin-bottom:3px;}
 .meta-kpi-s{font-size:10px;font-weight:600;color:var(--tx3);}
-/* pace boxes row */
-.meta-pace-boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px;}
-.meta-pbox{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:10px 12px;}
-.meta-pbox.hi{border-color:var(--bda);}
-.meta-pbox-l{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;}
-.meta-pbox-v{font-family:var(--fn);font-size:19px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;margin-bottom:2px;}
+/* pace: só 2 boxes */
+.meta-pace-boxes{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;}
+.meta-pbox{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:11px 13px;}
+.meta-pbox.hi{background:var(--accg);border-color:var(--bda);}
+.meta-pbox-l{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;}
+.meta-pbox.hi .meta-pbox-l{color:var(--tagt);}
+.meta-pbox-v{font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;margin-bottom:3px;}
 .meta-pbox-s{font-size:10px;font-weight:600;color:var(--tx3);}
 /* collapsible diarizado */
 .meta-diario-sec{margin-bottom:10px;}
@@ -178,26 +177,31 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .meta-dthead{display:grid;background:var(--cdh);}
 .meta-dthead>div{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;padding:6px 9px;}
 .meta-dtr{display:grid;border-top:1px solid var(--bd);}
-.meta-dtd{padding:6px 9px;font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx);}
-.meta-dtd.dt{font-family:var(--f);font-weight:600;color:var(--tx2);font-size:11px;}
+.meta-dtd{padding:6px 9px;font-family:var(--fn);font-size:11px;font-weight:600;color:var(--tx);}
+.meta-dtd.dt{font-family:var(--f);font-weight:500;color:var(--tx2);font-size:11px;}
 /* cursos */
 .meta-cursos-hdr{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;}
 .meta-crow{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;margin-bottom:5px;}
 .meta-crow:last-child{margin-bottom:0;}
 .meta-crow.open{border-color:var(--bda);}
-.meta-crow-top{display:grid;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;transition:background var(--tr);}
+.meta-crow-top{display:grid;align-items:center;gap:9px;padding:13px 14px;cursor:pointer;transition:background var(--tr);}
 .meta-crow-top:hover{background:var(--cdh);}
-.meta-cacc{width:4px;border-radius:2px;align-self:stretch;flex-shrink:0;}
+.meta-cacc{width:3px;border-radius:2px;align-self:stretch;flex-shrink:0;}
 .meta-cnm{font-size:12px;font-weight:700;color:var(--tx);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* mobile-only abbreviated name */
+.meta-cnm-short{display:none;font-size:12px;font-weight:700;color:var(--tx);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .meta-cvals{text-align:right;white-space:nowrap;}
-.meta-cv{font-family:var(--fn);font-size:14px;font-weight:800;color:var(--tx);}
+.meta-cv{font-family:var(--fn);font-size:14px;font-weight:700;color:var(--tx);}
 .meta-cs{font-size:9px;color:var(--tx3);}
 .meta-cchev{font-size:13px;color:var(--tx3);text-align:center;transition:transform var(--tr);}
 .meta-cchev.open{transform:rotate(90deg);}
 .meta-cdaily{max-height:0;overflow:hidden;transition:max-height .3s ease;}
-.meta-cdaily.open{max-height:600px;}
-.meta-cdaily-inner{border-top:1px solid var(--bd);background:var(--cd);padding:9px 11px;}
-.meta-cdaily-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--rs);border:1px solid var(--bd);max-height:190px;overflow-y:auto;}
+.meta-cdaily.open{max-height:700px;}
+.meta-cdaily-inner{border-top:1px solid var(--bd);background:var(--cd);padding:10px 13px;}
+.meta-cdaily-summary{display:flex;gap:14px;margin-bottom:9px;flex-wrap:wrap;}
+.meta-cdaily-sumitem{font-size:12px;color:var(--tx2);}
+.meta-cdaily-sumval{font-family:var(--fn);font-size:15px;font-weight:800;color:var(--tx);}
+.meta-cdaily-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--rs);border:1px solid var(--bd);max-height:220px;overflow-y:auto;}
 
 /* TAXA — linha compacta com colunas fixas */
 .taxa-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;flex-wrap:wrap;}
@@ -229,35 +233,35 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .cpl-list{display:flex;flex-direction:column;gap:4px;}
 .cpl-row{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;display:flex;}
 .cpl-row.open{border-color:var(--bda);}
-.cpl-acc{width:4px;align-self:stretch;flex-shrink:0;}
+.cpl-acc{width:3px;align-self:stretch;flex-shrink:0;}
 .cpl-inner{flex:1;min-width:0;}
-.cpl-top{display:flex;align-items:center;gap:11px;padding:10px 13px;cursor:pointer;transition:background var(--tr);}
+.cpl-top{display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;transition:background var(--tr);}
 .cpl-top:hover{background:var(--cdh);}
-.cpl-left{flex:1;min-width:0;}
-.cpl-nome{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.cpl-totleads{font-size:10px;color:var(--tx3);font-weight:500;}
-.cpl-m{text-align:right;flex-shrink:0;}
-.cpl-ml{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;}
-.cpl-mv{font-family:var(--fn);font-size:16px;font-weight:800;letter-spacing:-.03em;color:var(--tx);}
-.cpl-mvar{font-size:10px;font-weight:700;margin-top:1px;}
-.cpl-chev{font-size:14px;color:var(--tx3);flex-shrink:0;transition:transform var(--tr);padding-left:3px;}
+.cpl-nome{font-size:12px;font-weight:600;color:var(--tx);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cpl-totleads{font-size:10px;color:var(--tx3);font-weight:400;margin-top:1px;}
+.cpl-kpis-inline{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.cpl-ml{font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1px;}
+.cpl-mv{font-family:var(--fn);font-size:15px;font-weight:700;letter-spacing:-.03em;color:var(--tx);}
+.cpl-mvar{font-size:10px;font-weight:600;margin-top:1px;}
+.cpl-chev{font-size:13px;color:var(--tx3);flex-shrink:0;transition:transform var(--tr);}
 .cpl-chev.open{transform:rotate(90deg);}
 .cpl-detail{max-height:0;overflow:hidden;transition:max-height .32s ease;}
 .cpl-detail.open{max-height:700px;}
 .cpld{padding:11px 13px;border-top:1px solid var(--bd);background:var(--cd);}
-.cpld-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:11px;}
-.cpld-k{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 11px;}
-.cpld-kl{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
-.cpld-kv{font-family:var(--fn);font-size:14px;font-weight:800;color:var(--tx);letter-spacing:-.03em;margin-bottom:2px;}
-.cpld-ks{font-size:10px;font-weight:700;color:var(--tx3);}
-.cpld-sec{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.cpld-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:11px;}
+.cpld-k{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:8px 10px;}
+.cpld-kl{font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;}
+.cpld-kv{font-size:13px;font-weight:600;color:var(--tx);letter-spacing:-.01em;margin-bottom:2px;}
+.cpld-ks{font-size:10px;font-weight:500;color:var(--tx3);}
+.cpld-sec{font-size:9px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px;}
 .cpld-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--rs);border:1px solid var(--bd);max-height:200px;overflow-y:auto;}
 .cpld-tbl{min-width:360px;}
-.cpld-thead{display:grid;grid-template-columns:55px 1fr 60px 60px 1fr 70px;background:var(--cdh);position:sticky;top:0;z-index:1;}
-.cpld-thead>div{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;padding:6px 8px;}
-.cpld-tr{display:grid;grid-template-columns:55px 1fr 60px 60px 1fr 70px;border-top:1px solid var(--bd);}
-.cpld-td{padding:6px 8px;font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx);}
-.cpld-td:first-child{font-family:var(--f);font-weight:600;color:var(--tx2);}
+.cpld-thead{display:grid;grid-template-columns:55px 1fr 55px 55px 1fr 70px;background:var(--cdh);position:sticky;top:0;z-index:1;}
+.cpld-thead>div{font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;padding:5px 7px;}
+.cpld-tr{display:grid;grid-template-columns:55px 1fr 55px 55px 1fr 70px;border-top:1px solid var(--bd);}
+.cpld-td{padding:5px 7px;font-size:11px;font-weight:500;color:var(--tx2);}
+.cpld-td.num{font-family:var(--fn);font-weight:600;color:var(--tx);font-size:11px;}
+.cpld-td:first-child{color:var(--tx3);font-size:10px;}
 
 /* ESC */
 .escsel{appearance:none;-webkit-appearance:none;background:var(--sf);border:1px solid var(--bda);border-radius:999px;color:var(--tx);font-family:var(--f);font-size:11px;padding:5px 26px 5px 10px;cursor:pointer;outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238888a0' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;}
@@ -309,9 +313,24 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* RESPONSIVE */
-@media(max-width:1100px){.daily-row{grid-template-columns:repeat(4,1fr);}.daily-row .kd-wide{grid-column:1/-1;}.meta-kpis{grid-template-columns:repeat(2,1fr);}.meta-pace-boxes{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:900px){.hero-row{grid-template-columns:1fr 1fr;}.daily-row{grid-template-columns:1fr 1fr;}.daily-row .kd-wide{grid-column:1/-1;}.cpld-kpis{grid-template-columns:1fr 1fr;}.meta-kpis{grid-template-columns:repeat(2,1fr);}.meta-pace-boxes{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:1100px){.daily-row{grid-template-columns:repeat(4,1fr);}.daily-row .kd-wide{grid-column:1/-1;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){.hero-row{grid-template-columns:1fr 1fr;}.daily-row{grid-template-columns:1fr 1fr;}.daily-row .kd-wide{grid-column:1/-1;}.cpld-kpis{grid-template-columns:1fr 1fr;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
 @media(max-width:700px){.g-ls{grid-template-columns:1fr;}.esc-blocks{grid-template-columns:repeat(3,1fr);}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
+
+/* MOBILE: painel taxa — esconde colunas numéricas, mostra só nome+taxa */
+@media(max-width:600px){
+  .txl-hdr-row{grid-template-columns:1fr 72px 28px;gap:6px;}
+  .txl-top{grid-template-columns:1fr 72px 28px;gap:6px;}
+  .txl-numcol{display:none;}
+  .txl-hdr-col.hide-m{display:none;}
+  /* CPL row: nome + cpl + var, sem sub-info */
+  .cpl-totleads{display:none;}
+  .cpl-ml{display:none;}
+  /* meta curso: esconde cvals no mobile */
+  .meta-cvals{display:none;}
+  .meta-cnm{display:none;}
+  .meta-cnm-short{display:block;}
+}
 @media(max-width:540px){
   main{padding:calc(var(--nh) + 8px) 10px 70px;}
   .hero-row,.daily-row{grid-template-columns:1fr 1fr;gap:8px;}
@@ -323,7 +342,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
   .meta-kpis{grid-template-columns:1fr 1fr;}
   .meta-pace-boxes{grid-template-columns:1fr 1fr;}
   .meta-hero-cap{font-size:26px;}.meta-hero-esp{font-size:18px;}
-  .txl-top{grid-template-columns:1fr 70px 70px 56px 22px;}.txl-hdr-row{grid-template-columns:1fr 70px 70px 56px 22px;}
+  .meta-hero-pct-v{font-size:24px;}
 }
 @media(max-width:380px){
   .esc-blocks{grid-template-columns:1fr 1fr;}
@@ -384,6 +403,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
     <div class="hero-row" id="kpi-row"></div>
     <div class="daily-row" id="kpi-diario"></div>
     </div>
+    <div class="rest-section">
     <div class="g-ls gf">
       <div class="card">
         <div class="lpd-hdr">
@@ -437,6 +457,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
       <div class="tbl-hint">← deslize →</div>
       <div class="tbl-wrap"><table class="dtbl"><thead id="tbl-head"></thead><tbody id="tbl-body"></tbody></table></div>
     </div>
+    </div><!-- /rest-section -->
   </div>
   <div class="panel" id="panel-crm"><div class="lockp"><div class="lockico">🔒</div><div class="lockt">CRM em breve</div></div></div>
   <div class="panel" id="panel-design"><div class="lockp"><div class="lockico">🔒</div><div class="lockt">Design em breve</div></div></div>
@@ -507,26 +528,23 @@ function parseDB(txt){
 }
 
 /*
-  Meta sheet layout (from screenshot):
-    Row 1 = headers: A=Data, B=Dia da Semana, C=(%), D..J=[Formulário] cursos, K=total col
-    Rows 2..N = daily metas
-    Last row = TOTAL row (has "TOTAL" somewhere in the row, not necessarily col A)
+  Meta sheet layout:
+    Row 1: A=Data, B=Dia Semana, C=(%), D-J=[Formulário] cursos, K=Total col
+    Rows 2..33: daily metas per course
+    Row 34: TOTAL row — col K has grand total, each course col has its total
 */
 function parseMeta(txt){
   const lines=txt.trim().split('\n').filter(l=>l.trim());
   if(lines.length<2){META={found:false};return;}
   const hdrs=csvL(lines[0]);
 
-  /* find total column: header named "total"/"geral", or last non-empty col */
-  let totalColIdx=hdrs.findIndex((h,i)=>i>0&&(h.toLowerCase().includes('total')||h.toLowerCase().includes('geral')));
-  if(totalColIdx<0){
-    /* last non-empty header col */
-    for(let i=hdrs.length-1;i>0;i--){if(hdrs[i].trim()){totalColIdx=i;break;}}
-  }
+  /* Col K = index 10 is the confirmed total column.
+     Find it by header name first, then fallback to index 10 */
+  let totalColIdx=hdrs.findIndex((h,i)=>i>0&&/\btotal\b|\bgeral\b/i.test(h));
+  if(totalColIdx<0&&hdrs.length>10)totalColIdx=10;
 
-  /* course columns: skip col 0 (Data), col 1 (Dia semana), col 2 (%), and totalColIdx
-     only cols with non-empty headers and not flagged as meta/dia/semana/% */
-  const skipLabels=/dia|semana|^\s*%\s*$|^\(\s*%\s*\)/i;
+  /* Course cols: skip A(0), skip any "dia/semana/%" cols, skip totalColIdx */
+  const skipLabels=/^dia\b|semana|\bdia\s+da|^\s*[\(%]|\bdata\b/i;
   const courseCols=[];
   hdrs.forEach((h,i)=>{
     if(i===0||i===totalColIdx)return;
@@ -539,21 +557,24 @@ function parseMeta(txt){
   courseCols.forEach(({name})=>{META.cursos[name]={metaTotal:0,dailyMetas:{}};});
 
   const dataRows=lines.slice(1);
-  dataRows.forEach((l,ri)=>{
+  let foundTotalRow=false;
+  dataRows.forEach((l)=>{
     const v=csvL(l);
-    /* check if any cell in this row says "total" — handles TOTAL in col C/D etc */
-    const rowHasTotal=v.some(c=>/^total$/i.test((c||'').trim()));
     const label=(v[0]||'').trim();
-    const isTotalRow=rowHasTotal||label.toLowerCase().includes('total')||label.toLowerCase().includes('geral');
-
-    if(isTotalRow){
+    /* Total row: any cell says "TOTAL" (case-insensitive) */
+    const isTotalRow=v.some(c=>/^\s*total\s*$/i.test(c||''));
+    if(isTotalRow&&!foundTotalRow){
+      foundTotalRow=true;
       const kIdx=totalColIdx>=0?totalColIdx:v.length-1;
+      /* grand total from col K */
+      const fromK=n(v[kIdx]);
       const fromCols=courseCols.reduce((s,{idx})=>s+n(v[idx]),0);
-      META.totalMeta=n(v[kIdx])||fromCols;
-      courseCols.forEach(({idx,name})=>{if(n(v[idx])>0)META.cursos[name].metaTotal=n(v[idx]);});
+      META.totalMeta=fromK||fromCols;
+      /* per-course totals from their columns */
+      courseCols.forEach(({idx,name})=>{const cv=n(v[idx]);if(cv>0)META.cursos[name].metaTotal=cv;});
       return;
     }
-    /* date row: col 0 must have a date */
+    /* Date row: col A has a date */
     const dm=label.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
     if(!dm)return;
     const yr=dm[3].length===2?'20'+dm[3]:dm[3];
@@ -566,6 +587,7 @@ function parseMeta(txt){
   });
 
   META.dates=Array.from(new Set(META.dates)).sort((a,b)=>pdk(a)-pdk(b));
+  /* fallback: synthesize per-course totals from daily sums if missing from total row */
   courseCols.forEach(({name})=>{
     if(!META.cursos[name].metaTotal)
       META.cursos[name].metaTotal=Object.values(META.cursos[name].dailyMetas).reduce((s,v)=>s+v,0);
@@ -683,12 +705,27 @@ function renderAll(){
     kdv('Leads D-1'+(d1k?` <span class="kd-date">${d1k}</span>`:''),hDB?fmt(d1C):'—','')+
     kdv('CPL Hoje',fmtR(cplHoje),cplVb)+
     kdv('CPL D-1',fmtR(cplD1),'')+
-    `<div class="kd kd-wide"><div class="kd-lbl">Top Curso Hoje</div><div class="tc-nome">${tHN}</div>
-    <div class="tc-row">
-      <div class="tc-cell"><div class="tc-cl">Leads</div><div class="tc-cv">${hDB&&tHV?fmt(tHV):'—'}</div></div>
-      <div class="tc-cell"><div class="tc-cl">CPL Hoje</div><div class="tc-cv">${topCPL?fmtR(topCPL):'—'}</div><div class="tc-var">${topCPL?vBadge(topCPLVar,true):''}</div></div>
-      <div class="tc-cell"><div class="tc-cl">Qualif.</div><div class="tc-cv" style="color:${topQ!==null?(topQ>=90?'var(--pos)':'var(--wrn)'):'inherit'}">${topQ!==null?topQ.toFixed(1)+'%':'—'}</div><div class="tc-var">${topQVar!==null?vBadge(topQVar,false):''}</div></div>
-    </div></div>`;
+    `<div class="kd kd-wide">
+      <div class="kd-lbl">Top Curso Hoje</div>
+      <div class="tc-nome">${tHN}</div>
+      <div class="tc-row">
+        <div class="tc-cell">
+          <div class="tc-cl">Leads</div>
+          <div class="tc-cv">${hDB&&tHV?fmt(tHV):'—'}</div>
+          <div class="tc-var"></div>
+        </div>
+        <div class="tc-cell">
+          <div class="tc-cl">CPL</div>
+          <div class="tc-cv" style="font-size:12px">${topCPL?fmtR(topCPL):'—'}</div>
+          <div class="tc-var">${topCPL?vBadge(topCPLVar,true):''}</div>
+        </div>
+        <div class="tc-cell">
+          <div class="tc-cl">Qualif.</div>
+          <div class="tc-cv" style="color:${topQ!==null?(topQ>=90?'var(--pos)':'var(--wrn)'):'inherit'}">${topQ!==null?topQ.toFixed(1)+'%':'—'}</div>
+          <div class="tc-var">${topQVar!==null?vBadge(topQVar,false):''}</div>
+        </div>
+      </div>
+    </div>`;
 
   buildDatePanel(hDB,hk,d1k,hC,d1C);
   buildMeta(tL,hk,hDB);
@@ -735,21 +772,24 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
     return`<div class="lpd-item"><div class="lpd-acc" style="background:${color}"></div><div class="lpd-nome">${nm}</div><div class="lpd-right"><div class="lpd-cnt">${fmt(cnt)}</div>${dH}</div></div>`;
   }).join('');
 
-  /* share card — topo sempre mostra total geral + qualificação geral (independente do filtro de dia) */
-  const tLGeral=_ss.reduce((s,r)=>s+n(r[_cT]),0);
-  const tQGeral=_ss.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0);
-  const qualGeral=tLGeral>0?(tQGeral/tLGeral)*100:0;
-  const qColor=qualGeral>=90?'var(--pos)':'var(--wrn)';
-  const qBorder=qualGeral>=90?'rgba(52,211,153,.28)':'rgba(251,191,36,.22)';
-  const qBg=qualGeral>=90?'rgba(52,211,153,.06)':'rgba(251,191,36,.06)';
+  /* share card — topo mostra leads do período selecionado + qualificação */
+  const tLSel=isTotal?_ss.reduce((s,r)=>s+n(r[_cT]),0):rows.reduce((s,x)=>s+x.cnt,0);
+  const tQSel=isTotal
+    ?_ss.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0)
+    :Math.round(tLSel*(_ss.reduce((s,r)=>s+n(r[_cT])*n(r[_cQ]),0)/Math.max(_ss.reduce((s,r)=>s+n(r[_cT]),0),1))/100);
+  const qualSel=tLSel>0?(tQSel/tLSel)*100:0;
+  const qColor=qualSel>=90?'var(--pos)':'var(--wrn)';
+  const qBorder=qualSel>=90?'rgba(52,211,153,.28)':'rgba(251,191,36,.22)';
+  const qBg=qualSel>=90?'rgba(52,211,153,.06)':'rgba(251,191,36,.06)';
+  const selLbl=isTotal?'Total Geral':dkLbl(selDate);
   document.getElementById('sh-toprow').innerHTML=
     `<div class="sh-topcard" style="background:var(--accg);border-color:var(--bda)">
-       <div class="sh-toplbl" style="color:var(--tagt)">Total Geral</div>
-       <div class="sh-topval">${fmt(tLGeral)}<span class="sh-topunit"> leads</span></div>
+       <div class="sh-toplbl" style="color:var(--tagt)">${selLbl}</div>
+       <div class="sh-topval">${fmt(tLSel)}<span class="sh-topunit"> leads</span></div>
      </div>
      <div class="sh-topcard" style="background:${qBg};border-color:${qBorder}">
        <div class="sh-toplbl" style="color:${qColor}">Qualificação</div>
-       <div class="sh-topval" style="color:${qColor}">${qualGeral.toFixed(1)}<span class="sh-topunit">%</span></div>
+       <div class="sh-topval" style="color:${qColor}">${qualSel.toFixed(1)}<span class="sh-topunit">%</span></div>
      </div>`;
 
   /* share bars — usa contagem do dia selecionado (ou total) */
@@ -798,40 +838,38 @@ function buildMeta(tL,hk,hDB){
   const diarOpen=_metaDiarOpen;
 
   sec.innerHTML=`<div class="card">
-    <div class="slbl" style="margin-bottom:11px">Meta de Leads</div>
-    <!-- HERO: captados / esperado / % -->
+    <div class="slbl" style="margin-bottom:13px">Meta de Leads</div>
+    <!-- HERO: grande destaque para captados/meta/% -->
     <div class="meta-hero">
-      <div style="flex:1;min-width:0">
-        <div class="meta-hero-num">
-          <div>
-            <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:2px">Captados</div>
+      <div class="meta-hero-main">
+        <div style="margin-bottom:3px">
+          <div class="meta-hero-sublabel">Leads captados</div>
+          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
             <div class="meta-hero-cap" style="color:${progColor}">${fmt(realAcum)}</div>
-          </div>
-          <div class="meta-hero-sep">/</div>
-          <div>
-            <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:2px">Esperado no mês</div>
-            <div class="meta-hero-esp">${fmt(metaTotal)}</div>
+            <div class="meta-hero-sep">/</div>
+            <div>
+              <div class="meta-hero-sublabel">Meta do mês</div>
+              <div class="meta-hero-esp">${fmt(metaTotal)}</div>
+            </div>
           </div>
         </div>
-        <div style="margin-top:8px">${progBar(Math.min(pctGeral,100),progColor,6)}</div>
+        <div style="margin-top:10px">${progBar(Math.min(pctGeral,100),progColor,7)}</div>
+        <div style="margin-top:5px;font-size:10px;color:var(--tx3)">Restante: <strong style="color:var(--tx)">${fmt(Math.max(metaTotal-realAcum,0))} leads</strong></div>
       </div>
-      <div class="meta-hero-pct">
-        <div class="meta-hero-pct-v" style="color:${progColor}">${pctGeral.toFixed(1)}<span style="font-size:14px">%</span></div>
+      <div class="meta-hero-pct-block" style="background:var(--accg)">
+        <div class="meta-hero-pct-v" style="color:${progColor}">${pctGeral.toFixed(1)}<span style="font-size:16px;font-weight:700">%</span></div>
         <div class="meta-hero-pct-l">da meta</div>
       </div>
     </div>
-    <!-- KPI BOXES: meta dia / realizado dia / restante / % dia -->
-    <div class="meta-kpis" style="margin-bottom:12px">
-      <div class="meta-kpi hi"><div class="meta-kpi-l">Meta do Dia</div><div class="meta-kpi-v">${fmt(metaHoje)}</div><div class="meta-kpi-s">leads esperados</div></div>
-      <div class="meta-kpi"><div class="meta-kpi-l">Realizado Hoje</div><div class="meta-kpi-v" style="color:${hojeColor}">${fmt(leadsHoje)}</div><div class="meta-kpi-s" style="color:${hojeColor}">${pctHoje.toFixed(0)}% da meta diária</div></div>
-      <div class="meta-kpi"><div class="meta-kpi-l">Restante Hoje</div><div class="meta-kpi-v" style="color:${restanteHoje===0?'var(--pos)':'var(--tx)'}">${fmt(restanteHoje)}</div><div class="meta-kpi-s">leads</div></div>
-      <div class="meta-kpi"><div class="meta-kpi-l">Atingimento Dia</div><div class="meta-kpi-v" style="color:${hojeColor}">${pctHoje.toFixed(1)}<span style="font-size:12px">%</span></div><div class="meta-kpi-s">${leadsHoje>=metaHoje?'✓ meta batida':'em andamento'}</div></div>
+    <!-- KPI: meta/real do dia -->
+    <div class="meta-kpis" style="margin-bottom:10px">
+      <div class="meta-kpi hi"><div class="meta-kpi-l">Meta do Dia</div><div class="meta-kpi-v">${fmt(metaHoje)}</div><div class="meta-kpi-s">leads esperados hoje</div></div>
+      <div class="meta-kpi"><div class="meta-kpi-l">Realizado Hoje</div><div class="meta-kpi-v" style="color:${hojeColor}">${fmt(leadsHoje)}</div><div class="meta-kpi-s" style="color:${hojeColor}">${pctHoje.toFixed(0)}% · restam ${fmt(restanteHoje)}</div></div>
     </div>
-    <!-- PACE BOXES -->
+    <!-- PACE: esperado / captado até D-1 -->
     <div class="meta-pace-boxes">
-      <div class="meta-pbox hi" style="background:var(--accg);border-color:var(--bda)"><div class="meta-pbox-l" style="color:var(--tagt)">Esperado até D-1</div><div class="meta-pbox-v">${fmt(metaAteD1)}</div><div class="meta-pbox-s">meta acumulada</div></div>
-      <div class="meta-pbox"><div class="meta-pbox-l">Captados até D-1</div><div class="meta-pbox-v" style="color:${paceColor}">${fmt(realAteD1)}</div><div class="meta-pbox-s" style="color:${paceColor}">${realAteD1>=metaAteD1?'▲ acima':'▼ abaixo'} do pace</div></div>
-      <div class="meta-pbox"><div class="meta-pbox-l">Atingimento Pace</div><div class="meta-pbox-v" style="color:${paceColor}">${pacePct.toFixed(1)}<span style="font-size:12px">%</span></div><div class="meta-pbox-s">${progBar(Math.min(pacePct,100),paceColor,4)}</div></div>
+      <div class="meta-pbox hi"><div class="meta-pbox-l">Esperado até D-1</div><div class="meta-pbox-v">${fmt(metaAteD1)}</div><div class="meta-pbox-s">meta acumulada</div></div>
+      <div class="meta-pbox"><div class="meta-pbox-l">Captados até D-1</div><div class="meta-pbox-v" style="color:${paceColor}">${fmt(realAteD1)}</div><div class="meta-pbox-s" style="color:${paceColor}">${realAteD1>=metaAteD1?'▲ acima do pace':'▼ abaixo do pace'} · ${pacePct.toFixed(0)}%</div></div>
     </div>
     <!-- DIARIZADO TOTAL (colapsável) -->
     <div class="meta-diario-sec">
@@ -841,17 +879,16 @@ function buildMeta(tL,hk,hDB){
       </div>
       <div class="meta-diario-body${diarOpen?' open':''}">
         <div class="meta-diario-scroll"><div class="meta-diario-tbl">
-          <div class="meta-dthead" style="grid-template-columns:68px 88px 88px 80px 90px 80px;">
+          <div class="meta-dthead" style="grid-template-columns:68px 80px 80px 72px 86px 80px;">
             <div>Data</div><div style="text-align:right">Meta</div><div style="text-align:right">Leads</div><div style="text-align:right">Diff.</div><div style="text-align:right">Acum. meta</div><div style="text-align:right">Acum. real</div>
           </div>
           ${(()=>{let aM=0,aR=0;return metaDates.map(dk=>{
-            /* meta diária = soma das metas diárias de todos os cursos */
             const mD=Object.values(META.cursos).reduce((s,c)=>s+(c.dailyMetas[dk]||0),0)||META.totalDaily[dk]||0;
             const rD=hDB?cntDate(dk):0;
             aM+=mD;aR+=rD;
             const diff=rD-mD;const dc=diff>=0?'var(--pos)':'var(--neg)';
             const iP=new Date(pdk(dk))<=hkDate;
-            return`<div class="meta-dtr" style="grid-template-columns:68px 88px 88px 80px 90px 80px;${iP?'':'opacity:.4'}">
+            return`<div class="meta-dtr" style="grid-template-columns:68px 80px 80px 72px 86px 80px;${iP?'':'opacity:.4'}">
               <div class="meta-dtd dt">${dkLbl(dk)}</div>
               <div class="meta-dtd" style="text-align:right">${fmt(mD)}</div>
               <div class="meta-dtd" style="text-align:right;color:${iP?(rD>0?'var(--tx)':'var(--tx3)'):'var(--tx3)'}">${iP?fmt(rD):'—'}</div>
@@ -867,39 +904,49 @@ function buildMeta(tL,hk,hDB){
       <div class="meta-cursos-hdr">Meta por Curso</div>
       ${_ss.map((r,i)=>{
         const nm=cl(r[_cC]);
+        /* abbreviate: first word + first letter of remaining significant words */
+        const nmShort=(()=>{const w=nm.split(/\s+/);if(w.length<=2)return nm;const skip=new Set(['de','da','do','em','e','a','o','para','com']);return w[0]+' '+w.slice(1).map(x=>skip.has(x.toLowerCase())?'':x[0].toUpperCase()+'.').filter(Boolean).join(' ');})();
         const cAtual=hDB?DBdates.reduce((s,dk)=>s+cntCurso(dk,nm),0):n(r[_cT]);
         const cObj=matchMetaCurso(nm);
         const cMeta=cObj?cObj.metaTotal:0;
-        /* pct pode ultrapassar 100% */
         const cPct=cMeta>0?(cAtual/cMeta)*100:null;
         const cColor=cPct===null?'var(--tx3)':cPct>=100?'var(--pos)':cPct>=70?'var(--wrn)':'var(--neg)';
         const isOpen=_metaCOpen.has(nm);
         const pctLabel=cPct!==null?cPct.toFixed(0)+'%':'—';
         const pctBadgeCls=cPct===null?'neu':cPct>=100?'pos':cPct>=70?'warn':'neg';
         const cDailyEntries=cObj?Object.entries(cObj.dailyMetas).sort((a,b)=>pdk(a[0])-pdk(b[0])):metaDates.map(dk=>[dk,0]);
-        const dailyHtml=isOpen?`<div class="meta-cdaily-inner"><div class="meta-cdaily-scroll"><div class="meta-diario-tbl">
-          <div class="meta-dthead" style="grid-template-columns:68px 80px 80px 72px;"><div>Data</div><div style="text-align:right">Meta</div><div style="text-align:right">Leads</div><div style="text-align:right">Diff.</div></div>
-          ${cDailyEntries.map(([dk,mD])=>{
-            const rD=hDB?cntCurso(dk,nm):0;const diff=rD-mD;const dc=diff>=0?'var(--pos)':'var(--neg)';
-            const iP=new Date(pdk(dk))<=hkDate;
-            return`<div class="meta-dtr" style="grid-template-columns:68px 80px 80px 72px;${iP?'':'opacity:.4'}">
-              <div class="meta-dtd dt">${dkLbl(dk)}</div>
-              <div class="meta-dtd" style="text-align:right">${fmt(mD)}</div>
-              <div class="meta-dtd" style="text-align:right;color:${iP?(rD>0?'var(--tx)':'var(--tx3)'):'var(--tx3)'}">${iP?fmt(rD):'—'}</div>
-              <div class="meta-dtd" style="text-align:right;color:${iP?dc:'var(--tx3)'}">${iP?(diff>=0?'+':'')+fmt(diff):'—'}</div>
-            </div>`;
-          }).join('')}
-        </div></div></div>`:'';
+        const dailyHtml=isOpen?`<div class="meta-cdaily-inner">
+          <div class="meta-cdaily-summary">
+            <div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Captados</div><div class="meta-cdaily-sumval" style="color:${cColor}">${fmt(cAtual)}</div></div>
+            <div style="color:var(--tx3);align-self:flex-end;padding-bottom:2px">/</div>
+            <div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Meta</div><div class="meta-cdaily-sumval">${cMeta>0?fmt(cMeta):'—'}</div></div>
+            ${cMeta>0?`<div style="align-self:flex-end;padding-bottom:1px">${badge(pctLabel,pctBadgeCls)}</div>`:''}
+          </div>
+          <div class="meta-cdaily-scroll"><div class="meta-diario-tbl">
+            <div class="meta-dthead" style="grid-template-columns:68px 80px 80px 72px;"><div>Data</div><div style="text-align:right">Meta</div><div style="text-align:right">Leads</div><div style="text-align:right">Diff.</div></div>
+            ${cDailyEntries.map(([dk,mD])=>{
+              const rD=hDB?cntCurso(dk,nm):0;const diff=rD-mD;const dc=diff>=0?'var(--pos)':'var(--neg)';
+              const iP=new Date(pdk(dk))<=hkDate;
+              return`<div class="meta-dtr" style="grid-template-columns:68px 80px 80px 72px;${iP?'':'opacity:.4'}">
+                <div class="meta-dtd dt">${dkLbl(dk)}</div>
+                <div class="meta-dtd" style="text-align:right">${fmt(mD)}</div>
+                <div class="meta-dtd" style="text-align:right;color:${iP?(rD>0?'var(--tx)':'var(--tx3)'):'var(--tx3)'}">${iP?fmt(rD):'—'}</div>
+                <div class="meta-dtd" style="text-align:right;color:${iP?dc:'var(--tx3)'}">${iP?(diff>=0?'+':'')+fmt(diff):'—'}</div>
+              </div>`;
+            }).join('')}
+          </div></div>
+        </div>`:'';
         return`<div class="meta-crow${isOpen?' open':''}">
-          <div class="meta-crow-top" style="grid-template-columns:4px 1fr auto auto 24px" onclick="toggleMetaCurso('${nm.replace(/'/g,"\\'")}')">
+          <div class="meta-crow-top" style="grid-template-columns:3px 1fr auto auto 22px" onclick="toggleMetaCurso('${nm.replace(/'/g,"\\'")}')">
             <div class="meta-cacc" style="background:${COLORS[i%COLORS.length]}"></div>
-            <div>
+            <div style="min-width:0">
               <div class="meta-cnm">${nm}</div>
-              <div style="margin-top:4px">${cMeta>0?progBar(Math.min(cPct,100),cColor,3):''}</div>
+              <div class="meta-cnm-short">${nmShort}</div>
+              <div style="margin-top:4px">${cMeta>0?progBar(Math.min(cPct||0,100),cColor,3):''}</div>
             </div>
-            <div class="meta-cvals" style="padding:0 6px">
+            <div class="meta-cvals" style="padding:0 8px">
               <div class="meta-cv" style="color:${cColor}">${fmt(cAtual)}<span class="meta-cs"> / ${cMeta>0?fmt(cMeta):'—'}</span></div>
-              <div class="meta-cs" style="margin-top:2px">leads captados</div>
+              <div class="meta-cs" style="margin-top:1px">leads captados</div>
             </div>
             <div style="padding:0 4px">${badge(pctLabel,pctBadgeCls)}</div>
             <div class="meta-cchev${isOpen?' open':''}">›</div>
@@ -935,22 +982,26 @@ function buildTaxa(){
       const dq=Math.round(dc*(dv/100)),c2=dv>=90?'var(--pos)':'var(--neg)';
       return`<div class="txd-tr"><div class="txd-td txd-date">${dkLbl(dk)}</div><div class="txd-td">${fmt(dc)}</div><div class="txd-td" style="color:${c2}">${fmt(dq)}</div><div class="txd-td" style="color:${c2}">${dv.toFixed(1)}%</div></div>`;
     }).filter(Boolean).join(''):'' ;
+    const expandedKpis=isOpen?`<div style="display:flex;gap:14px;padding:9px 13px 4px;flex-wrap:wrap;border-top:1px solid var(--bd);background:var(--cd)">
+      <div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Leads</div><div style="font-family:var(--fn);font-size:15px;font-weight:700;color:var(--tx)">${fmt(tot)}</div></div>
+      <div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Qualificados</div><div style="font-family:var(--fn);font-size:15px;font-weight:700;color:${col}">${fmt(qual)}</div></div>
+    </div>`:'';
     return`<div class="txl-row${isOpen?' open':''}">
       <div class="txl-top" onclick="toggleTaxa('${nm.replace(/'/g,"\\'")}')">
         <div class="txl-nome">${nm}</div>
         <div class="txl-numcol">${fmt(tot)}</div>
-        <div class="txl-numcol" style="color:${col}">${fmt(qual)}</div>
+        <div class="txl-numcol hide-m" style="color:${col}">${fmt(qual)}</div>
         <div class="txl-pctcol" style="color:${col}">${v.toFixed(1)}<span class="txl-sym">%</span></div>
         <div class="txl-chev${isOpen?' open':''}">›</div>
       </div>
-      ${isOpen?`<div class="txd-body"><div class="txd-scroll"><div class="txd-tbl">
+      ${isOpen?expandedKpis+`<div class="txd-body"><div class="txd-scroll"><div class="txd-tbl">
         <div class="txd-head"><div>Data</div><div>Leads</div><div>Qualif.</div><div>Taxa</div></div>${dailyRows}
       </div></div></div>`:''}
     </div>`;
   }).join('');
 
   document.getElementById('taxa-grid').innerHTML=
-    `<div class="txl-hdr-row"><div class="txl-hdr-col">Curso</div><div class="txl-hdr-col">Leads</div><div class="txl-hdr-col">Qualif.</div><div class="txl-hdr-col">Taxa</div><div></div></div>`+listHTML;
+    `<div class="txl-hdr-row"><div class="txl-hdr-col">Curso</div><div class="txl-hdr-col">Leads</div><div class="txl-hdr-col hide-m">Qualif.</div><div class="txl-hdr-col">Taxa</div><div></div></div>`+listHTML;
 }
 function setTaxaSel(dk){_txSel=dk;closeDD();buildTaxa();}
 function toggleTaxa(nm){if(_txOpen.has(nm))_txOpen.delete(nm);else _txOpen.add(nm);buildTaxa();}
@@ -973,8 +1024,17 @@ function buildCPL(){
       <div class="cpl-acc" style="background:${d.color}"></div>
       <div class="cpl-inner">
         <div class="cpl-top" onclick="toggleCPL('${d.nm.replace(/'/g,"\\'")}')">
-          <div class="cpl-left"><div class="cpl-nome">${d.nm}</div><div class="cpl-totleads">${fmt(d.tot)} leads</div></div>
-          <div class="cpl-m"><div class="cpl-ml">CPL Hoje</div><div class="cpl-mv">${fmtR(d.h)}</div><div class="cpl-mvar" style="color:${cH}">${aH}${Math.abs(d.vHP).toFixed(1)}% geral</div></div>
+          <div class="cpl-nome">${d.nm}</div>
+          <div class="cpl-kpis-inline">
+            <div style="text-align:right">
+              <div class="cpl-ml">CPL hoje</div>
+              <div class="cpl-mv">${fmtR(d.h)}</div>
+            </div>
+            <div style="text-align:right;min-width:52px">
+              <div class="cpl-ml">vs geral</div>
+              <div class="cpl-mvar" style="color:${cH};font-size:12px;font-weight:700">${aH}${Math.abs(d.vHP).toFixed(1)}%</div>
+            </div>
+          </div>
           <div class="cpl-chev${isOpen?' open':''}">›</div>
         </div>
         <div class="cpl-detail${isOpen?' open':''}">${isOpen?buildCPLDetail(d):''}</div>
@@ -993,7 +1053,7 @@ function buildCPLDetail(d){
       <div class="cpld-k"><div class="cpld-kl">CPL Hoje</div><div class="cpld-kv" style="color:${cH}">${fmtR(d.h)}</div><div class="cpld-ks" style="color:${cH}">${aH}${Math.abs(d.vHP).toFixed(1)}%</div></div>
       <div class="cpld-k"><div class="cpld-kl">CPL D-1</div><div class="cpld-kv" style="color:${cD}">${fmtR(d.d1)}</div><div class="cpld-ks" style="color:${cD}">${aD}${Math.abs(d.vD1P).toFixed(1)}%</div></div>
     </div>
-    <div class="cpld-sec">Histórico Diário <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0">★ dados simulados</span></div>
+    <div class="cpld-sec">Histórico Diário <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx3)">★ simulado</span></div>
     <div class="cpld-scroll"><div class="cpld-tbl">
       <div class="cpld-thead"><div>Data</div><div>Investido</div><div>Leads</div><div>Taxa</div><div>CPL</div><div>Var. CPL</div></div>
       ${d.daily.map((x,j)=>{
@@ -1004,10 +1064,10 @@ function buildCPLDetail(d){
         const vcSym=varCPL===null?'—':varCPL<=0?'▼':'▲';
         return`<div class="cpld-tr">
           <div class="cpld-td">${dkLbl(x.dk)}</div>
-          <div class="cpld-td">${fmtR(x.custo)}</div>
-          <div class="cpld-td">${fmt(x.cnt)}</div>
+          <div class="cpld-td num">${fmtR(x.custo)}</div>
+          <div class="cpld-td num">${fmt(x.cnt)}</div>
           <div class="cpld-td" style="color:${qc}">${x.qual.toFixed(1)}%</div>
-          <div class="cpld-td">${fmtR(x.cpl)}</div>
+          <div class="cpld-td num">${fmtR(x.cpl)}</div>
           <div class="cpld-td" style="color:${vcColor}">${varCPL!==null?vcSym+Math.abs(varCPL).toFixed(1)+'%':'—'}</div>
         </div>`;}).join('')}
     </div></div>
