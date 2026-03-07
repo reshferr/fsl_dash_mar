@@ -67,10 +67,17 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .pb-track{background:var(--grd);border-radius:999px;overflow:hidden;width:100%;}
 .pb-fill{height:100%;border-radius:999px;transition:width .8s ease;}
 
-/* HERO — 4 cards compactos */
+/* TOP-SECTION wrapper — leve gradiente de fundo */
+.top-section{position:relative;padding:14px 0 20px;margin-bottom:4px;}
+.top-section::after{content:'';position:absolute;bottom:0;left:-14px;right:-14px;height:1px;background:linear-gradient(90deg,transparent,var(--bd) 20%,var(--bd) 80%,transparent);}
+[data-theme=dark] .top-section{background:linear-gradient(180deg,rgba(124,92,252,.04) 0%,transparent 100%);}
+[data-theme=light] .top-section{background:linear-gradient(180deg,rgba(94,56,236,.04) 0%,transparent 100%);}
+[data-theme=beige] .top-section{background:linear-gradient(180deg,rgba(122,78,40,.04) 0%,transparent 100%);}
+
+/* HERO — 4 cards */
 .hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
-.kh{background:linear-gradient(145deg,var(--cd),var(--cdh));border:1px solid var(--bda);border-radius:var(--r);padding:15px 17px;box-shadow:var(--sh);position:relative;overflow:hidden;}
-.kh::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc),transparent);}
+.kh{background:linear-gradient(155deg,var(--cd) 60%,var(--cdh));border:1px solid var(--bda);border-radius:var(--r);padding:15px 17px;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.kh::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc),rgba(124,92,252,0));opacity:.7;}
 .kh-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
 .kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;margin-bottom:4px;}
 .kh-val.big{font-size:30px;}
@@ -86,13 +93,13 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .kd-num{font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
 .kd-vb{flex-shrink:0;padding-bottom:1px;}
 .kd-wide{display:flex;flex-direction:column;}
-.tc-nome{font-size:11px;font-weight:700;color:var(--tx);margin-bottom:7px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
-.tc-row{display:flex;border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;margin-top:auto;}
-.tc-cell{flex:1;padding:6px 9px;text-align:center;border-right:1px solid var(--bd);}
-.tc-cell:last-child{border-right:none;}
-.tc-cl{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;}
-.tc-cv{font-family:var(--fn);font-size:12px;font-weight:800;letter-spacing:-.03em;color:var(--tx);}
-.tc-var{margin-top:2px;}
+.tc-nome{font-size:11px;font-weight:700;color:var(--tx);margin-bottom:8px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
+/* tc-row: cells sutis sem borda marcada */
+.tc-row{display:flex;gap:6px;margin-top:auto;}
+.tc-cell{flex:1;padding:7px 8px;text-align:center;background:var(--grd);border-radius:7px;}
+.tc-cl{font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;}
+.tc-cv{font-family:var(--fn);font-size:17px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;}
+.tc-var{margin-top:3px;}
 
 /* LEADS + SHARE */
 .g-ls{display:grid;grid-template-columns:3fr 2fr;gap:10px;margin-bottom:10px;}
@@ -131,42 +138,60 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .meta-ring svg{display:block;}
 .meta-ring-pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.04em;line-height:1;}
 .meta-ring-sub{font-size:9px;font-weight:600;color:var(--tx3);letter-spacing:.04em;margin-top:2px;}
-.meta-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;}
-.meta-kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 11px;}
+/* hero header: captados / esperado / % */
+.meta-hero{display:flex;align-items:center;gap:16px;margin-bottom:14px;flex-wrap:wrap;}
+.meta-hero-num{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+.meta-hero-cap{font-family:var(--fn);font-size:34px;font-weight:800;letter-spacing:-.06em;color:var(--tx);line-height:1;}
+.meta-hero-sep{font-size:18px;color:var(--tx3);font-weight:300;}
+.meta-hero-esp{font-family:var(--fn);font-size:24px;font-weight:700;letter-spacing:-.04em;color:var(--tx2);line-height:1;}
+.meta-hero-sub{font-size:10px;color:var(--tx3);margin-top:2px;}
+.meta-hero-pct{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:10px 16px;min-width:76px;}
+.meta-hero-pct-v{font-family:var(--fn);font-size:24px;font-weight:800;letter-spacing:-.05em;line-height:1;}
+.meta-hero-pct-l{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-top:3px;}
+/* kpi boxes row */
+.meta-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px;}
+.meta-kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:10px 12px;}
 .meta-kpi.hi{background:var(--accg);border-color:var(--bda);}
-.meta-kpi-l{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px;}
+.meta-kpi-l{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;}
 .meta-kpi.hi .meta-kpi-l{color:var(--tagt);}
-.meta-kpi-v{font-family:var(--fn);font-size:17px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;margin-bottom:2px;}
+.meta-kpi-v{font-family:var(--fn);font-size:19px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;margin-bottom:2px;}
 .meta-kpi-s{font-size:10px;font-weight:600;color:var(--tx3);}
-.meta-pace{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 13px;margin-bottom:12px;}
-.meta-pace-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px;flex-wrap:wrap;}
-.meta-pace-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;}
-.meta-pace-val{font-size:10px;font-weight:700;}
-/* diarizado */
-.meta-diario-sec{margin-bottom:12px;}
-.meta-diario-hdr{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;}
-.meta-diario-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--rs);border:1px solid var(--bd);max-height:240px;overflow-y:auto;}
+/* pace boxes row */
+.meta-pace-boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px;}
+.meta-pbox{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:10px 12px;}
+.meta-pbox.hi{border-color:var(--bda);}
+.meta-pbox-l{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;}
+.meta-pbox-v{font-family:var(--fn);font-size:19px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;margin-bottom:2px;}
+.meta-pbox-s{font-size:10px;font-weight:600;color:var(--tx3);}
+/* collapsible diarizado */
+.meta-diario-sec{margin-bottom:10px;}
+.meta-diario-btn{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:background var(--tr);user-select:none;}
+.meta-diario-btn:hover{background:var(--cdh);}
+.meta-diario-btn-open{border-radius:var(--rs) var(--rs) 0 0;border-bottom-color:transparent;}
+.meta-diario-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;}
+.meta-diario-chev{font-size:13px;color:var(--tx3);transition:transform var(--tr);}
+.meta-diario-chev.open{transform:rotate(90deg);}
+.meta-diario-body{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+.meta-diario-body.open{max-height:400px;}
+.meta-diario-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--bd);border-top:none;border-radius:0 0 var(--rs) var(--rs);max-height:320px;overflow-y:auto;}
 .meta-diario-tbl{min-width:380px;}
-.meta-dthead{display:grid;background:var(--cdh);position:sticky;top:0;z-index:1;}
+.meta-dthead{display:grid;background:var(--cdh);}
 .meta-dthead>div{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;padding:6px 9px;}
 .meta-dtr{display:grid;border-top:1px solid var(--bd);}
 .meta-dtd{padding:6px 9px;font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx);}
 .meta-dtd.dt{font-family:var(--f);font-weight:600;color:var(--tx2);font-size:11px;}
 /* cursos */
 .meta-cursos-hdr{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;}
-.meta-crow{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;margin-bottom:4px;}
+.meta-crow{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;margin-bottom:5px;}
 .meta-crow:last-child{margin-bottom:0;}
 .meta-crow.open{border-color:var(--bda);}
-.meta-crow-top{display:grid;align-items:center;gap:10px;padding:9px 11px;cursor:pointer;transition:background var(--tr);}
+.meta-crow-top{display:grid;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;transition:background var(--tr);}
 .meta-crow-top:hover{background:var(--cdh);}
-.meta-cacc{width:4px;height:26px;border-radius:2px;flex-shrink:0;}
-.meta-cnm{font-size:11px;font-weight:700;color:var(--tx);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.meta-cacc{width:4px;border-radius:2px;align-self:stretch;flex-shrink:0;}
+.meta-cnm{font-size:12px;font-weight:700;color:var(--tx);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .meta-cvals{text-align:right;white-space:nowrap;}
-.meta-cv{font-family:var(--fn);font-size:12px;font-weight:800;color:var(--tx);}
+.meta-cv{font-family:var(--fn);font-size:14px;font-weight:800;color:var(--tx);}
 .meta-cs{font-size:9px;color:var(--tx3);}
-.meta-choje-l{font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1px;}
-.meta-choje-v{font-family:var(--fn);font-size:12px;font-weight:800;line-height:1;text-align:right;}
-.meta-choje-s{font-size:9px;font-weight:700;margin-top:1px;text-align:right;}
 .meta-cchev{font-size:13px;color:var(--tx3);text-align:center;transition:transform var(--tr);}
 .meta-cchev.open{transform:rotate(90deg);}
 .meta-cdaily{max-height:0;overflow:hidden;transition:max-height .3s ease;}
@@ -227,10 +252,10 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .cpld-ks{font-size:10px;font-weight:700;color:var(--tx3);}
 .cpld-sec{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
 .cpld-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--rs);border:1px solid var(--bd);max-height:200px;overflow-y:auto;}
-.cpld-tbl{min-width:420px;}
-.cpld-thead{display:grid;grid-template-columns:55px 1fr 1fr 1fr 1fr 65px;background:var(--cdh);position:sticky;top:0;z-index:1;}
+.cpld-tbl{min-width:360px;}
+.cpld-thead{display:grid;grid-template-columns:55px 1fr 60px 60px 1fr 70px;background:var(--cdh);position:sticky;top:0;z-index:1;}
 .cpld-thead>div{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;padding:6px 8px;}
-.cpld-tr{display:grid;grid-template-columns:55px 1fr 1fr 1fr 1fr 65px;border-top:1px solid var(--bd);}
+.cpld-tr{display:grid;grid-template-columns:55px 1fr 60px 60px 1fr 70px;border-top:1px solid var(--bd);}
 .cpld-td{padding:6px 8px;font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx);}
 .cpld-td:first-child{font-family:var(--f);font-weight:600;color:var(--tx2);}
 
@@ -284,9 +309,9 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* RESPONSIVE */
-@media(max-width:1100px){.daily-row{grid-template-columns:repeat(4,1fr);}.daily-row .kd-wide{grid-column:1/-1;}.meta-kpis{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:900px){.hero-row{grid-template-columns:1fr 1fr;}.daily-row{grid-template-columns:1fr 1fr;}.daily-row .kd-wide{grid-column:1/-1;}.cpld-kpis{grid-template-columns:1fr 1fr;}.meta-kpis{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:700px){.g-ls{grid-template-columns:1fr;}.esc-blocks{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:1100px){.daily-row{grid-template-columns:repeat(4,1fr);}.daily-row .kd-wide{grid-column:1/-1;}.meta-kpis{grid-template-columns:repeat(2,1fr);}.meta-pace-boxes{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:900px){.hero-row{grid-template-columns:1fr 1fr;}.daily-row{grid-template-columns:1fr 1fr;}.daily-row .kd-wide{grid-column:1/-1;}.cpld-kpis{grid-template-columns:1fr 1fr;}.meta-kpis{grid-template-columns:repeat(2,1fr);}.meta-pace-boxes{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:700px){.g-ls{grid-template-columns:1fr;}.esc-blocks{grid-template-columns:repeat(3,1fr);}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
 @media(max-width:540px){
   main{padding:calc(var(--nh) + 8px) 10px 70px;}
   .hero-row,.daily-row{grid-template-columns:1fr 1fr;gap:8px;}
@@ -295,14 +320,17 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
   .card{padding:12px;}
   .esc-kv{font-size:18px;}.esc-blocks{grid-template-columns:repeat(2,1fr);}
   .tbl-hint{display:block;}
-  .meta-kpis{grid-template-columns:repeat(2,1fr);}
-  .txl-top{grid-template-columns:1fr 75px 75px 58px 24px;}.txl-hdr-row{grid-template-columns:1fr 75px 75px 58px 24px;}
+  .meta-kpis{grid-template-columns:1fr 1fr;}
+  .meta-pace-boxes{grid-template-columns:1fr 1fr;}
+  .meta-hero-cap{font-size:26px;}.meta-hero-esp{font-size:18px;}
+  .txl-top{grid-template-columns:1fr 70px 70px 56px 22px;}.txl-hdr-row{grid-template-columns:1fr 70px 70px 56px 22px;}
 }
 @media(max-width:380px){
   .esc-blocks{grid-template-columns:1fr 1fr;}
-  .daily-row .kd-wide .tc-row{flex-direction:column;}
-  .tc-cell{border-right:none;border-bottom:1px solid var(--bd);text-align:left;}
-  .tc-cell:last-child{border-bottom:none;}
+  .daily-row .kd-wide .tc-row{flex-wrap:wrap;}
+  .tc-cell{min-width:calc(50% - 3px);}
+  .meta-kpis{grid-template-columns:1fr 1fr;}
+  .meta-pace-boxes{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -352,8 +380,10 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
         <span id="tslabel">—</span>
       </div>
     </div>
-    <div class="hero-row gf" id="kpi-row"></div>
-    <div class="daily-row gf" id="kpi-diario"></div>
+    <div class="top-section">
+    <div class="hero-row" id="kpi-row"></div>
+    <div class="daily-row" id="kpi-diario"></div>
+    </div>
     <div class="g-ls gf">
       <div class="card">
         <div class="lpd-hdr">
@@ -423,7 +453,7 @@ const COLORS=['#7c5cfc','#e05f8e','#34d399','#fbbf24','#60a5fa','#f97316','#a78b
 
 let SH=[],SD=[],DBmap=new Map(),DBdates=[],selDate='__total__';
 let _cC,_cT,_cQ,_cS,_ss;
-let _cplOpen=new Set(),_txOpen=new Set(),_txSel=null,_metaCOpen=new Set();
+let _cplOpen=new Set(),_txOpen=new Set(),_txSel=null,_metaCOpen=new Set(),_metaDiarOpen=false;
 let META={found:false};
 
 function csvL(line){
@@ -742,80 +772,111 @@ function buildMeta(tL,hk,hDB){
   }
   const metaTotal=META.totalMeta;
   const realAcum=hDB?DBdates.reduce((s,dk)=>s+cntDate(dk),0):tL;
-  const pctGeral=metaTotal>0?Math.min((realAcum/metaTotal)*100,100):0;
-  const restante=Math.max(metaTotal-realAcum,0);
+  const pctGeral=metaTotal>0?(realAcum/metaTotal)*100:0;
   const progColor=pctGeral>=100?'var(--pos)':pctGeral>=70?'var(--wrn)':'var(--neg)';
   const metaDates=META.dates;
-  const diasTotais=metaDates.length||1;
-  const diasDecorridos=hDB?Math.min(DBdates.length,diasTotais):0;
-  const diasRestantes=Math.max(diasTotais-diasDecorridos,1);
   const hkDate=new Date(pdk(hk));
-  const metaAteHoje=metaDates.reduce((s,dk)=>{if(new Date(pdk(dk))<=hkDate)s+=META.totalDaily[dk]||0;return s;},0);
-  const metaHoje=META.totalDaily[hk]||0;
+
+  /* D-1 key: último dia com dados reais antes de hoje */
+  const d1k=DBdates.find(d=>d!==hk&&new Date(pdk(d))<hkDate)||prevDK(hk);
+  const d1Date=new Date(pdk(d1k));
+
+  /* Meta do dia (hoje) = soma das metas diárias de todos os cursos para hoje */
+  const metaHoje=Object.values(META.cursos).reduce((s,c)=>s+(c.dailyMetas[hk]||0),0)||META.totalDaily[hk]||0;
   const leadsHoje=hDB?cntDate(hk):0;
-  const pacePct=metaAteHoje>0?(realAcum/metaAteHoje)*100:0;
-  const paceColor=realAcum>=metaAteHoje?'var(--pos)':'var(--neg)';
-  const metaRecalc=diasRestantes>0?Math.ceil(restante/diasRestantes):0;
-  const diffHoje=leadsHoje-metaHoje;
+  const restanteHoje=Math.max(metaHoje-leadsHoje,0);
+  const pctHoje=metaHoje>0?(leadsHoje/metaHoje)*100:0;
+  const hojeColor=pctHoje>=100?'var(--pos)':pctHoje>=70?'var(--wrn)':'var(--neg)';
+
+  /* Pace: leads esperados até D-1 = soma das metas diárias de todos os dias até d1k inclusive */
+  const metaAteD1=metaDates.reduce((s,dk)=>{if(new Date(pdk(dk))<=d1Date)s+=Object.values(META.cursos).reduce((ss,c)=>ss+(c.dailyMetas[dk]||0),0)||META.totalDaily[dk]||0;return s;},0);
+  const realAteD1=hDB?DBdates.filter(dk=>new Date(pdk(dk))<=d1Date).reduce((s,dk)=>s+cntDate(dk),0):0;
+  const pacePct=metaAteD1>0?(realAteD1/metaAteD1)*100:0;
+  const paceColor=pacePct>=100?'var(--pos)':pacePct>=70?'var(--wrn)':'var(--neg)';
+
+  /* diarizado total open state */
+  const diarOpen=_metaDiarOpen;
 
   sec.innerHTML=`<div class="card">
-    <div class="slbl" style="margin-bottom:13px">Meta de Leads</div>
-    <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;margin-bottom:13px">
-      ${metaRing(pctGeral,progColor,102)}
-      <div>
-        <div style="font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.04em;margin-bottom:2px">${fmt(realAcum)} <span style="font-size:12px;font-weight:600;color:var(--tx3)">/ ${fmt(metaTotal)} leads</span></div>
-        <div style="font-size:10px;color:var(--tx2);margin-bottom:8px">${pctGeral.toFixed(1)}% da meta atingida</div>
-        ${progBar(pctGeral,progColor,6)}
-        <div class="meta-kpis" style="margin-top:9px">
-          <div class="meta-kpi hi"><div class="meta-kpi-l">Meta total</div><div class="meta-kpi-v">${fmt(metaTotal)}</div><div class="meta-kpi-s">leads</div></div>
-          <div class="meta-kpi"><div class="meta-kpi-l">Restante</div><div class="meta-kpi-v" style="color:${progColor}">${fmt(restante)}</div><div class="meta-kpi-s">leads</div></div>
-          <div class="meta-kpi"><div class="meta-kpi-l">Dias rest.</div><div class="meta-kpi-v">${diasRestantes}</div><div class="meta-kpi-s">de ${diasTotais}</div></div>
-          <div class="meta-kpi"><div class="meta-kpi-l">Meta recalc.</div><div class="meta-kpi-v" style="color:var(--wrn)">${fmt(metaRecalc)}</div><div class="meta-kpi-s">/dia</div></div>
-          <div class="meta-kpi"><div class="meta-kpi-l">Leads hoje</div><div class="meta-kpi-v" style="color:${diffHoje>=0?'var(--pos)':'var(--neg)'}">${fmt(leadsHoje)}</div><div class="meta-kpi-s" style="color:${diffHoje>=0?'var(--pos)':'var(--neg)'}">${diffHoje>=0?'+':''}${fmt(diffHoje)} vs meta</div></div>
+    <div class="slbl" style="margin-bottom:11px">Meta de Leads</div>
+    <!-- HERO: captados / esperado / % -->
+    <div class="meta-hero">
+      <div style="flex:1;min-width:0">
+        <div class="meta-hero-num">
+          <div>
+            <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:2px">Captados</div>
+            <div class="meta-hero-cap" style="color:${progColor}">${fmt(realAcum)}</div>
+          </div>
+          <div class="meta-hero-sep">/</div>
+          <div>
+            <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:2px">Esperado no mês</div>
+            <div class="meta-hero-esp">${fmt(metaTotal)}</div>
+          </div>
         </div>
+        <div style="margin-top:8px">${progBar(Math.min(pctGeral,100),progColor,6)}</div>
+      </div>
+      <div class="meta-hero-pct">
+        <div class="meta-hero-pct-v" style="color:${progColor}">${pctGeral.toFixed(1)}<span style="font-size:14px">%</span></div>
+        <div class="meta-hero-pct-l">da meta</div>
       </div>
     </div>
-    <div class="meta-pace">
-      <div class="meta-pace-hdr"><span class="meta-pace-lbl">Pace acumulado</span><span class="meta-pace-val" style="color:${paceColor}">${pacePct.toFixed(1)}% do esperado até hoje · meta acum. ${fmt(metaAteHoje)}</span></div>
-      ${progBar(pacePct,paceColor,8)}
+    <!-- KPI BOXES: meta dia / realizado dia / restante / % dia -->
+    <div class="meta-kpis" style="margin-bottom:12px">
+      <div class="meta-kpi hi"><div class="meta-kpi-l">Meta do Dia</div><div class="meta-kpi-v">${fmt(metaHoje)}</div><div class="meta-kpi-s">leads esperados</div></div>
+      <div class="meta-kpi"><div class="meta-kpi-l">Realizado Hoje</div><div class="meta-kpi-v" style="color:${hojeColor}">${fmt(leadsHoje)}</div><div class="meta-kpi-s" style="color:${hojeColor}">${pctHoje.toFixed(0)}% da meta diária</div></div>
+      <div class="meta-kpi"><div class="meta-kpi-l">Restante Hoje</div><div class="meta-kpi-v" style="color:${restanteHoje===0?'var(--pos)':'var(--tx)'}">${fmt(restanteHoje)}</div><div class="meta-kpi-s">leads</div></div>
+      <div class="meta-kpi"><div class="meta-kpi-l">Atingimento Dia</div><div class="meta-kpi-v" style="color:${hojeColor}">${pctHoje.toFixed(1)}<span style="font-size:12px">%</span></div><div class="meta-kpi-s">${leadsHoje>=metaHoje?'✓ meta batida':'em andamento'}</div></div>
     </div>
+    <!-- PACE BOXES -->
+    <div class="meta-pace-boxes">
+      <div class="meta-pbox hi" style="background:var(--accg);border-color:var(--bda)"><div class="meta-pbox-l" style="color:var(--tagt)">Esperado até D-1</div><div class="meta-pbox-v">${fmt(metaAteD1)}</div><div class="meta-pbox-s">meta acumulada</div></div>
+      <div class="meta-pbox"><div class="meta-pbox-l">Captados até D-1</div><div class="meta-pbox-v" style="color:${paceColor}">${fmt(realAteD1)}</div><div class="meta-pbox-s" style="color:${paceColor}">${realAteD1>=metaAteD1?'▲ acima':'▼ abaixo'} do pace</div></div>
+      <div class="meta-pbox"><div class="meta-pbox-l">Atingimento Pace</div><div class="meta-pbox-v" style="color:${paceColor}">${pacePct.toFixed(1)}<span style="font-size:12px">%</span></div><div class="meta-pbox-s">${progBar(Math.min(pacePct,100),paceColor,4)}</div></div>
+    </div>
+    <!-- DIARIZADO TOTAL (colapsável) -->
     <div class="meta-diario-sec">
-      <div class="meta-diario-hdr">Diarizado Total</div>
-      <div class="meta-diario-scroll"><div class="meta-diario-tbl">
-        <div class="meta-dthead" style="grid-template-columns:68px 88px 88px 80px 90px 80px;">
-          <div>Data</div><div style="text-align:right">Meta</div><div style="text-align:right">Leads</div><div style="text-align:right">Diff.</div><div style="text-align:right">Acum. meta</div><div style="text-align:right">Acum. real</div>
-        </div>
-        ${(()=>{let aM=0,aR=0;return metaDates.map(dk=>{
-          const mD=META.totalDaily[dk]||0,rD=hDB?cntDate(dk):0;
-          aM+=mD;aR+=rD;
-          const diff=rD-mD;const dc=diff>=0?'var(--pos)':'var(--neg)';
-          const iP=new Date(pdk(dk))<=hkDate;
-          return`<div class="meta-dtr" style="grid-template-columns:68px 88px 88px 80px 90px 80px;${iP?'':'opacity:.4'}">
-            <div class="meta-dtd dt">${dkLbl(dk)}</div>
-            <div class="meta-dtd" style="text-align:right">${fmt(mD)}</div>
-            <div class="meta-dtd" style="text-align:right;color:${iP?(rD>0?'var(--tx)':'var(--tx3)'):'var(--tx3)'}">${iP?fmt(rD):'—'}</div>
-            <div class="meta-dtd" style="text-align:right;color:${iP?dc:'var(--tx3)'}">${iP?(diff>=0?'+':'')+fmt(diff):'—'}</div>
-            <div class="meta-dtd" style="text-align:right;color:var(--tx2)">${fmt(aM)}</div>
-            <div class="meta-dtd" style="text-align:right;color:${iP?(aR>=aM?'var(--pos)':'var(--wrn)'):'var(--tx3)'}">${iP?fmt(aR):'—'}</div>
-          </div>`;}).join('');})()}
-      </div></div>
+      <div class="meta-diario-btn${diarOpen?' meta-diario-btn-open':''}" onclick="toggleMetaDiar()">
+        <span class="meta-diario-lbl">Diarizado Total</span>
+        <span class="meta-diario-chev${diarOpen?' open':''}">›</span>
+      </div>
+      <div class="meta-diario-body${diarOpen?' open':''}">
+        <div class="meta-diario-scroll"><div class="meta-diario-tbl">
+          <div class="meta-dthead" style="grid-template-columns:68px 88px 88px 80px 90px 80px;">
+            <div>Data</div><div style="text-align:right">Meta</div><div style="text-align:right">Leads</div><div style="text-align:right">Diff.</div><div style="text-align:right">Acum. meta</div><div style="text-align:right">Acum. real</div>
+          </div>
+          ${(()=>{let aM=0,aR=0;return metaDates.map(dk=>{
+            /* meta diária = soma das metas diárias de todos os cursos */
+            const mD=Object.values(META.cursos).reduce((s,c)=>s+(c.dailyMetas[dk]||0),0)||META.totalDaily[dk]||0;
+            const rD=hDB?cntDate(dk):0;
+            aM+=mD;aR+=rD;
+            const diff=rD-mD;const dc=diff>=0?'var(--pos)':'var(--neg)';
+            const iP=new Date(pdk(dk))<=hkDate;
+            return`<div class="meta-dtr" style="grid-template-columns:68px 88px 88px 80px 90px 80px;${iP?'':'opacity:.4'}">
+              <div class="meta-dtd dt">${dkLbl(dk)}</div>
+              <div class="meta-dtd" style="text-align:right">${fmt(mD)}</div>
+              <div class="meta-dtd" style="text-align:right;color:${iP?(rD>0?'var(--tx)':'var(--tx3)'):'var(--tx3)'}">${iP?fmt(rD):'—'}</div>
+              <div class="meta-dtd" style="text-align:right;color:${iP?dc:'var(--tx3)'}">${iP?(diff>=0?'+':'')+fmt(diff):'—'}</div>
+              <div class="meta-dtd" style="text-align:right;color:var(--tx2)">${fmt(aM)}</div>
+              <div class="meta-dtd" style="text-align:right;color:${iP?(aR>=aM?'var(--pos)':'var(--wrn)'):'var(--tx3)'}">${iP?fmt(aR):'—'}</div>
+            </div>`;}).join('');})()}
+        </div></div>
+      </div>
     </div>
+    <!-- META POR CURSO -->
     <div>
-      <div class="meta-cursos-hdr">Meta por Curso · hoje vs meta do dia</div>
+      <div class="meta-cursos-hdr">Meta por Curso</div>
       ${_ss.map((r,i)=>{
         const nm=cl(r[_cC]);
         const cAtual=hDB?DBdates.reduce((s,dk)=>s+cntCurso(dk,nm),0):n(r[_cT]);
         const cObj=matchMetaCurso(nm);
         const cMeta=cObj?cObj.metaTotal:0;
-        const cPct=cMeta>0?Math.min((cAtual/cMeta)*100,100):null;
+        /* pct pode ultrapassar 100% */
+        const cPct=cMeta>0?(cAtual/cMeta)*100:null;
         const cColor=cPct===null?'var(--tx3)':cPct>=100?'var(--pos)':cPct>=70?'var(--wrn)':'var(--neg)';
         const isOpen=_metaCOpen.has(nm);
-        const cMetaHoje=cObj?(cObj.dailyMetas[hk]||0):0;
-        const cLeadsHoje=hDB?cntCurso(hk,nm):0;
-        const cDiff=cLeadsHoje-cMetaHoje;
-        const cHojeColor=cDiff>=0?'var(--pos)':'var(--neg)';
-        const tag=cPct!==null?badge(cPct.toFixed(0)+'%',cPct>=100?'pos':cPct>=70?'warn':'neg'):badge('sem meta','neu');
-        const cDailyEntries=cObj?Object.entries(cObj.dailyMetas):metaDates.map(dk=>[dk,0]);
+        const pctLabel=cPct!==null?cPct.toFixed(0)+'%':'—';
+        const pctBadgeCls=cPct===null?'neu':cPct>=100?'pos':cPct>=70?'warn':'neg';
+        const cDailyEntries=cObj?Object.entries(cObj.dailyMetas).sort((a,b)=>pdk(a[0])-pdk(b[0])):metaDates.map(dk=>[dk,0]);
         const dailyHtml=isOpen?`<div class="meta-cdaily-inner"><div class="meta-cdaily-scroll"><div class="meta-diario-tbl">
           <div class="meta-dthead" style="grid-template-columns:68px 80px 80px 72px;"><div>Data</div><div style="text-align:right">Meta</div><div style="text-align:right">Leads</div><div style="text-align:right">Diff.</div></div>
           ${cDailyEntries.map(([dk,mD])=>{
@@ -830,17 +891,17 @@ function buildMeta(tL,hk,hDB){
           }).join('')}
         </div></div></div>`:'';
         return`<div class="meta-crow${isOpen?' open':''}">
-          <div class="meta-crow-top" style="grid-template-columns:4px 1fr 80px auto auto 78px 24px" onclick="toggleMetaCurso('${nm.replace(/'/g,"\\'")}')">
+          <div class="meta-crow-top" style="grid-template-columns:4px 1fr auto auto 24px" onclick="toggleMetaCurso('${nm.replace(/'/g,"\\'")}')">
             <div class="meta-cacc" style="background:${COLORS[i%COLORS.length]}"></div>
-            <div class="meta-cnm">${nm}</div>
-            <div>${cPct!==null?progBar(cPct,cColor,4):''}</div>
-            <div class="meta-cvals"><span class="meta-cv">${fmt(cAtual)}</span>${cMeta>0?`<span class="meta-cs"> / ${fmt(cMeta)}</span>`:''}</div>
-            <div style="padding:0 6px">${tag}</div>
             <div>
-              <div class="meta-choje-l">Hoje</div>
-              <div class="meta-choje-v" style="color:${cMetaHoje>0?cHojeColor:'var(--tx)'}">${cMetaHoje>0?fmt(cLeadsHoje):'—'}</div>
-              ${cMetaHoje>0?`<div class="meta-choje-s" style="color:${cHojeColor}">${cDiff>=0?'+':''}${fmt(cDiff)}</div>`:''}
+              <div class="meta-cnm">${nm}</div>
+              <div style="margin-top:4px">${cMeta>0?progBar(Math.min(cPct,100),cColor,3):''}</div>
             </div>
+            <div class="meta-cvals" style="padding:0 6px">
+              <div class="meta-cv" style="color:${cColor}">${fmt(cAtual)}<span class="meta-cs"> / ${cMeta>0?fmt(cMeta):'—'}</span></div>
+              <div class="meta-cs" style="margin-top:2px">leads captados</div>
+            </div>
+            <div style="padding:0 4px">${badge(pctLabel,pctBadgeCls)}</div>
             <div class="meta-cchev${isOpen?' open':''}">›</div>
           </div>
           <div class="meta-cdaily${isOpen?' open':''}">${dailyHtml}</div>
@@ -849,6 +910,7 @@ function buildMeta(tL,hk,hDB){
     </div>
   </div>`;
 }
+function toggleMetaDiar(){_metaDiarOpen=!_metaDiarOpen;buildMeta();}
 function toggleMetaCurso(nm){if(_metaCOpen.has(nm))_metaCOpen.delete(nm);else _metaCOpen.add(nm);buildMeta();}
 
 /* TAXA */
@@ -876,8 +938,8 @@ function buildTaxa(){
     return`<div class="txl-row${isOpen?' open':''}">
       <div class="txl-top" onclick="toggleTaxa('${nm.replace(/'/g,"\\'")}')">
         <div class="txl-nome">${nm}</div>
-        <div><div class="txl-numcol">${fmt(tot)}</div><div class="txl-sublbl">leads</div></div>
-        <div><div class="txl-numcol" style="color:${col}">${fmt(qual)}</div><div class="txl-sublbl">qualif.</div></div>
+        <div class="txl-numcol">${fmt(tot)}</div>
+        <div class="txl-numcol" style="color:${col}">${fmt(qual)}</div>
         <div class="txl-pctcol" style="color:${col}">${v.toFixed(1)}<span class="txl-sym">%</span></div>
         <div class="txl-chev${isOpen?' open':''}">›</div>
       </div>
@@ -933,9 +995,21 @@ function buildCPLDetail(d){
     </div>
     <div class="cpld-sec">Histórico Diário <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0">★ dados simulados</span></div>
     <div class="cpld-scroll"><div class="cpld-tbl">
-      <div class="cpld-thead"><div>Data</div><div>Leads</div><div>Custo</div><div>CPL</div><div>Qualif.</div><div>Taxa</div></div>
-      ${d.daily.map(x=>{const qc=x.qual>=90?'var(--pos)':'var(--neg)';const qcnt=Math.round(x.cnt*(x.qual/100));
-        return`<div class="cpld-tr"><div class="cpld-td">${dkLbl(x.dk)}</div><div class="cpld-td">${fmt(x.cnt)}</div><div class="cpld-td">${fmtR(x.custo)}</div><div class="cpld-td">${fmtR(x.cpl)}</div><div class="cpld-td" style="color:${qc}">${fmt(qcnt)}</div><div class="cpld-td" style="color:${qc}">${x.qual.toFixed(1)}%</div></div>`;}).join('')}
+      <div class="cpld-thead"><div>Data</div><div>Investido</div><div>Leads</div><div>Taxa</div><div>CPL</div><div>Var. CPL</div></div>
+      ${d.daily.map((x,j)=>{
+        const qc=x.qual>=90?'var(--pos)':'var(--neg)';
+        const prevDay=d.daily[j+1];
+        const varCPL=prevDay&&prevDay.cpl>0?(x.cpl-prevDay.cpl)/prevDay.cpl*100:null;
+        const vcColor=varCPL===null?'var(--tx3)':varCPL<=0?'var(--pos)':'var(--neg)';
+        const vcSym=varCPL===null?'—':varCPL<=0?'▼':'▲';
+        return`<div class="cpld-tr">
+          <div class="cpld-td">${dkLbl(x.dk)}</div>
+          <div class="cpld-td">${fmtR(x.custo)}</div>
+          <div class="cpld-td">${fmt(x.cnt)}</div>
+          <div class="cpld-td" style="color:${qc}">${x.qual.toFixed(1)}%</div>
+          <div class="cpld-td">${fmtR(x.cpl)}</div>
+          <div class="cpld-td" style="color:${vcColor}">${varCPL!==null?vcSym+Math.abs(varCPL).toFixed(1)+'%':'—'}</div>
+        </div>`;}).join('')}
     </div></div>
   </div>`;
 }
