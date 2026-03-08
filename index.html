@@ -43,7 +43,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh
 @media(max-width:480px){.ni{padding:0 10px;}.logo{font-size:11px;margin-right:6px;}.tbtn{padding:5px 8px;gap:2px;}.tbtn-txt{display:none;}.th-txt{display:none;}.tsbtn{padding:5px 7px;}}
 
 /* LAYOUT */
-main{max-width:980px;margin:0 auto;padding:calc(var(--nh) + 28px) 0 max(80px,env(safe-area-inset-bottom,0px)+60px);width:100%;}
+main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px,env(safe-area-inset-bottom,0px)+60px);width:100%;box-sizing:border-box;}
 .panel{display:none;}.panel.on{display:block;animation:fu .2s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 #loader{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:80px 0;text-align:center;}
@@ -51,7 +51,7 @@ main{max-width:980px;margin:0 auto;padding:calc(var(--nh) + 28px) 0 max(80px,env
 @keyframes sp{to{transform:rotate(360deg)}}
 #loader p{font-size:12px;color:var(--tx3);}
 #err{display:none;text-align:center;padding:50px 20px;font-size:13px;line-height:1.9;}
-.gf{margin-bottom:14px;}
+.gf{margin-bottom:16px;}
 .card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:20px 24px;box-shadow:var(--sh2);}
 .slbl{font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin-bottom:14px;}
 .empty{font-size:12px;color:var(--tx3);padding:6px 0;}
@@ -70,33 +70,33 @@ main{max-width:980px;margin:0 auto;padding:calc(var(--nh) + 28px) 0 max(80px,env
 .pb-fill{height:100%;border-radius:999px;transition:width .8s ease;}
 
 /* TOP-SECTION wrapper — destaque com gradiente e separador */
-.top-section{position:relative;padding:8px 0 16px;margin-bottom:0;}
+.top-section{position:relative;padding:10px 0 20px;margin-bottom:0;}
 .top-section::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--bd);}
-.rest-section{padding-top:16px;}
-.mid-sep{height:1px;margin:12px 0 14px;background:var(--bd);opacity:.4;}
+.rest-section{padding-top:20px;}
+.mid-sep{height:1px;margin:16px 0 16px;background:var(--bd);opacity:.35;}
 [data-theme=dark] .top-section{background:linear-gradient(180deg,rgba(124,92,252,.055) 0%,transparent 100%);}
 [data-theme=light] .top-section{background:linear-gradient(180deg,rgba(94,56,236,.035) 0%,transparent 100%);}
 [data-theme=beige] .top-section{background:linear-gradient(180deg,rgba(122,85,48,.03) 0%,transparent 100%);}
 
 /* HERO — 4 cards principais */
-.hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
-.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;}
+.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:26px 28px;box-shadow:var(--sh);position:relative;overflow:hidden;}
 .kh::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc) 0%,transparent 65%);opacity:.5;}
 [data-theme=light] .kh{border-color:var(--bda);background:var(--sf);}
 [data-theme=beige] .kh{border-color:var(--bda);background:var(--sf);}
 .kh-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.13em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
 .kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
-.kh-val.big{font-size:32px;}
-.kh-val.md{font-size:24px;}
+.kh-val.big{font-size:40px;}
+.kh-val.md{font-size:28px;}
 .kh-sub{display:none;}
 
 /* DAILY — 5 cards */
 .daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2fr;gap:10px;margin-bottom:0;}
-.kd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;box-shadow:var(--sh2);}
+.kd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh2);}
 .kd-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
 .kd-date{font-weight:400;text-transform:none;letter-spacing:0;font-size:9px;color:var(--tx3);}
 .kd-body{display:flex;align-items:flex-end;justify-content:space-between;gap:5px;}
-.kd-num{font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
+.kd-num{font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
 .kd-vb{flex-shrink:0;padding-bottom:1px;}
 .kd-wide{display:flex;flex-direction:column;min-height:160px;}
 /* Top Curso: nome grande, células limpas */
@@ -320,7 +320,7 @@ main{max-width:980px;margin:0 auto;padding:calc(var(--nh) + 28px) 0 max(80px,env
 /* MISC */
 .lockp{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:10px;text-align:center;}
 .lockico{font-size:26px;opacity:.25;}.lockt{font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx3);}
-#btt{position:fixed;bottom:16px;right:14px;z-index:400;width:32px;height:32px;border-radius:50%;background:var(--acc);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transform:translateY(8px);transition:all var(--tr);}
+#btt{position:fixed;bottom:24px;right:24px;z-index:400;height:42px;padding:0 20px;border-radius:999px;background:var(--acc);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:var(--fn);font-size:12px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;box-shadow:0 4px 20px rgba(124,92,252,.45);opacity:0;pointer-events:none;transform:translateY(10px);transition:all var(--tr);}
 #btt.on{opacity:1;pointer-events:all;transform:translateY(0);}
 #toast{position:fixed;bottom:54px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--cd);border:1px solid var(--bd);color:var(--tx2);padding:6px 14px;border-radius:999px;font-size:11px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--sh);}
 @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
@@ -329,6 +329,29 @@ main{max-width:980px;margin:0 auto;padding:calc(var(--nh) + 28px) 0 max(80px,env
 .kh.kh-green{border-color:var(--bd);}
 [data-theme=light] .kh.kh-green{border-color:var(--bda);}
 [data-theme=beige] .kh.kh-green{border-color:var(--bda);}
+
+
+/* RESUMO POPUP */
+#resumo-popup{position:fixed;inset:0;z-index:800;display:flex;align-items:flex-end;justify-content:center;padding:0 16px 80px;pointer-events:none;}
+#resumo-popup.open{pointer-events:all;}
+#resumo-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;transition:opacity .25s ease;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
+#resumo-popup.open #resumo-backdrop{opacity:1;}
+#resumo-sheet{background:var(--cd);border:1px solid var(--bd);border-radius:20px 20px 16px 16px;width:100%;max-width:520px;box-shadow:0 -4px 40px rgba(0,0,0,.35);transform:translateY(24px);opacity:0;transition:transform .28s cubic-bezier(.2,.8,.4,1),opacity .25s ease;}
+#resumo-popup.open #resumo-sheet{transform:translateY(0);opacity:1;}
+.rp-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;}
+.rp-title{font-family:var(--fn);font-size:14px;font-weight:800;letter-spacing:-.02em;color:var(--tx);}
+.rp-close{width:28px;height:28px;border-radius:50%;border:none;background:var(--grd);color:var(--tx2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background var(--tr);}
+.rp-close:hover{background:var(--cdh);}
+.rp-body{padding:0 22px 22px;display:flex;flex-direction:column;gap:10px;}
+.rp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.rp-kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:12px 14px;}
+.rp-kpi.hi{background:var(--accg);border-color:var(--bda);}
+.rp-kl{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;}
+.rp-kpi.hi .rp-kl{color:var(--tagt);}
+.rp-kv{font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;margin-bottom:3px;}
+.rp-ks{font-size:10px;font-weight:600;color:var(--tx2);}
+.rp-divider{height:1px;background:var(--bd);margin:2px 0;}
+.rp-best-row{display:flex;flex-direction:column;gap:5px;}
 
 /* RESPONSIVE */
 @media(max-width:1100px){.daily-row{grid-template-columns:repeat(2,1fr) 2fr;}.daily-row .kd-wide{grid-column:3;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
@@ -353,8 +376,8 @@ main{max-width:980px;margin:0 auto;padding:calc(var(--nh) + 28px) 0 max(80px,env
 @media(max-width:540px){
   main{padding:calc(var(--nh) + 16px) 16px max(70px,env(safe-area-inset-bottom,0px)+50px);}
   .hero-row,.daily-row{grid-template-columns:1fr 1fr;gap:8px;}
-  .kh{padding:12px 13px;}.kh-val.big{font-size:22px;}.kh-val.md{font-size:18px;}
-  .kd{padding:10px 11px;}.kd-num{font-size:18px;}
+  .kh{padding:16px 18px;}.kh-val.big{font-size:26px;}.kh-val.md{font-size:20px;}
+  .kd{padding:12px 14px;}.kd-num{font-size:18px;}
   .card{padding:12px;}
   .esc-kv{font-size:18px;}.esc-blocks{grid-template-columns:repeat(2,1fr);}
   .tbl-hint{display:block;}
@@ -449,22 +472,25 @@ main{max-width:980px;margin:0 auto;padding:calc(var(--nh) + 28px) 0 max(80px,env
     </div>
     <div class="gf" id="section-meta"></div>
     <div class="gf card">
-      <div class="taxa-hdr">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px">
         <div>
           <div class="slbl" style="margin-bottom:2px">Taxa de Qualificação por Curso</div>
           <div style="font-size:9px;color:var(--tx2)">Do mais qualificado ao menos · clique para ver o diarizado</div>
         </div>
-        <div class="dd-wrap" id="taxa-dd">
-          <button class="dd-btn" onclick="toggleDD('taxa-dd')"><span id="taxa-dd-lbl">Total acumulado</span><span class="cr">▾</span></button>
+        <div class="dd-wrap" id="taxa-dd" style="flex-shrink:0">
+          <button class="dd-btn" onclick="toggleDD('taxa-dd')"><span id="taxa-dd-lbl">Total</span><span class="cr">▾</span></button>
           <div class="dd-menu" id="taxa-dd-menu"></div>
         </div>
       </div>
       <div id="taxa-grid"></div>
     </div>
     <div class="gf card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px">
         <div class="slbl" style="margin-bottom:0">Distribuição por Escolaridade</div>
-        <select class="escsel" id="escsel" onchange="renderEsc()"></select>
+        <div class="dd-wrap" id="esc-dd" style="flex-shrink:0">
+          <button class="dd-btn" onclick="toggleDD('esc-dd')"><span id="esc-dd-lbl">Todos</span><span class="cr">▾</span></button>
+          <div class="dd-menu" id="esc-dd-menu"></div>
+        </div>
       </div>
       <div class="esc-top">
         <div class="esc-k"><div class="esc-kl">Leads no filtro</div><div class="esc-kv" id="esc-leads-val">—</div></div>
@@ -483,7 +509,28 @@ main{max-width:980px;margin:0 auto;padding:calc(var(--nh) + 28px) 0 max(80px,env
   <div class="panel" id="panel-crm"><div class="lockp"><div class="lockico">🔒</div><div class="lockt">CRM em breve</div></div></div>
   <div class="panel" id="panel-design"><div class="lockp"><div class="lockico">🔒</div><div class="lockt">Design em breve</div></div></div>
 </main>
-<button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div id="resumo-popup">
+  <div id="resumo-backdrop" onclick="closeResumo()"></div>
+  <div id="resumo-sheet">
+    <div class="rp-hdr">
+      <div class="rp-title">Resumo</div>
+      <button class="rp-close" onclick="closeResumo()">✕</button>
+    </div>
+    <div class="rp-body" id="rp-body">
+      <div class="rp-row">
+        <div class="rp-kpi hi"><div class="rp-kl">Total Leads</div><div class="rp-kv" id="rp-leads">—</div><div class="rp-ks">captados</div></div>
+        <div class="rp-kpi"><div class="rp-kl">Qualificados</div><div class="rp-kv" id="rp-qual">—</div><div class="rp-ks" id="rp-qual-s">—</div></div>
+      </div>
+      <div class="rp-row">
+        <div class="rp-kpi"><div class="rp-kl">Qualificação</div><div class="rp-kv" id="rp-taxa">—</div><div class="rp-ks">taxa geral</div></div>
+        <div class="rp-kpi"><div class="rp-kl">CPL Geral</div><div class="rp-kv" id="rp-cpl">—</div><div class="rp-ks" id="rp-cpl-s">—</div></div>
+      </div>
+      <div class="rp-divider"></div>
+      <div class="rp-best-row" id="rp-best"></div>
+    </div>
+  </div>
+</div>
+<button id="btt" onclick="openResumo()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>Resumo</button>
 <div id="toast"></div>
 <script>
 const PUB='https://docs.google.com/spreadsheets/d/e/2PACX-1vT6iHhSHZBcAWYSw8wlRwyX7r6_jUnaULqG4uyt9dDG578kCD_N-j0NanrwJZvoDOyFidHmc_vaMAVj/pub?output=csv';
@@ -761,7 +808,7 @@ function renderAll(){
     kdv('Leads Hoje',hDB?fmt(hC):'—',leadsVb)+
     kdv('Captados D-1',hDB?fmt(d1C):'—',d1Vb)+
     kdv('CPL Hoje',fmtR(cplHoje),cplVb)+
-    kdv('CPL D-1',fmtR(cplD1),'')+
+    kdv('Qualif. Hoje',hDB?fmt(Math.round(hC*(aT/100)))+'<span style="font-size:10px;font-weight:600;color:var(--tx2)"> leads</span>':'—',badge(aT.toFixed(1)+'%',aT>=90?'pos':'warn'))+
     `<div class="kd kd-wide" style="padding:12px 13px">
       <div style="font-family:var(--fn);font-size:12px;font-weight:800;letter-spacing:-.02em;color:var(--tx);margin-bottom:10px">Resumo</div>
       ${resumoHTML}
@@ -771,11 +818,38 @@ function renderAll(){
   buildMeta(tL,hk,hDB);
   buildTaxa();
   buildCPL();
-  const sel=document.getElementById('escsel');
-  sel.innerHTML='<option value="__all__">Todos os cursos</option>';
-  SD.forEach(r=>{const o=document.createElement('option');o.value=r[_cC];o.textContent=cl(r[_cC]);sel.appendChild(o);});
+  /* populate esc dd-wrap */
+  const escMenu=document.getElementById('esc-dd-menu');
+  let _escSel='__all__';
+  if(escMenu){
+    const mk=(val,lbl,sel)=>{const d=document.createElement('div');d.className='dd-item'+(sel?' sel':'');d.textContent=lbl;d.onclick=()=>{_escSel=val;document.getElementById('esc-dd-lbl').textContent=lbl==='Todos'?'Todos':cl(lbl);document.querySelectorAll('#esc-dd-menu .dd-item').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');closeDD('esc-dd');renderEsc();};return d;};
+    escMenu.innerHTML='';
+    escMenu.appendChild(mk('__all__','Todos',true));
+    SD.forEach(r=>{escMenu.appendChild(mk(r[_cC],cl(r[_cC]),false));});
+  }
+  window._escSelFn=()=>_escSel;
   renderEsc();buildTable();
   document.getElementById('panel-perf').classList.add('on');
+  /* update resumo popup values */
+  const _rl=document.getElementById('rp-leads');if(_rl)_rl.textContent=fmt(tL);
+  const _rq=document.getElementById('rp-qual');if(_rq)_rq.textContent=fmt(tQ);
+  const _rqs=document.getElementById('rp-qual-s');if(_rqs)_rqs.textContent=(tL>0?(tQ/tL*100).toFixed(1)+'%':'—')+' do total';
+  const _rt=document.getElementById('rp-taxa');if(_rt)_rt.textContent=aT.toFixed(1)+'%';
+  const _rc=document.getElementById('rp-cpl');if(_rc)_rc.textContent=fmtR(60);
+  const _rcs=document.getElementById('rp-cpl-s');if(_rcs)_rcs.textContent=cplVar<=0?'▼ Saudável':'▲ Elevado';
+  /* best per category */
+  const _rb=document.getElementById('rp-best');
+  if(_rb&&_ss.length){
+    const mH2=DBdates.length>0?DBmap.get(dkOf(new Date())):null;
+    const today2=mH2?Array.from(mH2.entries()).sort((a,b)=>b[1]-a[1]):[];
+    const topNm2=today2[0]?.[0]||(cl(_ss[0]?.[_cC])||'—');
+    const topCnt2=today2[0]?.[1]||(0);
+    const bQ2=_cQ?[..._ss].sort((a,b)=>n(b[_cQ])-n(a[_cQ]))[0]:null;
+    const bQNm2=bQ2?cl(bQ2[_cC]):'—',bQV2=bQ2?n(bQ2[_cQ]):0;
+    const bCpl2=_ss.map((r,i)=>({nm:cl(r[_cC]),g:getCPL(cl(r[_cC])).g})).sort((a,b)=>a.g-b.g)[0];
+    const row=(lbl,val,nm,col)=>`<div style="display:grid;grid-template-columns:1fr auto;align-items:center;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden"><div style="padding:8px 12px;border-left:3px solid ${col}"><div style="font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">${lbl}</div><div style="font-family:var(--fn);font-size:16px;font-weight:800;letter-spacing:-.04em;color:${col};line-height:1">${val}</div></div><div style="padding:8px 12px;text-align:right;max-width:140px;border-left:1px solid var(--bd)"><div style="font-size:10px;font-weight:700;color:var(--tx);line-height:1.3;word-break:break-word">${nm}</div></div></div>`;
+    _rb.innerHTML=row('Top Leads Hoje',fmt(topCnt2),topNm2,COLORS[0])+row('Menor CPL',fmtR(bCpl2?.g||0),bCpl2?.nm||'—',COLORS[1])+row('Maior Qualif.',bQV2.toFixed(1)+'%',bQNm2,COLORS[2]);
+  }
 }
 function khv(lbl,val,extra,sz,cls){return`<div class="kh${cls?' '+cls:''}"><div class="kh-lbl">${lbl}</div>${extra?`<div style="position:absolute;top:9px;right:11px;display:flex;align-items:center">${extra}</div>`:''}<div class="kh-val ${sz}">${val}</div></div>`;}
 function kdv(lbl,val,vb){return`<div class="kd"><div class="kd-lbl">${lbl}</div><div class="kd-body"><div class="kd-num">${val}</div>${vb?`<div class="kd-vb">${vb}</div>`:''}</div></div>`;}
@@ -787,9 +861,9 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   hC=hC??cntDate(hk);d1C=d1C??cntDate(d1k);
   const isTotal=selDate==='__total__';
 
-  document.getElementById('date-dd-lbl').textContent=isTotal?'Total acumulado':(selDate?dkLbl(selDate):'Hoje');
+  document.getElementById('date-dd-lbl').textContent=isTotal?'Total':(selDate?dkLbl(selDate):'Hoje');
   document.getElementById('date-dd-menu').innerHTML=
-    `<div class="dd-item${isTotal?' sel':''}" onclick="selectDate('__total__')">Total acumulado<span class="dd-count">—</span></div><div class="dd-sep"></div>`+
+    `<div class="dd-item${isTotal?' sel':''}" onclick="selectDate('__total__')">Total<span class="dd-count">—</span></div><div class="dd-sep"></div>`+
     DBdates.slice(0,20).map(dk=>`<div class="dd-item${dk===selDate?' sel':''}" onclick="selectDate('${dk}')">${dkLbl(dk)}<span class="dd-count">${fmt(cntDate(dk))}</span></div>`).join('');
 
   if(!hDB&&!isTotal){
@@ -1021,9 +1095,9 @@ function toggleMetaCurso(nm){if(_metaCOpen.has(nm))_metaCOpen.delete(nm);else _m
 function buildTaxa(){
   if(!_cQ)return;
   const txSel=_txSel||'__total__';
-  document.getElementById('taxa-dd-lbl').textContent=txSel==='__total__'?'Total acumulado':(txSel?dkLbl(txSel):'Total');
+  document.getElementById('taxa-dd-lbl').textContent=txSel==='__total__'?'Total':(txSel?dkLbl(txSel):'Total');
   document.getElementById('taxa-dd-menu').innerHTML=
-    `<div class="dd-item${txSel==='__total__'?' sel':''}" onclick="setTaxaSel('__total__')">Total acumulado</div><div class="dd-sep"></div>`+
+    `<div class="dd-item${txSel==='__total__'?' sel':''}" onclick="setTaxaSel('__total__')">Total</div><div class="dd-sep"></div>`+
     DBdates.slice(0,20).map(dk=>`<div class="dd-item${dk===txSel?' sel':''}" onclick="setTaxaSel('${dk}')">${dkLbl(dk)}<span class="dd-count">${fmt(cntDate(dk))}</span></div>`).join('');
   const isTotal=txSel==='__total__';
   const _skip=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
@@ -1132,7 +1206,7 @@ function toggleCPL(nm){if(_cplOpen.has(nm))_cplOpen.delete(nm);else _cplOpen.add
 
 /* ESC */
 function renderEsc(){
-  const chosen=document.getElementById('escsel').value;
+  const chosen={value:window._escSelFn?window._escSelFn():'__all__'}; const _dummy=document.getElementById('escsel-dummy').value;
   const escA=ESC_COLS.map(e=>SH.find(h=>h.trim()===e)||SH.find(h=>h.trim().toLowerCase()===e.toLowerCase())||null);
   const sub=chosen==='__all__'?SD:SD.filter(r=>r[_cC]===chosen);
   const tL=sub.reduce((s,r)=>s+n(r[_cT]),0)||1;
@@ -1201,7 +1275,13 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 const TH={dark:{i:'🌑',t:'Dark'},light:{i:'☀️',t:'Light'},beige:{i:'🍂',t:'Bege'}};
 function setTheme(th){document.body.setAttribute('data-theme',th);document.getElementById('th-ico').textContent=TH[th].i;document.getElementById('th-txt').textContent=TH[th].t;document.querySelectorAll('.topt').forEach(o=>o.classList.remove('act'));document.getElementById('to-'+th).classList.add('act');document.getElementById('tsw').classList.remove('open');localStorage.setItem('fsl-t',th);}
 function toggleTheme(){document.getElementById('tsw').classList.toggle('open');}
-window.addEventListener('scroll',()=>document.getElementById('btt').classList.toggle('on',window.scrollY>260),{passive:true});
+window.addEventListener('scroll',()=>{
+  const btt=document.getElementById('btt');
+  if(window.scrollY>200){btt.classList.add('on');}else{btt.classList.remove('on');closeResumo();}
+},{passive:true});
+function openResumo(){document.getElementById('resumo-popup').classList.add('open');document.body.style.overflow='hidden';}
+function closeResumo(){document.getElementById('resumo-popup').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeResumo();});
 const _st=localStorage.getItem('fsl-t');if(_st)setTheme(_st);
 load();
 </script>
