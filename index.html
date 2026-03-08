@@ -17,7 +17,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh
 
 /* NAV */
 #topbar{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nh);background:var(--nav);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);}
-.ni{height:100%;max-width:1400px;margin:0 auto;padding:0 32px;display:flex;align-items:center;}
+.ni{height:100%;max-width:1200px;margin:0 auto;padding:0 16px;display:flex;align-items:center;}
 .logo{font-family:var(--fn);font-size:14px;font-weight:800;letter-spacing:-.03em;color:var(--tx);white-space:nowrap;flex-shrink:0;margin-right:18px;}
 .logo em{color:var(--acc);font-style:normal;}
 .tnav{display:flex;align-items:center;gap:2px;flex:1;justify-content:center;}
@@ -43,7 +43,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh
 @media(max-width:480px){.ni{padding:0 10px;}.logo{font-size:11px;margin-right:6px;}.tbtn{padding:5px 8px;gap:2px;}.tbtn-txt{display:none;}.th-txt{display:none;}.tsbtn{padding:5px 7px;}}
 
 /* LAYOUT */
-main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px,env(safe-area-inset-bottom,0px)+60px);width:100%;box-sizing:border-box;overflow-x:hidden;}
+main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 20px) 16px max(70px,env(safe-area-inset-bottom,0px)+50px);width:100%;box-sizing:border-box;overflow-x:hidden;}
 .panel{display:none;}.panel.on{display:block;animation:fu .2s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 #loader{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:80px 0;text-align:center;}
@@ -169,10 +169,10 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 .meta-pbox-s{font-size:10px;font-weight:600;color:var(--tx3);}
 /* collapsible diarizado */
 .meta-diario-sec{margin-bottom:10px;}
-.meta-diario-btn{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:background var(--tr);user-select:none;}
+.meta-diario-btn{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:background var(--tr);user-select:none;}
 .meta-diario-btn:hover{background:var(--cdh);}
 .meta-diario-btn-open{border-radius:var(--rs) var(--rs) 0 0;border-bottom-color:transparent;}
-.meta-diario-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;}
+.meta-diario-lbl{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:8px;}
 .meta-diario-chev{font-size:13px;color:var(--tx2);transition:transform var(--tr);}
 .meta-diario-chev.open{transform:rotate(90deg);}
 .meta-diario-body{max-height:0;overflow:hidden;transition:max-height .35s ease;}
@@ -408,7 +408,7 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
   .meta-cnm-short{display:block;}
 }
 @media(max-width:540px){
-  main{padding:calc(var(--nh) + 16px) 12px max(70px,env(safe-area-inset-bottom,0px)+50px);}
+  main{padding:calc(var(--nh) + 12px) 10px max(70px,env(safe-area-inset-bottom,0px)+50px);}
   .hero-row,.daily-row{grid-template-columns:1fr 1fr;gap:8px;}
   .kh{padding:16px 18px;}.kh-val.big{font-size:26px;}.kh-val.md{font-size:26px;}
   .kd{padding:12px 14px;}.kd-num{font-size:18px;}
@@ -465,15 +465,19 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
   <div id="loader"><div class="spin"></div><p>Carregando dados…</p></div>
   <div id="err"></div>
   <div class="panel" id="panel-perf">
-    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;">
-      <div>
-        <div style="font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Faculdade Sírio-Libanês</div>
-        <div style="font-family:var(--fn);font-size:18px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1.1">Performance de Lançamentos</div>
-        <div style="font-size:11px;color:var(--tx2);margin-top:5px" id="hero-date">—</div>
-      </div>
-      <div style="display:inline-flex;align-items:center;gap:6px;font-size:10px;color:var(--tx2);background:var(--sf);border:1px solid var(--bd);border-radius:999px;padding:5px 12px;white-space:nowrap;margin-top:2px">
-        <div style="width:6px;height:6px;border-radius:50%;background:var(--pos);animation:pu 2s infinite;flex-shrink:0"></div>
-        Atualizado às <span id="tslabel" style="font-weight:700;color:var(--tx);margin-left:2px">—</span>
+    <div style="margin-bottom:22px;">
+      <div id="welcome-msg" style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1.15;margin-bottom:10px">—</div>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2);">
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--acc);flex-shrink:0;opacity:.8"></div>
+          <span id="lancamento-lbl" style="font-weight:600">Lançamentos —</span>
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2);">
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--pos);animation:pu 2s infinite;flex-shrink:0"></div>
+          <span>Atualizado</span>
+          <span id="tslabel" style="font-weight:700;color:var(--tx)">—</span>
+          <span id="hero-date" style="color:var(--tx3)">—</span>
+        </div>
       </div>
     </div>
     <div class="top-section">
@@ -1106,10 +1110,10 @@ function buildMeta(tL,hk,hDB){
     <div class="slbl" style="margin-bottom:14px">Meta de Leads</div>
     <div style="display:grid;grid-template-columns:auto 1fr;align-items:center;gap:20px;margin-bottom:14px">
       <div style="position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center">
-        ${ring(pctGeral,progColor,110,10)}
+        ${ring(pctGeral,progColor,130,11)}
         <div style="position:absolute;text-align:center;pointer-events:none">
-          <div style="font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.05em;color:${progColor};line-height:1">${pctGeral.toFixed(0)}<span style="font-size:11px">%</span></div>
-          <div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-top:2px">meta</div>
+          <div style="font-family:var(--fn);font-size:26px;font-weight:800;letter-spacing:-.05em;color:${progColor};line-height:1">${pctGeral.toFixed(0)}<span style="font-size:12px">%</span></div>
+          <div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-top:3px">meta</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
@@ -1141,7 +1145,7 @@ function buildMeta(tL,hk,hDB){
     <!-- DIARIZADO TOTAL (colapsável) -->
     <div class="meta-diario-sec">
       <div class="meta-diario-btn${diarOpen?' meta-diario-btn-open':''}" onclick="toggleMetaDiar()">
-        <span class="meta-diario-lbl">Diarizado Total</span>
+        <span class="meta-diario-lbl">Diarizado Total<span style="font-size:9px;font-weight:600;color:var(--tx3);text-transform:none;letter-spacing:0;opacity:.8">· clique para expandir</span></span>
         <span class="meta-diario-chev${diarOpen?' open':''}">›</span>
       </div>
       <div class="meta-diario-body${diarOpen?' open':''}">
@@ -1213,7 +1217,6 @@ function buildMeta(tL,hk,hDB){
             </div>
             <div class="meta-cvals">
               <div class="meta-cv" style="color:${cColor}">${fmt(cAtual)}<span class="meta-cs"> / ${cMeta>0?fmt(cMeta):'—'}</span></div>
-              <div class="meta-cs" style="margin-top:1px">leads</div>
             </div>
             <div class="meta-cbadge">${badge(pctLabel,pctBadgeCls)}</div>
             <div class="meta-cchev${isOpen?' open':''}">›</div>
@@ -1572,6 +1575,45 @@ function exportPDF(){
     },400);
   };
 }
+
+
+/* BOAS-VINDAS */
+(function(){
+  const hr=new Date().getHours();
+  const greeting=hr<12?'Bom dia':hr<18?'Boa tarde':'Boa noite';
+  let nome=localStorage.getItem('fsl-nome');
+  const el=document.getElementById('welcome-msg');
+  const llbl=document.getElementById('lancamento-lbl');
+  const now=new Date();
+  const mes=now.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  if(llbl)llbl.textContent='Lançamentos '+mes.charAt(0).toUpperCase()+mes.slice(1);
+  if(!nome){
+    // Pede nome uma única vez
+    const input=document.createElement('div');
+    input.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);';
+    input.innerHTML=`<div style="background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:32px 36px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.5);">
+      <div style="font-family:var(--fn);font-size:20px;font-weight:800;color:var(--tx);margin-bottom:6px;letter-spacing:-.03em">Olá! 👋</div>
+      <div style="font-size:13px;color:var(--tx2);margin-bottom:20px;line-height:1.5">Como posso te chamar?</div>
+      <input id="nome-input" type="text" placeholder="Seu nome" style="width:100%;padding:11px 14px;border-radius:var(--rs);border:1px solid var(--bda);background:var(--sf);color:var(--tx);font-family:var(--f);font-size:14px;outline:none;margin-bottom:14px;">
+      <button id="nome-btn" style="width:100%;height:42px;border-radius:999px;background:var(--acc);color:#fff;border:none;cursor:pointer;font-family:var(--fn);font-size:13px;font-weight:700;letter-spacing:-.01em;">Continuar</button>
+    </div>`;
+    document.body.appendChild(input);
+    const inp=document.getElementById('nome-input');
+    const btn=document.getElementById('nome-btn');
+    inp.focus();
+    const save=()=>{
+      const v=inp.value.trim();
+      if(!v)return;
+      localStorage.setItem('fsl-nome',v);
+      input.remove();
+      if(el)el.textContent=greeting+', '+v+' 👋';
+    };
+    btn.onclick=save;
+    inp.onkeydown=e=>{if(e.key==='Enter')save();};
+  } else {
+    if(el)el.textContent=greeting+', '+nome+' 👋';
+  }
+})();
 
 const _st=localStorage.getItem('fsl-t');if(_st)setTheme(_st);
 load();
