@@ -336,12 +336,12 @@ main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 20px) 16px max(70px
 
 
 /* RESUMO POPUP */
-#resumo-popup{position:fixed;inset:0;z-index:800;display:flex;align-items:flex-end;justify-content:center;padding:0 16px 16px;pointer-events:none;}
+#resumo-popup{position:fixed;inset:0;z-index:800;display:flex;align-items:center;justify-content:center;padding:24px 16px;pointer-events:none;}
 #resumo-popup.open{pointer-events:all;}
 #resumo-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;transition:opacity .25s ease;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
 #resumo-popup.open #resumo-backdrop{opacity:1;}
-#resumo-sheet{background:var(--cd);border:1px solid var(--bd);border-radius:20px 20px 16px 16px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 -4px 40px rgba(0,0,0,.35);transform:translateY(24px);opacity:0;transition:transform .28s cubic-bezier(.2,.8,.4,1),opacity .25s ease;}
-#resumo-popup.open #resumo-sheet{transform:translateY(0);opacity:1;}
+#resumo-sheet{background:var(--cd);border:1px solid var(--bd);border-radius:16px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;box-shadow:0 8px 48px rgba(0,0,0,.45);transform:scale(.96) translateY(8px);opacity:0;transition:transform .25s cubic-bezier(.2,.8,.4,1),opacity .22s ease;}
+#resumo-popup.open #resumo-sheet{transform:scale(1) translateY(0);opacity:1;}
 .rp-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;}
 .rp-title{font-family:var(--fn);font-size:14px;font-weight:800;letter-spacing:-.02em;color:var(--tx);}
 .rp-close{width:28px;height:28px;border-radius:50%;border:none;background:var(--grd);color:var(--tx2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background var(--tr);}
@@ -461,14 +461,11 @@ main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 20px) 16px max(70px
   </div>
 </header>
 <main>
-  <!-- BOAS-VINDAS -->
-  <div id="welcome-bar" style="margin-bottom:24px;">
-    <div id="welcome-msg" style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1.2;margin-bottom:8px;">Bom dia, FSL Digital 👋</div>
-    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-      <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2);">
-        <div style="width:7px;height:7px;border-radius:50%;background:var(--acc);flex-shrink:0;opacity:.8"></div>
-        <span id="lancamento-lbl" style="font-weight:600">Lançamentos —</span>
-      </div>
+
+  <div id="loader"><div class="spin"></div><p>Carregando dados…</p></div>
+  <div id="err"></div>
+  <div class="panel" id="panel-perf">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
       <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2);">
         <div style="width:7px;height:7px;border-radius:50%;background:var(--pos);animation:pu 2s infinite;flex-shrink:0"></div>
         <span>Atualizado</span>
@@ -476,10 +473,6 @@ main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 20px) 16px max(70px
         <span id="hero-date" style="color:var(--tx3)">—</span>
       </div>
     </div>
-  </div>
-  <div id="loader"><div class="spin"></div><p>Carregando dados…</p></div>
-  <div id="err"></div>
-  <div class="panel" id="panel-perf">
     <div class="top-section">
     <div class="hero-row" id="kpi-row"></div>
     </div>
@@ -1572,46 +1565,7 @@ function exportPDF(){
 }
 
 
-/* BOAS-VINDAS */
-/* BOAS-VINDAS */
-function _greeting(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';}
-function _setWelcome(nome){
-  const el=document.getElementById('welcome-msg');
-  if(el)el.textContent=_greeting()+', '+(nome||'FSL Digital')+' 👋';
-  const ll=document.getElementById('lancamento-lbl');
-  if(ll){const m=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});ll.textContent='Lançamentos '+m.charAt(0).toUpperCase()+m.slice(1);}
-}
-function _getName(){try{return localStorage.getItem('fsl-nome');}catch(e){}try{return sessionStorage.getItem('fsl-nome');}catch(e){}return null;}
-function _saveName(v){try{localStorage.setItem('fsl-nome',v);}catch(e){}try{sessionStorage.setItem('fsl-nome',v);}catch(e){}}
-function initWelcome(){
-  const nome=_getName();
-  _setWelcome(nome);
-  if(nome||document.getElementById('nome-overlay'))return;
-  const ov=document.createElement('div');
-  ov.id='nome-overlay';
-  ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);';
-  ov.innerHTML=`<div style="background:var(--cd);border:1px solid var(--bd);border-radius:16px;padding:36px 40px;max-width:360px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,.6);">
-    <div style="font-family:var(--fn);font-size:22px;font-weight:800;color:var(--tx);margin-bottom:6px;letter-spacing:-.03em">Olá! 👋</div>
-    <div style="font-size:13px;color:var(--tx2);margin-bottom:22px;line-height:1.6">Como posso te chamar?<br><span style="font-size:11px;opacity:.7">Salvo para as próximas visitas.</span></div>
-    <input id="nome-input" type="text" placeholder="Seu nome" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--bda);background:var(--sf);color:var(--tx);font-family:var(--f);font-size:14px;outline:none;margin-bottom:14px;box-sizing:border-box;">
-    <button id="nome-btn" style="width:100%;height:44px;border-radius:999px;background:var(--acc);color:#fff;border:none;cursor:pointer;font-family:var(--fn);font-size:13px;font-weight:700;">Continuar →</button>
-  </div>`;
-  document.body.appendChild(ov);
-  const inp=document.getElementById('nome-input');
-  setTimeout(()=>{try{inp.focus();}catch(e){}},80);
-  const save=()=>{
-    const v=(inp.value||'').trim();
-    if(!v){inp.style.borderColor='var(--neg)';return;}
-    _saveName(v);
-    ov.remove();
-    _setWelcome(v);
-  };
-  document.getElementById('nome-btn').onclick=save;
-  inp.onkeydown=e=>{if(e.key==='Enter')save();};
-}
 
-const _st=localStorage.getItem('fsl-t');if(_st)setTheme(_st);
-initWelcome();
 load();
 </script>
 </body>
