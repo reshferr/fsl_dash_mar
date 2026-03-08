@@ -372,6 +372,10 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 .rp-curso-metric:first-child{border-left:none;}
 .rp-curso-mv{font-family:var(--fn);font-size:13px;font-weight:800;letter-spacing:-.03em;color:var(--tx);line-height:1;}
 .rp-curso-ml{font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+.rp-curso-header{display:flex;align-items:center;padding:3px 0 6px;border-bottom:1px solid var(--bd);margin-bottom:4px;}
+.rp-curso-header-nm{flex:1;font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;padding-left:16px;}
+.rp-curso-header-cols{display:flex;gap:0;flex-shrink:0;}
+.rp-curso-header-col{width:64px;text-align:center;font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;}
 
 /* RESPONSIVE */
 @media(max-width:1100px){.daily-row{grid-template-columns:repeat(2,1fr) 2fr;}.daily-row .kd-wide{grid-column:3;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
@@ -380,6 +384,7 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 
 /* MOBILE: painel taxa — esconde colunas numéricas, mostra só nome+taxa */
 @media(max-width:600px){
+  main{padding-left:14px;padding-right:14px;}
   .txl-hdr-row{grid-template-columns:1fr 60px 28px;gap:6px;padding:4px 10px 8px;}
   .txl-top{grid-template-columns:1fr 60px 28px;gap:6px;padding:10px 10px;}
   .txl-numcol{display:none;}
@@ -394,8 +399,8 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
   .meta-cnm-short{display:block;}
 }
 @media(max-width:540px){
-  main{padding:calc(var(--nh) + 16px) 16px max(70px,env(safe-area-inset-bottom,0px)+50px);}
-  body{padding-left:4px;padding-right:4px;}
+  main{padding:calc(var(--nh) + 16px) 14px max(70px,env(safe-area-inset-bottom,0px)+50px);}
+  .card,.kh,.kd{margin-left:0;margin-right:0;}
   .hero-row,.daily-row{grid-template-columns:1fr 1fr;gap:8px;}
   .kh{padding:16px 18px;}.kh-val.big{font-size:26px;}.kh-val.md{font-size:20px;}
   .kd{padding:12px 14px;}.kd-num{font-size:18px;}
@@ -811,13 +816,21 @@ function renderAll(){
   _cS=SH.find(h=>h.toLowerCase()==='share'||h.toLowerCase().includes('share'));
   _ss=[...SD].sort((a,b)=>n(b[_cT])-n(a[_cT]));
 
-  const tL=_ss.reduce((s,r)=>s+n(r[_cT]),0);
-  const tQ=_ss.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0);
-  const aT=tL>0?(tQ/tL)*100:0;
   const hDB=DBdates.length>0;
   const hk=dkOf(new Date());
   const d1k=DBdates.find(d=>d!==hk)||prevDK(hk);
   const hC=hDB?cntDate(hk):0,d1C=hDB?cntDate(d1k):0;
+  /* tL: soma total de leads de todos os dias do DB quando disponível, senão usa Summary */
+  const tLsum=_ss.reduce((s,r)=>s+n(r[_cT]),0);
+  const tLdb=hDB?DBdates.reduce((s,dk)=>s+cntDate(dk),0):0;
+  const tL=tLdb||tLsum;
+  /* qualificação ponderada: usa taxa por curso × leads reais do período total */
+  const tQ=_ss.reduce((s,r)=>{
+    const nm=cl(r[_cC]);
+    const leads=hDB?DBdates.reduce((ls,dk)=>ls+cntCurso(dk,nm),0):n(r[_cT]);
+    return s+Math.round(leads*(n(r[_cQ])/100));
+  },0);
+  const aT=tL>0?(tQ/tL)*100:0;
   const dHD=d1C>0?(hC-d1C)/d1C*100:null;
   const cplHoje=58.4,cplD1=61.2,cplVar=cplD1>0?(cplHoje-cplD1)/cplD1*100:0;
 
@@ -853,7 +866,7 @@ function renderAll(){
     kdv('Leads Hoje',hDB?fmt(hC):'—',leadsVb)+
     kdv('Captados D-1',hDB?fmt(d1C):'—',d1Vb)+
     kdv('CPL Hoje',fmtR(cplHoje),cplVb)+
-    kdv('Qualif. Hoje',hDB?fmt(Math.round(hC*(aT/100)))+'<span style="font-size:10px;font-weight:600;color:var(--tx2)"> leads</span>':'—',badge(aT.toFixed(1)+'%',aT>=90?'pos':'warn'))+
+    kdv('Qualif. Hoje',aT.toFixed(1)+'%',hDB?badge(fmt(Math.round(hC*(aT/100)))+' leads','neu'):'') +
     `<div class="kd kd-wide" style="padding:12px 13px">
       <div style="font-family:var(--fn);font-size:12px;font-weight:800;letter-spacing:-.02em;color:var(--tx);margin-bottom:10px">Resumo</div>
       ${resumoHTML}
@@ -916,7 +929,8 @@ function renderAll(){
     }
     const _rcu=document.getElementById('rp-cursos');
     if(_rcu&&_ss.length){
-      _rcu.innerHTML=_ss.map((r,i)=>{
+      /* build list with pct for sorting */
+      const cursosList=_ss.map((r,i)=>{
         const nm=cl(r[_cC]);
         const col=COLORS[i%COLORS.length];
         const leads=hDB?cntCurso(_d1k,nm):n(r[_cT]);
@@ -926,6 +940,17 @@ function renderAll(){
         const pctColor=pct===null?'var(--tx3)':pct>=90?'var(--pos)':pct>=70?'var(--wrn)':'var(--neg)';
         const cplV=getCPL(nm).d1;
         const taxa=n(r[_cQ]);
+        return{nm,col,pct,pctColor,cplV,taxa};
+      }).sort((a,b)=>(b.pct||0)-(a.pct||0));
+      /* header row */
+      const header=`<div class="rp-curso-header">
+        <div class="rp-curso-header-nm">Curso</div>
+        <div class="rp-curso-header-cols">
+          <div class="rp-curso-header-col">CPL</div>
+          <div class="rp-curso-header-col">Qualif.</div>
+        </div>
+      </div>`;
+      const rows=cursosList.map(({nm,col,pct,pctColor,cplV,taxa})=>{
         return`<div class="rp-curso-item">
           <div class="rp-curso-acc" style="background:${col}"></div>
           <div class="rp-curso-main">
@@ -936,17 +961,12 @@ function renderAll(){
             </div>
           </div>
           <div class="rp-curso-metrics">
-            <div class="rp-curso-metric">
-              <div class="rp-curso-mv">R$${cplV.toFixed(3)}</div>
-              <div class="rp-curso-ml">CPL</div>
-            </div>
-            <div class="rp-curso-metric">
-              <div class="rp-curso-mv">${taxa.toFixed(3)}%</div>
-              <div class="rp-curso-ml">Qualif.</div>
-            </div>
+            <div class="rp-curso-metric"><div class="rp-curso-mv">R$${Math.round(cplV)}</div></div>
+            <div class="rp-curso-metric"><div class="rp-curso-mv">${Math.round(taxa)}%</div></div>
           </div>
         </div>`;
       }).join('');
+      _rcu.innerHTML=header+rows;
     }
   })();
 }
