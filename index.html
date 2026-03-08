@@ -462,24 +462,25 @@ main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 20px) 16px max(70px
   </div>
 </header>
 <main>
+  <!-- BOAS-VINDAS: fixo, fora dos painéis -->
+  <div id="welcome-bar" style="margin-bottom:22px;">
+    <div id="welcome-msg" style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1.15;margin-bottom:10px"> </div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2);">
+        <div style="width:7px;height:7px;border-radius:50%;background:var(--acc);flex-shrink:0;opacity:.8"></div>
+        <span id="lancamento-lbl" style="font-weight:600">Lançamentos —</span>
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2);">
+        <div style="width:7px;height:7px;border-radius:50%;background:var(--pos);animation:pu 2s infinite;flex-shrink:0"></div>
+        <span>Atualizado</span>
+        <span id="tslabel" style="font-weight:700;color:var(--tx)">—</span>
+        <span id="hero-date" style="color:var(--tx3)">—</span>
+      </div>
+    </div>
+  </div>
   <div id="loader"><div class="spin"></div><p>Carregando dados…</p></div>
   <div id="err"></div>
   <div class="panel" id="panel-perf">
-    <div style="margin-bottom:22px;">
-      <div id="welcome-msg" style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1.15;margin-bottom:10px">—</div>
-      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-        <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2);">
-          <div style="width:7px;height:7px;border-radius:50%;background:var(--acc);flex-shrink:0;opacity:.8"></div>
-          <span id="lancamento-lbl" style="font-weight:600">Lançamentos —</span>
-        </div>
-        <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2);">
-          <div style="width:7px;height:7px;border-radius:50%;background:var(--pos);animation:pu 2s infinite;flex-shrink:0"></div>
-          <span>Atualizado</span>
-          <span id="tslabel" style="font-weight:700;color:var(--tx)">—</span>
-          <span id="hero-date" style="color:var(--tx3)">—</span>
-        </div>
-      </div>
-    </div>
     <div class="top-section">
     <div class="hero-row" id="kpi-row"></div>
     </div>
@@ -905,7 +906,6 @@ function renderAll(){
   window._escSelFn=()=>_escSel;
   renderEsc();buildTable();
   document.getElementById('panel-perf').classList.add('on');
-  initWelcome();
   /* update resumo D-1 popup */
   (()=>{
     const _hk=dkOf(new Date());
@@ -1579,51 +1579,50 @@ function exportPDF(){
 
 
 /* BOAS-VINDAS */
-/* armazenamento com fallback para ambientes sem localStorage */
-const _store={
-  get(k){try{return localStorage.getItem(k)||sessionStorage.getItem(k);}catch(e){return _store._m[k]||null;}},
-  set(k,v){try{localStorage.setItem(k,v);sessionStorage.setItem(k,v);}catch(e){_store._m[k]=v;}},
-  _m:{}
-};
-let _welcomeDone=false;
-function initWelcome(){
-  /* atualiza saudação e lbl sempre */
-  const hr=new Date().getHours();
-  const greeting=hr<12?'Bom dia':hr<18?'Boa tarde':'Boa noite';
+/* BOAS-VINDAS */
+function _fslGet(k){try{const v=localStorage.getItem(k);if(v)return v;}catch(e){}try{return sessionStorage.getItem(k);}catch(e){}return null;}
+function _fslSet(k,v){try{localStorage.setItem(k,v);}catch(e){}try{sessionStorage.setItem(k,v);}catch(e){}}
+function _greeting(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';}
+function _setWelcomeText(nome){
   const el=document.getElementById('welcome-msg');
-  const llbl=document.getElementById('lancamento-lbl');
-  const now=new Date();
-  const mes=now.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-  if(llbl)llbl.textContent='Lançamentos '+mes.charAt(0).toUpperCase()+mes.slice(1);
-  const nome=_store.get('fsl-nome');
-  if(nome){
-    if(el)el.textContent=greeting+', '+nome+' 👋';
-    return;
-  }
-  /* modal só uma vez por sessão */
-  if(_welcomeDone||document.getElementById('nome-overlay'))return;
-  _welcomeDone=true;
-  const overlay=document.createElement('div');
-  overlay.id='nome-overlay';
-  overlay.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);';
-  overlay.innerHTML=`<div style="background:var(--cd);border:1px solid var(--bd);border-radius:16px;padding:36px 40px;max-width:360px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,.6);">
+  if(!el)return;
+  el.textContent=_greeting()+', '+(nome||'FSL Digital')+' 👋';
+}
+function _setLancamentoLbl(){
+  const el=document.getElementById('lancamento-lbl');
+  if(!el)return;
+  const m=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  el.textContent='Lançamentos '+m.charAt(0).toUpperCase()+m.slice(1);
+}
+let _modalShown=false;
+function initWelcome(){
+  _setLancamentoLbl();
+  const nome=_fslGet('fsl-nome');
+  if(nome){_setWelcomeText(nome);return;}
+  /* fallback imediato enquanto modal não é respondido */
+  _setWelcomeText(null);
+  if(_modalShown||document.getElementById('nome-overlay'))return;
+  _modalShown=true;
+  const ov=document.createElement('div');
+  ov.id='nome-overlay';
+  ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);';
+  ov.innerHTML=`<div style="background:var(--cd);border:1px solid var(--bd);border-radius:16px;padding:36px 40px;max-width:360px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,.6);">
     <div style="font-family:var(--fn);font-size:22px;font-weight:800;color:var(--tx);margin-bottom:6px;letter-spacing:-.03em">Olá! 👋</div>
     <div style="font-size:13px;color:var(--tx2);margin-bottom:22px;line-height:1.6">Como posso te chamar?<br><span style="font-size:11px;opacity:.7">Seu nome será salvo para as próximas visitas.</span></div>
-    <input id="nome-input" type="text" placeholder="Seu nome" autocomplete="given-name" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--bda);background:var(--sf);color:var(--tx);font-family:var(--f);font-size:14px;outline:none;margin-bottom:14px;box-sizing:border-box;transition:border-color .2s;">
-    <button id="nome-btn" style="width:100%;height:44px;border-radius:999px;background:var(--acc);color:#fff;border:none;cursor:pointer;font-family:var(--fn);font-size:13px;font-weight:700;letter-spacing:-.01em;">Continuar →</button>
+    <input id="nome-input" type="text" placeholder="Seu nome" autocomplete="given-name" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--bda);background:var(--sf);color:var(--tx);font-family:var(--f);font-size:14px;outline:none;margin-bottom:14px;box-sizing:border-box;">
+    <button id="nome-btn" style="width:100%;height:44px;border-radius:999px;background:var(--acc);color:#fff;border:none;cursor:pointer;font-family:var(--fn);font-size:13px;font-weight:700;">Continuar →</button>
   </div>`;
-  document.body.appendChild(overlay);
+  document.body.appendChild(ov);
   const inp=document.getElementById('nome-input');
   const btn=document.getElementById('nome-btn');
-  requestAnimationFrame(()=>inp.focus());
+  setTimeout(()=>inp&&inp.focus(),100);
   const save=()=>{
-    const v=inp.value.trim();
+    const v=(inp.value||'').trim();
     if(!v){inp.style.borderColor='var(--neg)';inp.focus();return;}
-    _store.set('fsl-nome',v);
-    overlay.style.opacity='0';
-    overlay.style.transition='opacity .25s';
-    setTimeout(()=>overlay.remove(),260);
-    if(el)el.textContent=greeting+', '+v+' 👋';
+    _fslSet('fsl-nome',v);
+    ov.style.opacity='0';ov.style.transition='opacity .2s';
+    setTimeout(()=>ov.remove(),220);
+    _setWelcomeText(v);
   };
   btn.onclick=save;
   inp.onkeydown=e=>{if(e.key==='Enter')save();};
@@ -1631,6 +1630,7 @@ function initWelcome(){
 }
 
 const _st=localStorage.getItem('fsl-t');if(_st)setTheme(_st);
+initWelcome();
 load();
 </script>
 </body>
