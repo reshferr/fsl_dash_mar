@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>FSL Lançamentos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--f:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;--fn:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;--tr:.18s ease;--r:14px;--rs:10px;--nh:60px;}
+:root{--f:'Inter',system-ui,sans-serif;--fn:'Inter',system-ui,sans-serif;--tr:.18s ease;--r:14px;--rs:10px;--nh:60px;}
 [data-theme=dark]{--bg:#0c0c10;--sf:#16161c;--cd:#19191f;--cdh:#21212a;--nav:rgba(12,12,16,.97);--bd:rgba(255,255,255,.1);--bda:rgba(255,255,255,.18);--tx:#f0f0f8;--tx2:#a8a8c8;--tx3:#6868a0;--acc:#7c5cfc;--accg:rgba(124,92,252,.16);--pos:#34d399;--neg:#f87171;--wrn:#fbbf24;--tagt:#a78bfa;--grd:rgba(255,255,255,.06);--sh:0 6px 28px rgba(0,0,0,.6);--sh2:0 1px 6px rgba(0,0,0,.35);}
 [data-theme=light]{--bg:#f0f0f8;--sf:#ffffff;--cd:#ffffff;--cdh:#f6f6fc;--nav:rgba(240,240,248,.97);--bd:rgba(0,0,0,.07);--bda:rgba(0,0,0,.11);--tx:#0e0e1a;--tx2:#4a4a68;--tx3:#7878a8;--acc:#5e38ec;--accg:rgba(94,56,236,.06);--pos:#1a6e48;--neg:#a82828;--wrn:#7a5000;--tagt:#5e38ec;--grd:rgba(0,0,0,.03);--sh:0 2px 12px rgba(0,0,0,.06);--sh2:0 1px 3px rgba(0,0,0,.04);}
 [data-theme=beige]{--bg:#e8dfd4;--sf:#fdf6ed;--cd:#fdf6ed;--cdh:#f3e9dc;--nav:rgba(232,223,212,.97);--bd:rgba(110,80,40,.13);--bda:rgba(90,60,20,.18);--tx:#1c1208;--tx2:#6b4e2e;--tx3:#907050;--acc:#7a5530;--accg:rgba(122,85,48,.08);--pos:#2a5030;--neg:#782020;--wrn:#7a5000;--tagt:#7a5530;--grd:rgba(90,60,20,.05);--sh:0 2px 10px rgba(40,22,6,.11);--sh2:0 1px 3px rgba(40,22,6,.07);}
@@ -83,16 +84,16 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 .kh::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--acc) 50%,transparent 100%);background-size:250% 100%;background-position:200% 0;animation:barslide 6s ease-in-out infinite;opacity:.55;}
 [data-theme=light] .kh{border-color:var(--bda);background:var(--sf);}
 [data-theme=beige] .kh{border-color:var(--bda);background:var(--sf);}
-.kh-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.13em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.kh-lbl{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
 .kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
-.kh-val.big{font-size:38px;}
-.kh-val.md{font-size:26px;}
+.kh-val.big{font-size:36px;}
+.kh-val.md{font-size:36px;}
 .kh-sub{display:none;}
 
 /* DAILY — 5 cards */
 .daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2.2fr;gap:12px;margin-bottom:0;}
 .kd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:22px 24px;box-shadow:var(--sh2);position:relative;overflow:hidden;}.kd::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--acc),transparent);opacity:.25;}
-.kd-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
+.kd-lbl{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
 .kd-date{font-weight:400;text-transform:none;letter-spacing:0;font-size:9px;color:var(--tx3);}
 .kd-body{display:flex;align-items:flex-end;justify-content:space-between;gap:5px;}
 .kd-num{font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
@@ -387,7 +388,7 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
   main{padding-left:12px !important;padding-right:12px !important;}
 }
 /* RESPONSIVE */
-@media(max-width:1100px){.daily-row{grid-template-columns:repeat(2,1fr) 2fr;}.daily-row .kd-wide{grid-column:3;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
+@media(max-width:1100px){.daily-row{grid-template-columns:repeat(4,1fr);}.daily-row .kd-wide{grid-column:1/-1;min-height:auto;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
 @media(max-width:900px){.hero-row{grid-template-columns:1fr 1fr;}.daily-row{grid-template-columns:1fr 1fr;}.daily-row .kd-wide{grid-column:1/-1;}.cpld-kpis{grid-template-columns:1fr 1fr;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
 @media(max-width:700px){.g-ls{grid-template-columns:1fr;}.esc-blocks{grid-template-columns:repeat(3,1fr);}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
 
@@ -409,7 +410,7 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 @media(max-width:540px){
   main{padding:calc(var(--nh) + 16px) 12px max(70px,env(safe-area-inset-bottom,0px)+50px);}
   .hero-row,.daily-row{grid-template-columns:1fr 1fr;gap:8px;}
-  .kh{padding:16px 18px;}.kh-val.big{font-size:26px;}.kh-val.md{font-size:20px;}
+  .kh{padding:16px 18px;}.kh-val.big{font-size:26px;}.kh-val.md{font-size:26px;}
   .kd{padding:12px 14px;}.kd-num{font-size:18px;}
   .card{padding:12px;}
   .esc-kv{font-size:18px;}.esc-blocks{grid-template-columns:repeat(2,1fr);}
@@ -499,7 +500,13 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
       </div>
     </div>
     <div class="gf card">
-      <div class="slbl" style="margin-bottom:3px">CPL por Curso</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:3px">
+        <div class="slbl" style="margin-bottom:0">CPL por Curso</div>
+        <div class="dd-wrap" id="cpl-dd" style="flex-shrink:0">
+          <button class="dd-btn" onclick="toggleDD('cpl-dd')"><span id="cpl-dd-lbl">Geral</span><span class="cr">▾</span></button>
+          <div class="dd-menu" id="cpl-dd-menu"></div>
+        </div>
+      </div>
       <div style="font-size:9px;color:var(--wrn);margin-bottom:11px">★ dados simulados · do menor para o maior CPL · clique para expandir</div>
       <div class="cpl-list" id="cpl-list"></div>
     </div>
@@ -1273,21 +1280,23 @@ function buildCPL(){
   /* popular dropdown datas */
   const cplMenu=document.getElementById('cpl-dd-menu');
   if(cplMenu&&cplMenu.innerHTML===''){
-    const mkC=(val,lbl,sel)=>{const d=document.createElement('div');d.className='dd-item'+(sel?' sel':'');d.textContent=lbl;d.onclick=()=>{_cplSel=val;document.getElementById('cpl-dd-lbl').textContent=lbl==='Total'?'Total':lbl;document.querySelectorAll('#cpl-dd-menu .dd-item').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');closeDD();buildCPL();};return d;};
-    cplMenu.innerHTML='';cplMenu.appendChild(mkC('__total__','Total',true));
+    const mkC=(val,lbl,sel)=>{const d=document.createElement('div');d.className='dd-item'+(sel?' sel':'');d.textContent=lbl;d.onclick=()=>{_cplSel=val;document.getElementById('cpl-dd-lbl').textContent=lbl==='Geral'?'Geral':lbl;document.querySelectorAll('#cpl-dd-menu .dd-item').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');closeDD();buildCPL();};return d;};
+    cplMenu.innerHTML='';cplMenu.appendChild(mkC('__total__','Geral',true));
     if(cplMenu.children.length<2){const sep=document.createElement('div');sep.className='dd-sep';cplMenu.appendChild(sep);}
     DBdates.slice(0,20).forEach(dk=>{cplMenu.appendChild(mkC(dk,dkLbl(dk),false));});
   }
   const isTotal=_cplSel==='__total__';
   const data=_ss.map((r,i)=>{
     const nm=cl(r[_cC]),tot=isTotal?n(r[_cT]):cntCurso(_cplSel,nm),c=getCPL(nm);
+    /* CPL a exibir: geral ou do dia selecionado */
+    const displayCPL=isTotal?c.g:(()=>{const entry=c.daily?.find?.(x=>x.dk===_cplSel);return entry?entry.cpl:c.g;})();
     const vHP=c.g>0?(c.h-c.g)/c.g*100:0,vD1P=c.g>0?(c.d1-c.g)/c.g*100:0;
     const seed=nm.split('').reduce((a,ch)=>a+ch.charCodeAt(0),0);
     const dS=DBdates.length>0?DBdates:(()=>{const arr=[];for(let j=0;j<14;j++){const d=new Date();d.setDate(d.getDate()-j);arr.push(dkOf(d));}return arr;})();
     const baseQ=_cQ?n(r[_cQ]):80;
     const daily=dS.map((dk,j)=>{const real=cntCurso(dk,nm);const sim=real>0?real:Math.max(0,Math.round(tot*0.03+((seed*(j+2))%18)-6));if(sim===0)return null;return{dk,cnt:sim,cpl:c.g*(0.84+((seed*(j+4))%32)/100),custo:sim*c.g*(0.84+((seed*(j+4))%32)/100),qual:dayQual(nm,dk,baseQ)};}).filter(Boolean);
-    return{nm,color:COLORS[i%COLORS.length],tot,g:c.g,h:c.h,d1:c.d1,vHP,vD1P,daily,baseQ};
-  }).sort((a,b)=>a.h-b.h);
+    return{nm,color:COLORS[i%COLORS.length],tot,g:c.g,displayCPL,h:c.h,d1:c.d1,vHP,vD1P,daily,baseQ};
+  }).sort((a,b)=>a.displayCPL-b.displayCPL);
 
   document.getElementById('cpl-list').innerHTML=data.map(d=>{
     const isOpen=_cplOpen.has(d.nm);
@@ -1298,8 +1307,8 @@ function buildCPL(){
           <div class="cpl-nome">${d.nm}</div>
           <div class="cpl-kpis-inline">
             <div style="text-align:right">
-              <div class="cpl-ml">CPL Geral</div>
-              <div class="cpl-mv">${fmtR(d.g)}</div>
+              <div class="cpl-ml">${isTotal?"CPL Geral":"CPL "+dkLbl(_cplSel)}</div>
+              <div class="cpl-mv">${fmtR(d.displayCPL)}</div>
             </div>
           </div>
           <div class="cpl-chev${isOpen?' open':''}">›</div>
@@ -1417,10 +1426,15 @@ window.addEventListener('scroll',()=>{
   const bg=document.getElementById('btt-group');if(!bg)return;
   const scrollTop=window.scrollY;
   const scrollBottom=document.documentElement.scrollHeight-window.innerHeight-scrollTop;
-  /* esconde quando não está no topo nem no fim; mostra quando está no fim */
-  if(scrollTop<120){bg.classList.remove('on');}
-  else if(scrollBottom<80){bg.classList.remove('on');}
-  else{bg.classList.add('on');closeResumo();}
+  /* grupo inteiro: some no topo; btt (resumo) some no meio; btt3 (topo) só no fim */
+  if(scrollTop<120){
+    bg.classList.remove('on'); /* tudo visível no topo */
+  } else if(scrollBottom<120){
+    bg.classList.remove('on'); /* tudo visível no fim */
+  } else {
+    bg.classList.add('on'); /* some no meio da página */
+    closeResumo();
+  }
 },{passive:true});
 function openResumo(){document.getElementById('resumo-popup').classList.add('open');document.body.style.overflow='hidden';}
 function closeResumo(){document.getElementById('resumo-popup').classList.remove('open');document.body.style.overflow='';}
@@ -1456,13 +1470,22 @@ function exportPDF(){
     const cnt=el.querySelector('.lpd-cnt')?.textContent?.trim()||'';
     if(nm)leadRows.push({nm,cnt});
   });
-  // Captura share
-  const shareRows=[];
-  document.querySelectorAll('#share-list .sh-item').forEach(el=>{
-    const nm=el.querySelector('.sh-nome')?.textContent?.trim()||'';
-    const pct=el.querySelector('.sh-pct')?.textContent?.trim()||'';
-    if(nm)shareRows.push({nm,pct});
+  // Captura qualificação por curso
+  const qualRows=[];
+  document.querySelectorAll('#taxa-grid .txl-row').forEach(el=>{
+    const nm=el.querySelector('.txl-nome')?.textContent?.trim()||'';
+    const pct=el.querySelector('.txl-pctcol')?.textContent?.trim()||'';
+    if(nm)qualRows.push({nm,pct});
   });
+  // Captura meta
+  const metaPct=document.querySelector('#section-meta .meta-hero-pct-v,.meta-hero-pct-v')?.textContent?.trim()||'';
+  const metaCapt=document.querySelector('#section-meta')?.querySelector?.('[style*="font-size:20px"]')?.textContent?.trim()||'';
+  const metaTotal=document.querySelectorAll('#section-meta')[0]?.innerText||'';
+  // Extrai valores dos KPIs da meta via texto
+  const metaEls=[]; document.querySelectorAll('#section-meta .meta-kpi,.meta-pbox').forEach(el=>{const l=el.querySelector('.meta-kpi-l,.meta-pbox-l')?.textContent?.trim()||'';const v=el.querySelector('.meta-kpi-v,.meta-pbox-v')?.textContent?.trim()||'';const s=el.querySelector('.meta-kpi-s,.meta-pbox-s')?.textContent?.trim()||'';if(l)metaEls.push({l,v,s});});
+  // Atingimento geral
+  const ringEl=document.querySelector('#section-meta svg+div,.meta-hero-cap');
+  const pctGeral=document.querySelector('#section-meta [style*="var(--pos)"] [style*="font-size:22px"],[style*="font-size:22px"]')?.textContent?.trim()||'—';
 
   const COLORS_PDF=['#7c5cfc','#e05f8e','#34d399','#fbbf24','#60a5fa','#f97316','#a78bfa','#fb7185'];
   const isDark=document.body.getAttribute('data-theme')!=='light';
@@ -1493,17 +1516,24 @@ function exportPDF(){
       <div style="font-size:12px;font-weight:800;color:${tx};letter-spacing:-.02em">${d.cnt}</div>
     </div>`).join('');
 
-  const shareHTML=shareRows.slice(0,8).map((d,i)=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:${card};border:1px solid ${border};border-radius:8px">
-      <div style="display:flex;align-items:center;gap:6px">
-        <div style="width:7px;height:7px;border-radius:50%;background:${COLORS_PDF[i%COLORS_PDF.length]}"></div>
-        <div style="font-size:10px;font-weight:600;color:${tx}">${d.nm}</div>
+  const qualHTML=qualRows.slice(0,8).map((d,i)=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:${card};border:1px solid ${border};border-radius:8px">
+      <div style="display:flex;align-items:center;gap:7px;min-width:0;overflow:hidden">
+        <div style="width:3px;height:20px;border-radius:2px;background:${COLORS_PDF[i%COLORS_PDF.length]};flex-shrink:0"></div>
+        <div style="font-size:10px;font-weight:600;color:${tx};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.nm}</div>
       </div>
-      <div style="font-size:11px;font-weight:800;color:${COLORS_PDF[i%COLORS_PDF.length]}">${d.pct}%</div>
+      <div style="font-size:12px;font-weight:800;color:${COLORS_PDF[i%COLORS_PDF.length]};flex-shrink:0;margin-left:8px">${d.pct}</div>
+    </div>`).join('');
+  const metaKpisHTML=metaEls.map(({l,v,s})=>`
+    <div style="background:${card};border:1px solid ${border};border-radius:8px;padding:11px 14px">
+      <div style="font-size:8px;font-weight:700;color:${tx2};text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px">${l}</div>
+      <div style="font-size:18px;font-weight:800;color:${tx};letter-spacing:-.04em;line-height:1">${v}</div>
+      ${s?`<div style="font-size:9px;font-weight:600;color:${tx2};margin-top:3px">${s}</div>`:''}
     </div>`).join('');
 
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <style>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{background:${bg};font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;padding:32px;width:1000px;}
     .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
@@ -1522,10 +1552,11 @@ function exportPDF(){
   </div>
   <div class="sec"><h2>Resumo Geral</h2><div class="grid4">${heroHTML}</div></div>
   <div class="sec"><h2>Hoje</h2><div class="grid4d">${dailyHTML}</div></div>
-  <div class="grid2">
+  <div class="grid2" style="margin-bottom:16px">
     <div class="sec"><h2>Leads por Curso</h2><div class="col">${leadsHTML}</div></div>
-    <div class="sec"><h2>Share por Curso</h2><div class="col">${shareHTML}</div></div>
+    <div class="sec"><h2>Qualificação por Curso</h2><div class="col">${qualHTML}</div></div>
   </div>
+  <div class="sec"><h2>Meta de Leads</h2><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${metaKpisHTML}</div></div>
   </body></html>`;
 
   const w=window.open('','_blank','width=1060,height=800');
