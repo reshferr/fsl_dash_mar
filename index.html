@@ -1215,7 +1215,7 @@ function toggleCPL(nm){if(_cplOpen.has(nm))_cplOpen.delete(nm);else _cplOpen.add
 
 /* ESC */
 function renderEsc(){
-  const chosen={value:window._escSelFn?window._escSelFn():'__all__'}; const _dummy=document.getElementById('escsel-dummy').value;
+  const chosen={value:window._escSelFn?window._escSelFn():'__all__'};
   const escA=ESC_COLS.map(e=>SH.find(h=>h.trim()===e)||SH.find(h=>h.trim().toLowerCase()===e.toLowerCase())||null);
   const sub=chosen==='__all__'?SD:SD.filter(r=>r[_cC]===chosen);
   const tL=sub.reduce((s,r)=>s+n(r[_cT]),0)||1;
