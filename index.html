@@ -322,10 +322,9 @@ main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 20px) 16px max(70px
 /* MISC */
 .lockp{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:10px;text-align:center;}
 .lockico{font-size:26px;opacity:.25;}.lockt{font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx3);}
-#btt-group{position:fixed;bottom:24px;right:24px;z-index:400;display:flex;gap:8px;align-items:center;transition:all var(--tr);}
-#btt-group.on{opacity:0;pointer-events:none;transform:translateY(10px);}
+#btt-group{position:fixed;bottom:24px;right:24px;z-index:400;display:flex;gap:8px;align-items:center;}
 #btt{height:42px;padding:0 20px;border-radius:999px;background:var(--acc);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;font-family:var(--fn);font-size:12px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;box-shadow:0 4px 20px rgba(124,92,252,.45);}
-#btt2,#btt3{height:42px;width:42px;border-radius:999px;background:var(--cd);color:var(--tx);border:1px solid var(--bd);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--fn);font-size:18px;font-weight:700;box-shadow:var(--sh2);transition:background var(--tr);}#btt2:hover,#btt3:hover{background:var(--cdh);}
+#btt2,#btt3{height:42px;width:42px;border-radius:999px;background:var(--cd);color:var(--tx);border:1px solid var(--bd);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--fn);font-size:18px;font-weight:700;box-shadow:var(--sh2);transition:background var(--tr),opacity .3s;}#btt2:hover,#btt3:hover{background:var(--cdh);}#btt3{opacity:0;pointer-events:none;}#btt-group.on{opacity:0;pointer-events:none;transform:translateY(10px);}
 #toast{position:fixed;bottom:54px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--cd);border:1px solid var(--bd);color:var(--tx2);padding:6px 14px;border-radius:999px;font-size:11px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--sh);}
 @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes pdot{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(52,211,153,.6)}60%{transform:scale(1.3);box-shadow:0 0 0 6px rgba(52,211,153,0)}}
@@ -337,11 +336,11 @@ main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 20px) 16px max(70px
 
 
 /* RESUMO POPUP */
-#resumo-popup{position:fixed;inset:0;z-index:800;display:flex;align-items:flex-end;justify-content:center;padding:0 16px 80px;pointer-events:none;}
+#resumo-popup{position:fixed;inset:0;z-index:800;display:flex;align-items:flex-end;justify-content:center;padding:0 16px 16px;pointer-events:none;}
 #resumo-popup.open{pointer-events:all;}
 #resumo-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;transition:opacity .25s ease;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
 #resumo-popup.open #resumo-backdrop{opacity:1;}
-#resumo-sheet{background:var(--cd);border:1px solid var(--bd);border-radius:20px 20px 16px 16px;width:100%;max-width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 -4px 40px rgba(0,0,0,.35);transform:translateY(24px);opacity:0;transition:transform .28s cubic-bezier(.2,.8,.4,1),opacity .25s ease;}
+#resumo-sheet{background:var(--cd);border:1px solid var(--bd);border-radius:20px 20px 16px 16px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 -4px 40px rgba(0,0,0,.35);transform:translateY(24px);opacity:0;transition:transform .28s cubic-bezier(.2,.8,.4,1),opacity .25s ease;}
 #resumo-popup.open #resumo-sheet{transform:translateY(0);opacity:1;}
 .rp-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;}
 .rp-title{font-family:var(--fn);font-size:14px;font-weight:800;letter-spacing:-.02em;color:var(--tx);}
@@ -462,9 +461,9 @@ main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 20px) 16px max(70px
   </div>
 </header>
 <main>
-  <!-- BOAS-VINDAS: fixo, fora dos painéis -->
-  <div id="welcome-bar" style="margin-bottom:22px;">
-    <div id="welcome-msg" style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1.15;margin-bottom:10px"> </div>
+  <!-- BOAS-VINDAS -->
+  <div id="welcome-bar" style="margin-bottom:24px;">
+    <div id="welcome-msg" style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1.2;margin-bottom:8px;">Bom dia, FSL Digital 👋</div>
     <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
       <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2);">
         <div style="width:7px;height:7px;border-radius:50%;background:var(--acc);flex-shrink:0;opacity:.8"></div>
@@ -1429,17 +1428,12 @@ const TH={dark:{i:'🌑',t:'Dark'},light:{i:'☀️',t:'Light'},beige:{i:'🍂',
 function setTheme(th){document.body.setAttribute('data-theme',th);document.getElementById('th-ico').textContent=TH[th].i;document.getElementById('th-txt').textContent=TH[th].t;document.querySelectorAll('.topt').forEach(o=>o.classList.remove('act'));document.getElementById('to-'+th).classList.add('act');document.getElementById('tsw').classList.remove('open');localStorage.setItem('fsl-t',th);}
 function toggleTheme(){document.getElementById('tsw').classList.toggle('open');}
 window.addEventListener('scroll',()=>{
-  const bg=document.getElementById('btt-group');if(!bg)return;
-  const scrollTop=window.scrollY;
-  const scrollBottom=document.documentElement.scrollHeight-window.innerHeight-scrollTop;
-  /* grupo inteiro: some no topo; btt (resumo) some no meio; btt3 (topo) só no fim */
-  if(scrollTop<120){
-    bg.classList.remove('on'); /* tudo visível no topo */
-  } else if(scrollBottom<120){
-    bg.classList.remove('on'); /* tudo visível no fim */
-  } else {
-    bg.classList.add('on'); /* some no meio da página */
-    closeResumo();
+  const scrollBottom=document.documentElement.scrollHeight-window.innerHeight-window.scrollY;
+  const btt3=document.getElementById('btt3');
+  /* seta de topo: só aparece nos últimos 200px da página */
+  if(btt3){
+    if(scrollBottom<200){btt3.style.opacity='1';btt3.style.pointerEvents='all';}
+    else{btt3.style.opacity='0';btt3.style.pointerEvents='none';}
   }
 },{passive:true});
 function openResumo(){document.getElementById('resumo-popup').classList.add('open');document.body.style.overflow='hidden';}
@@ -1580,53 +1574,40 @@ function exportPDF(){
 
 /* BOAS-VINDAS */
 /* BOAS-VINDAS */
-function _fslGet(k){try{const v=localStorage.getItem(k);if(v)return v;}catch(e){}try{return sessionStorage.getItem(k);}catch(e){}return null;}
-function _fslSet(k,v){try{localStorage.setItem(k,v);}catch(e){}try{sessionStorage.setItem(k,v);}catch(e){}}
 function _greeting(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';}
-function _setWelcomeText(nome){
+function _setWelcome(nome){
   const el=document.getElementById('welcome-msg');
-  if(!el)return;
-  el.textContent=_greeting()+', '+(nome||'FSL Digital')+' 👋';
+  if(el)el.textContent=_greeting()+', '+(nome||'FSL Digital')+' 👋';
+  const ll=document.getElementById('lancamento-lbl');
+  if(ll){const m=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});ll.textContent='Lançamentos '+m.charAt(0).toUpperCase()+m.slice(1);}
 }
-function _setLancamentoLbl(){
-  const el=document.getElementById('lancamento-lbl');
-  if(!el)return;
-  const m=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-  el.textContent='Lançamentos '+m.charAt(0).toUpperCase()+m.slice(1);
-}
-let _modalShown=false;
+function _getName(){try{return localStorage.getItem('fsl-nome');}catch(e){}try{return sessionStorage.getItem('fsl-nome');}catch(e){}return null;}
+function _saveName(v){try{localStorage.setItem('fsl-nome',v);}catch(e){}try{sessionStorage.setItem('fsl-nome',v);}catch(e){}}
 function initWelcome(){
-  _setLancamentoLbl();
-  const nome=_fslGet('fsl-nome');
-  if(nome){_setWelcomeText(nome);return;}
-  /* fallback imediato enquanto modal não é respondido */
-  _setWelcomeText(null);
-  if(_modalShown||document.getElementById('nome-overlay'))return;
-  _modalShown=true;
+  const nome=_getName();
+  _setWelcome(nome);
+  if(nome||document.getElementById('nome-overlay'))return;
   const ov=document.createElement('div');
   ov.id='nome-overlay';
-  ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);';
+  ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);';
   ov.innerHTML=`<div style="background:var(--cd);border:1px solid var(--bd);border-radius:16px;padding:36px 40px;max-width:360px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,.6);">
     <div style="font-family:var(--fn);font-size:22px;font-weight:800;color:var(--tx);margin-bottom:6px;letter-spacing:-.03em">Olá! 👋</div>
-    <div style="font-size:13px;color:var(--tx2);margin-bottom:22px;line-height:1.6">Como posso te chamar?<br><span style="font-size:11px;opacity:.7">Seu nome será salvo para as próximas visitas.</span></div>
-    <input id="nome-input" type="text" placeholder="Seu nome" autocomplete="given-name" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--bda);background:var(--sf);color:var(--tx);font-family:var(--f);font-size:14px;outline:none;margin-bottom:14px;box-sizing:border-box;">
+    <div style="font-size:13px;color:var(--tx2);margin-bottom:22px;line-height:1.6">Como posso te chamar?<br><span style="font-size:11px;opacity:.7">Salvo para as próximas visitas.</span></div>
+    <input id="nome-input" type="text" placeholder="Seu nome" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--bda);background:var(--sf);color:var(--tx);font-family:var(--f);font-size:14px;outline:none;margin-bottom:14px;box-sizing:border-box;">
     <button id="nome-btn" style="width:100%;height:44px;border-radius:999px;background:var(--acc);color:#fff;border:none;cursor:pointer;font-family:var(--fn);font-size:13px;font-weight:700;">Continuar →</button>
   </div>`;
   document.body.appendChild(ov);
   const inp=document.getElementById('nome-input');
-  const btn=document.getElementById('nome-btn');
-  setTimeout(()=>inp&&inp.focus(),100);
+  setTimeout(()=>{try{inp.focus();}catch(e){}},80);
   const save=()=>{
     const v=(inp.value||'').trim();
-    if(!v){inp.style.borderColor='var(--neg)';inp.focus();return;}
-    _fslSet('fsl-nome',v);
-    ov.style.opacity='0';ov.style.transition='opacity .2s';
-    setTimeout(()=>ov.remove(),220);
-    _setWelcomeText(v);
+    if(!v){inp.style.borderColor='var(--neg)';return;}
+    _saveName(v);
+    ov.remove();
+    _setWelcome(v);
   };
-  btn.onclick=save;
+  document.getElementById('nome-btn').onclick=save;
   inp.onkeydown=e=>{if(e.key==='Enter')save();};
-  inp.oninput=()=>{inp.style.borderColor='var(--bda)';};
 }
 
 const _st=localStorage.getItem('fsl-t');if(_st)setTheme(_st);
