@@ -12,7 +12,7 @@
 [data-theme=beige]{--bg:#e8dfd4;--sf:#fdf6ed;--cd:#fdf6ed;--cdh:#f3e9dc;--nav:rgba(232,223,212,.97);--bd:rgba(110,80,40,.13);--bda:rgba(90,60,20,.18);--tx:#1c1208;--tx2:#6b4e2e;--tx3:#907050;--acc:#7a5530;--accg:rgba(122,85,48,.08);--pos:#2a5030;--neg:#782020;--wrn:#7a5000;--tagt:#7a5530;--grd:rgba(90,60,20,.05);--sh:0 2px 10px rgba(40,22,6,.11);--sh2:0 1px 3px rgba(40,22,6,.07);}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{font-size:14px;scroll-behavior:smooth;overflow-x:hidden;width:100%;-webkit-text-size-adjust:100%;}
-body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh;-webkit-font-smoothing:antialiased;transition:background var(--tr),color var(--tr);overflow-x:hidden;width:100%;}
+body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh;-webkit-font-smoothing:antialiased;transition:background var(--tr),color var(--tr);overflow-x:hidden;width:100%;box-sizing:border-box;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--tx3);border-radius:2px;}
 
 /* NAV */
@@ -368,15 +368,20 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 .rp-curso-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 .rp-curso-pct{font-family:var(--fn);font-size:11px;font-weight:800;letter-spacing:-.02em;}
 .rp-curso-metrics{display:flex;gap:0;flex-shrink:0;border-left:1px solid var(--bd);}
-.rp-curso-metric{padding:8px 12px;text-align:center;border-left:1px solid var(--bd);}
+.rp-curso-metric{padding:8px 10px;text-align:center;border-left:1px solid var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:58px;}
 .rp-curso-metric:first-child{border-left:none;}
 .rp-curso-mv{font-family:var(--fn);font-size:13px;font-weight:800;letter-spacing:-.03em;color:var(--tx);line-height:1;}
+.rp-curso-mv-prefix{font-size:9px;font-weight:600;color:var(--tx3);vertical-align:middle;}
 .rp-curso-ml{font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
 .rp-curso-header{display:flex;align-items:center;padding:3px 0 6px;border-bottom:1px solid var(--bd);margin-bottom:4px;}
 .rp-curso-header-nm{flex:1;font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;padding-left:16px;}
 .rp-curso-header-cols{display:flex;gap:0;flex-shrink:0;}
 .rp-curso-header-col{width:64px;text-align:center;font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;}
 
+/* MOBILE MARGIN — garante respiro em qualquer tela pequena */
+@media(max-width:768px){
+  main{padding-left:12px !important;padding-right:12px !important;}
+}
 /* RESPONSIVE */
 @media(max-width:1100px){.daily-row{grid-template-columns:repeat(2,1fr) 2fr;}.daily-row .kd-wide{grid-column:3;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
 @media(max-width:900px){.hero-row{grid-template-columns:1fr 1fr;}.daily-row{grid-template-columns:1fr 1fr;}.daily-row .kd-wide{grid-column:1/-1;}.cpld-kpis{grid-template-columns:1fr 1fr;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
@@ -384,7 +389,6 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 
 /* MOBILE: painel taxa — esconde colunas numéricas, mostra só nome+taxa */
 @media(max-width:600px){
-  main{padding-left:14px;padding-right:14px;}
   .txl-hdr-row{grid-template-columns:1fr 60px 28px;gap:6px;padding:4px 10px 8px;}
   .txl-top{grid-template-columns:1fr 60px 28px;gap:6px;padding:10px 10px;}
   .txl-numcol{display:none;}
@@ -399,8 +403,7 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
   .meta-cnm-short{display:block;}
 }
 @media(max-width:540px){
-  main{padding:calc(var(--nh) + 16px) 14px max(70px,env(safe-area-inset-bottom,0px)+50px);}
-  .card,.kh,.kd{margin-left:0;margin-right:0;}
+  main{padding:calc(var(--nh) + 16px) 12px max(70px,env(safe-area-inset-bottom,0px)+50px);}
   .hero-row,.daily-row{grid-template-columns:1fr 1fr;gap:8px;}
   .kh{padding:16px 18px;}.kh-val.big{font-size:26px;}.kh-val.md{font-size:20px;}
   .kd{padding:12px 14px;}.kd-num{font-size:18px;}
@@ -816,21 +819,13 @@ function renderAll(){
   _cS=SH.find(h=>h.toLowerCase()==='share'||h.toLowerCase().includes('share'));
   _ss=[...SD].sort((a,b)=>n(b[_cT])-n(a[_cT]));
 
+  const tL=_ss.reduce((s,r)=>s+n(r[_cT]),0);
+  const tQ=_ss.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0);
+  const aT=tL>0?(tQ/tL)*100:0;
   const hDB=DBdates.length>0;
   const hk=dkOf(new Date());
   const d1k=DBdates.find(d=>d!==hk)||prevDK(hk);
   const hC=hDB?cntDate(hk):0,d1C=hDB?cntDate(d1k):0;
-  /* tL: soma total de leads de todos os dias do DB quando disponível, senão usa Summary */
-  const tLsum=_ss.reduce((s,r)=>s+n(r[_cT]),0);
-  const tLdb=hDB?DBdates.reduce((s,dk)=>s+cntDate(dk),0):0;
-  const tL=tLdb||tLsum;
-  /* qualificação ponderada: usa taxa por curso × leads reais do período total */
-  const tQ=_ss.reduce((s,r)=>{
-    const nm=cl(r[_cC]);
-    const leads=hDB?DBdates.reduce((ls,dk)=>ls+cntCurso(dk,nm),0):n(r[_cT]);
-    return s+Math.round(leads*(n(r[_cQ])/100));
-  },0);
-  const aT=tL>0?(tQ/tL)*100:0;
   const dHD=d1C>0?(hC-d1C)/d1C*100:null;
   const cplHoje=58.4,cplD1=61.2,cplVar=cplD1>0?(cplHoje-cplD1)/cplD1*100:0;
 
@@ -961,7 +956,7 @@ function renderAll(){
             </div>
           </div>
           <div class="rp-curso-metrics">
-            <div class="rp-curso-metric"><div class="rp-curso-mv">R$${Math.round(cplV)}</div></div>
+            <div class="rp-curso-metric"><div class="rp-curso-mv"><span class="rp-curso-mv-prefix">R$</span>${Math.round(cplV)}</div></div>
             <div class="rp-curso-metric"><div class="rp-curso-mv">${Math.round(taxa)}%</div></div>
           </div>
         </div>`;
