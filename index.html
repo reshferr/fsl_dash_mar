@@ -71,6 +71,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .top-section{position:relative;padding:10px 0 26px;margin-bottom:0;}
 .top-section::after{content:'';position:absolute;bottom:0;left:-14px;right:-14px;height:1px;background:linear-gradient(90deg,transparent 0%,var(--bd) 15%,var(--bda) 50%,var(--bd) 85%,transparent 100%);}
 .rest-section{padding-top:22px;}
+.mid-sep{position:relative;height:1px;margin:20px -14px 22px;background:linear-gradient(90deg,transparent 0%,var(--bd) 15%,var(--bda) 50%,var(--bd) 85%,transparent 100%);}
 [data-theme=dark] .top-section{background:linear-gradient(180deg,rgba(124,92,252,.055) 0%,transparent 100%);}
 [data-theme=light] .top-section{background:linear-gradient(180deg,rgba(94,56,236,.035) 0%,transparent 100%);}
 [data-theme=beige] .top-section{background:linear-gradient(180deg,rgba(122,85,48,.03) 0%,transparent 100%);}
@@ -321,6 +322,11 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 #btt.on{opacity:1;pointer-events:all;transform:translateY(0);}
 #toast{position:fixed;bottom:54px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--cd);border:1px solid var(--bd);color:var(--tx2);padding:6px 14px;border-radius:999px;font-size:11px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--sh);}
 @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
+.kh-live-dot{width:7px;height:7px;border-radius:50%;background:var(--pos);display:inline-block;animation:pulse-dot 2s ease-in-out infinite;flex-shrink:0;}
+.kh.kh-pos{border-color:rgba(52,211,153,.35);}
+[data-theme=light] .kh.kh-pos{border-color:rgba(26,110,72,.3);}
+[data-theme=beige] .kh.kh-pos{border-color:rgba(42,80,48,.3);}
 
 /* RESPONSIVE */
 @media(max-width:1100px){.daily-row{grid-template-columns:repeat(2,1fr) 2fr;}.daily-row .kd-wide{grid-column:3;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
@@ -414,7 +420,8 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
     <div class="hero-row" id="kpi-row"></div>
     </div>
     <div class="rest-section">
-    <div class="daily-row" id="kpi-diario" style="margin-bottom:10px"></div>
+    <div class="daily-row" id="kpi-diario" style="margin-bottom:0"></div>
+    <div class="mid-sep"></div>
     <div class="g-ls gf">
       <div class="card">
         <div class="lpd-hdr">
@@ -461,7 +468,6 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
         <div class="esc-k"><div class="esc-kl">Taxa de Qualif.</div><div class="esc-kv" id="esc-qual-val">—</div></div>
       </div>
       <div class="escbar-wrap"><div class="escbar-lbl">Share por escolaridade</div><div class="escbar" id="escbar"></div></div>
-      <div class="esc-radar-wrap" id="esc-radar"></div>
       <div class="esc-blocks" id="esc-blocks"></div>
     </div>
     <div class="gf card">
@@ -696,63 +702,73 @@ function renderAll(){
   const cplHoje=58.4,cplD1=61.2,cplVar=cplD1>0?(cplHoje-cplD1)/cplD1*100:0;
 
   document.getElementById('kpi-row').innerHTML=
-    khv('Leads Captados',fmt(tL),null,'big')+
+    khv('Leads Captados',fmt(tL),'<span class="kh-live-dot"></span>','big')+
     khv('Qualificados',fmt(tQ),null,'big')+
     khv('Qualificação',aT.toFixed(1)+'%',aT>=90?badge('▲ Alta','pos'):badge('→ Regular','warn'),'md')+
-    khv('CPL Geral',fmtR(60),cplVar!==null?`<span style="font-size:11px;font-weight:700;color:${cplVar<=0?'var(--pos)':'var(--neg)'}">${cplVar<=0?'▼':'▲'}${Math.abs(cplVar).toFixed(1)}%</span>`:null,'md');
+    khv('CPL Geral',fmtR(60),cplVar!==null?`<span style="font-size:11px;font-weight:700;color:${cplVar<=0?'var(--pos)':'var(--neg)'}">${cplVar<=0?'▼':'▲'}${Math.abs(cplVar).toFixed(1)}%</span>`:null,'md','kh-pos');
 
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
   const cplVb=vBadge(cplVar,true);
 
-  /* Performance Boost panel — analysis of what's performing well today */
-  const perfBoostHTML=(()=>{
-    if(!hDB){return`<div style="font-size:11px;color:var(--tx3)">Sem dados de hoje para análise</div>`;}
-    const mH=DBmap.get(hk);
+  /* Resumo panel — 3 boxes verticais: melhor curso/leads, melhor CPL, melhor qualificação */
+  const resumoHTML=(()=>{
+    if(!hDB&&!_ss.length){return`<div style="font-size:11px;color:var(--tx3)">Sem dados para análise</div>`;}
+    const mH=hDB?DBmap.get(hk):null;
     const todayList=mH?Array.from(mH.entries()).sort((a,b)=>b[1]-a[1]):[];
-    const topNm=todayList[0]?.[0]||'—';
-    const topCnt=todayList[0]?.[1]||0;
-    const botNm=todayList.length>1?todayList[todayList.length-1][0]:'—';
-    const botCnt=todayList.length>1?todayList[todayList.length-1][1]:0;
-    const topR=_ss.find(r=>cl(r[_cC])===topNm)||_ss[0];
-    const topQ=topR&&_cQ?n(topR[_cQ]):0;
-    const topCpl=topR?getCPL(cl(topR[_cC])):null;
-    const avgLeads=todayList.length>0?todayList.reduce((s,[,v])=>s+v,0)/todayList.length:0;
-    /* pace vs yesterday */
-    const d1Tots=DBdates.filter(d=>d!==hk).slice(0,1);
-    const d1Tot=d1Tots.reduce((s,dk)=>s+cntDate(dk),0);
-    const paceVsD1=d1Tot>0?(hC-d1Tot)/d1Tot*100:null;
-    const paceColor=paceVsD1===null?'var(--tx3)':paceVsD1>=0?'var(--pos)':'var(--neg)';
-    /* best qual course */
-    const bestQual=[..._ss].sort((a,b)=>n(b[_cQ])-n(a[_cQ]))[0];
+    /* melhor curso por leads hoje (ou total se sem DB) */
+    const topLeadNm=todayList[0]?.[0]||(cl(_ss[0]?.[_cC])||'—');
+    const topLeadCnt=todayList[0]?.[1]||(hDB?0:n(_ss[0]?.[_cT]||0));
+    const topLeadColor=todayList[0]?COLORS[_ss.findIndex(r=>cl(r[_cC])===topLeadNm)%COLORS.length]:COLORS[0];
+    /* melhor CPL (menor custo) — com base simulada */
+    const cplData=_ss.map((r,i)=>{const nm=cl(r[_cC]);const c=getCPL(nm);return{nm,g:c.g,color:COLORS[i%COLORS.length]};}).sort((a,b)=>a.g-b.g);
+    const bestCplNm=cplData[0]?.nm||'—';
+    const bestCplVal=cplData[0]?.g||0;
+    const bestCplColor=cplData[0]?.color||COLORS[0];
+    /* melhor qualificação */
+    const bestQual=_cQ?[..._ss].sort((a,b)=>n(b[_cQ])-n(a[_cQ]))[0]:null;
     const bestQNm=bestQual?cl(bestQual[_cC]):'—';
     const bestQV=bestQual?n(bestQual[_cQ]):0;
+    const bestQColor=bestQual?COLORS[_ss.indexOf(bestQual)%COLORS.length]:COLORS[2];
 
-    const stat=(lbl,val,sub,col)=>`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:11px 13px;min-width:0">
-      <div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">${lbl}</div>
-      <div style="font-family:var(--fn);font-size:${typeof val==='string'&&val.length>6?'15':'18'}px;font-weight:800;letter-spacing:-.04em;color:${col||'var(--tx)'};line-height:1.1;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${val}</div>
-      ${sub?`<div style="font-size:9px;color:var(--tx3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub}</div>`:''}
-    </div>`;
+    const box=(icon,title,value,sub,color)=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs)">
+        <div style="width:3px;align-self:stretch;border-radius:2px;background:${color};flex-shrink:0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px">${title}</div>
+          <div style="font-family:var(--fn);font-size:16px;font-weight:800;letter-spacing:-.04em;color:${color};line-height:1.1;margin-bottom:2px">${value}</div>
+          <div style="font-size:10px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub}</div>
+        </div>
+        <div style="font-size:18px;opacity:.5;flex-shrink:0">${icon}</div>
+      </div>`;
 
-    return`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">
-      ${stat('Líder Hoje',fmt(topCnt),topNm,'var(--acc)')}
-      ${stat('Ritmo vs D-1',paceVsD1!==null?(paceVsD1>=0?'▲':'▼')+Math.abs(paceVsD1).toFixed(1)+'%':'—',hC+' leads hoje',paceColor)}
-      ${stat('Média / Curso',fmt(Math.round(avgLeads)),'leads por curso','var(--tx)')}
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-      ${stat('Melhor Qualif.',bestQV.toFixed(1)+'%',bestQNm,'var(--pos)')}
-      ${stat('CPL Hoje',fmtR(topCpl?topCpl.h:0),topNm+' · líder',topCpl&&topCpl.h<topCpl.g?'var(--pos)':'var(--neg)')}
-      ${stat('Menor Volume',fmt(botCnt),botNm,'var(--tx3)')}
+    return`<div style="display:flex;flex-direction:column;gap:7px">
+      ${box('🏆','Melhor Curso · Leads',fmt(topLeadCnt),topLeadNm,topLeadColor)}
+      ${box('💰','Melhor CPL',fmtR(bestCplVal),bestCplNm,bestCplColor)}
+      ${box('⭐','Melhor Qualificação',bestQV.toFixed(1)+'%',bestQNm,bestQColor)}
     </div>`;
   })();
 
+  /* badge de variação acima da meta para D-1 */
+  const d1PacePct=(()=>{
+    const metaAteD1_quick=META.found&&META.totalMeta>0?(()=>{
+      const hkD=new Date(pdk(hk));
+      const d1kD=DBdates.find(d=>d!==hk&&new Date(pdk(d))<hkD)||prevDK(hk);
+      const d1D=new Date(pdk(d1kD));
+      return META.dates?META.dates.reduce((s,dk)=>{if(new Date(pdk(dk))<=d1D)s+=Object.values(META.cursos).reduce((ss,c)=>ss+(c.dailyMetas[dk]||0),0)||META.totalDaily[dk]||0;return s;},0):0;
+    })():0;
+    if(metaAteD1_quick>0)return((d1C-metaAteD1_quick)/metaAteD1_quick)*100;
+    return dHD; /* fallback: variação vs D-2 */
+  })();
+  const d1VbPct=d1PacePct!==null?`<span style="font-size:10px;font-weight:700;color:${d1PacePct>=0?'var(--pos)':'var(--neg)'}">${d1PacePct>=0?'▲':'▼'}${Math.abs(d1PacePct).toFixed(1)}%</span>`:'';
+
   document.getElementById('kpi-diario').innerHTML=
     kdv('Leads Hoje',hDB?fmt(hC):'—',leadsVb)+
-    kdv('Leads D-1'+(d1k?` <span class="kd-date">${d1k}</span>`:''),hDB?fmt(d1C):'—','')+
+    kdv('Captados D-1',hDB?fmt(d1C):'—',d1VbPct)+
     kdv('CPL Hoje',fmtR(cplHoje),cplVb)+
     kdv('CPL D-1',fmtR(cplD1),'')+
-    `<div class="kd kd-wide" style="padding:14px 16px">
-      <div class="kd-lbl" style="margin-bottom:10px;font-size:10px;letter-spacing:.06em">⚡ Performance Boost</div>
-      ${perfBoostHTML}
+    `<div class="kd kd-wide" style="padding:13px 14px">
+      <div class="kd-lbl" style="margin-bottom:9px;font-size:9px;letter-spacing:.1em">Resumo</div>
+      ${resumoHTML}
     </div>`;
 
   buildDatePanel(hDB,hk,d1k,hC,d1C);
@@ -765,7 +781,7 @@ function renderAll(){
   renderEsc();buildTable();
   document.getElementById('panel-perf').classList.add('on');
 }
-function khv(lbl,val,extra,sz){return`<div class="kh"><div class="kh-lbl">${lbl}${extra?extra:''}</div><div class="kh-val ${sz}">${val}</div></div>`;}
+function khv(lbl,val,extra,sz,cls){return`<div class="kh${cls?' '+cls:''}">${extra?`<div style="position:absolute;top:10px;right:12px">${extra}</div>`:''}<div class="kh-lbl">${lbl}</div><div class="kh-val ${sz}">${val}</div></div>`;}
 function kdv(lbl,val,vb){return`<div class="kd"><div class="kd-lbl">${lbl}</div><div class="kd-body"><div class="kd-num">${val}</div>${vb?`<div class="kd-vb">${vb}</div>`:''}</div></div>`;}
 
 /* DATE PANEL + SHARE */
@@ -880,26 +896,36 @@ function buildMeta(tL,hk,hDB){
 
   sec.innerHTML=`<div class="card">
     <div class="slbl" style="margin-bottom:14px">Meta de Leads</div>
-    <!-- HERO: anel de % + captados em destaque / meta em opacidade -->
-    <div class="meta-hero" style="align-items:center">
-      <!-- Anel -->
+    <!-- HERO: anel % + 3 boxes -->
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap">
+      <!-- Anel — só % -->
       <div style="position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center">
-        ${ring(pctGeral,progColor,120,10)}
+        ${ring(pctGeral,progColor,100,9)}
         <div style="position:absolute;text-align:center">
-          <div style="font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.05em;color:${progColor};line-height:1">${pctGeral.toFixed(0)}<span style="font-size:13px">%</span></div>
-          <div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-top:2px">da meta</div>
+          <div style="font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:${progColor};line-height:1">${pctGeral.toFixed(0)}<span style="font-size:11px">%</span></div>
         </div>
       </div>
-      <!-- Números -->
-      <div class="meta-hero-main" style="border:none;background:none;padding:0 0 0 4px">
-        <div style="margin-bottom:2px;font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em">Captados</div>
-        <div style="font-family:var(--fn);font-size:42px;font-weight:800;letter-spacing:-.06em;line-height:1;color:${progColor}">${fmt(realAcum)}</div>
-        <div style="margin-top:6px;font-size:13px;font-weight:600;color:var(--tx3);opacity:.55">de <span style="font-family:var(--fn);font-weight:700;letter-spacing:-.03em">${fmt(metaTotal)}</span> meta</div>
-        <div style="margin-top:8px;font-size:10px;color:var(--tx3)">Restam <strong style="color:var(--tx);font-weight:700">${fmt(Math.max(metaTotal-realAcum,0))}</strong></div>
+      <!-- 3 boxes -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;flex:1;min-width:180px">
+        <div style="background:${progColor==='var(--pos)'?'rgba(52,211,153,.08)':progColor==='var(--wrn)'?'rgba(251,191,36,.08)':'rgba(248,113,113,.08)'};border:1px solid ${progColor==='var(--pos)'?'rgba(52,211,153,.25)':progColor==='var(--wrn)'?'rgba(251,191,36,.25)':'rgba(248,113,113,.25)'};border-radius:var(--rs);padding:10px 13px">
+          <div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Captados</div>
+          <div style="font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.05em;color:${progColor};line-height:1">${fmt(realAcum)}</div>
+        </div>
+        <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:10px 13px">
+          <div style="font-size:8px;font-weight:700;color:var(--tagt);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Meta Total</div>
+          <div style="font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1">${fmt(metaTotal)}</div>
+        </div>
+        <div style="grid-column:1/-1;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div>
+            <div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Restante</div>
+            <div style="font-family:var(--fn);font-size:18px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1">${fmt(Math.max(metaTotal-realAcum,0))}</div>
+          </div>
+          <div style="flex:1;max-width:120px">${progBar(Math.min(pctGeral,100),progColor,5)}</div>
+        </div>
       </div>
     </div>
-    <!-- KPI: meta/real do dia (sem descrição) -->
-    <div class="meta-kpis" style="margin-bottom:10px;margin-top:14px">
+    <!-- KPI: meta/real do dia -->
+    <div class="meta-kpis" style="margin-bottom:10px">
       <div class="meta-kpi hi"><div class="meta-kpi-l">Meta do Dia</div><div class="meta-kpi-v">${fmt(metaHoje)}</div></div>
       <div class="meta-kpi"><div class="meta-kpi-l">Realizado Hoje</div><div class="meta-kpi-v" style="color:${hojeColor}">${fmt(leadsHoje)}</div><div class="meta-kpi-s" style="color:${hojeColor}">${pctHoje.toFixed(0)}% · restam ${fmt(restanteHoje)}</div></div>
     </div>
@@ -1006,12 +1032,17 @@ function buildTaxa(){
     `<div class="dd-item${txSel==='__total__'?' sel':''}" onclick="setTaxaSel('__total__')">Total acumulado</div><div class="dd-sep"></div>`+
     DBdates.slice(0,20).map(dk=>`<div class="dd-item${dk===txSel?' sel':''}" onclick="setTaxaSel('${dk}')">${dkLbl(dk)}<span class="dd-count">${fmt(cntDate(dk))}</span></div>`).join('');
   const isTotal=txSel==='__total__';
-  const sQ=[..._ss].map(r=>{
+  const sQ=[..._ss].map((r,i)=>{
     const nm=cl(r[_cC]),baseV=n(r[_cQ]),v=isTotal?baseV:dayQual(nm,txSel,baseV),tot=n(r[_cT]),qual=Math.round(tot*(baseV/100));
-    return{nm,v,baseV,tot,qual};
+    /* abbreviate name: first word + initials of rest (skip prepositions) */
+    const skip=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
+    const words=nm.split(/\s+/);
+    const nmAbbr=words.length>3?words[0]+' '+words.slice(1).map(w=>skip.has(w.toLowerCase())?'':w[0].toUpperCase()+'.').filter(Boolean).join(' '):nm;
+    const color=COLORS[i%COLORS.length];
+    return{nm,nmAbbr,v,baseV,tot,qual,color,idx:i};
   }).sort((a,b)=>b.v-a.v);
 
-  const listHTML=sQ.map(({nm,v,baseV,tot,qual})=>{
+  const listHTML=sQ.map(({nm,nmAbbr,v,baseV,tot,qual,color})=>{
     const col=v>=90?'var(--pos)':'var(--neg)';
     const isOpen=_txOpen.has(nm);
     const dailyRows=isOpen?DBdates.slice(0,20).map(dk=>{
@@ -1025,7 +1056,10 @@ function buildTaxa(){
     </div>`:'';
     return`<div class="txl-row${isOpen?' open':''}">
       <div class="txl-top" onclick="toggleTaxa('${nm.replace(/'/g,"\\'")}')">
-        <div class="txl-nome">${nm}</div>
+        <div style="display:flex;align-items:center;gap:8px;min-width:0;overflow:hidden">
+          <div style="width:3px;height:28px;border-radius:2px;background:${color};flex-shrink:0"></div>
+          <div class="txl-nome" title="${nm}">${nmAbbr}</div>
+        </div>
         <div class="txl-numcol">${fmt(tot)}</div>
         <div class="txl-numcol hide-m" style="color:${col}">${fmt(qual)}</div>
         <div class="txl-pctcol" style="color:${col}">${v.toFixed(1)}<span class="txl-sym">%</span></div>
