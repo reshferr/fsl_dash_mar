@@ -43,7 +43,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh
 @media(max-width:480px){.ni{padding:0 10px;}.logo{font-size:11px;margin-right:6px;}.tbtn{padding:5px 8px;gap:2px;}.tbtn-txt{display:none;}.th-txt{display:none;}.tsbtn{padding:5px 7px;}}
 
 /* LAYOUT */
-main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px,env(safe-area-inset-bottom,0px)+60px);width:100%;box-sizing:border-box;}
+main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px,env(safe-area-inset-bottom,0px)+60px);width:100%;box-sizing:border-box;overflow-x:hidden;}
 .panel{display:none;}.panel.on{display:block;animation:fu .2s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 #loader{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:80px 0;text-align:center;}
@@ -352,14 +352,26 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 .rp-ks{font-size:10px;font-weight:600;color:var(--tx2);}
 .rp-divider{height:1px;background:var(--bd);margin:2px 0;}
 .rp-best-row{display:flex;flex-direction:column;gap:5px;}
+.rp-top-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.rp-ating-bar{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 13px;}
+.rp-ating-lbl{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px;}
+.rp-ating-row{display:flex;align-items:center;gap:10px;}
+.rp-ating-track{flex:1;height:6px;background:var(--grd);border-radius:999px;overflow:hidden;}
+.rp-ating-fill{height:100%;border-radius:999px;background:var(--acc);transition:width .6s ease;}
+.rp-ating-pct{font-family:var(--fn);font-size:15px;font-weight:800;letter-spacing:-.04em;color:var(--tx);min-width:42px;text-align:right;}
 .rp-cursos{display:flex;flex-direction:column;gap:5px;}
-.rp-curso-item{display:grid;grid-template-columns:1fr auto;align-items:center;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;}
-.rp-curso-left{padding:9px 12px;border-left:3px solid var(--acc);}
-.rp-curso-nm{font-size:11px;font-weight:700;color:var(--tx);margin-bottom:2px;line-height:1.3;}
-.rp-curso-prog{font-size:9px;color:var(--tx3);margin-top:2px;}
-.rp-curso-right{padding:8px 12px;border-left:1px solid var(--bd);display:flex;flex-direction:column;gap:3px;align-items:flex-end;min-width:90px;}
-.rp-curso-kv{font-family:var(--fn);font-size:13px;font-weight:800;letter-spacing:-.03em;color:var(--tx);line-height:1;}
-.rp-curso-kl{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;}
+.rp-curso-item{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;display:flex;align-items:stretch;}
+.rp-curso-acc{width:3px;flex-shrink:0;}
+.rp-curso-main{flex:1;min-width:0;padding:9px 11px;}
+.rp-curso-nm{font-size:11px;font-weight:700;color:var(--tx);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rp-curso-dot-row{display:flex;align-items:center;gap:5px;margin-top:4px;}
+.rp-curso-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.rp-curso-pct{font-family:var(--fn);font-size:11px;font-weight:800;letter-spacing:-.02em;}
+.rp-curso-metrics{display:flex;gap:0;flex-shrink:0;border-left:1px solid var(--bd);}
+.rp-curso-metric{padding:8px 12px;text-align:center;border-left:1px solid var(--bd);}
+.rp-curso-metric:first-child{border-left:none;}
+.rp-curso-mv{font-family:var(--fn);font-size:13px;font-weight:800;letter-spacing:-.03em;color:var(--tx);line-height:1;}
+.rp-curso-ml{font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
 
 /* RESPONSIVE */
 @media(max-width:1100px){.daily-row{grid-template-columns:repeat(2,1fr) 2fr;}.daily-row .kd-wide{grid-column:3;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
@@ -382,7 +394,8 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
   .meta-cnm-short{display:block;}
 }
 @media(max-width:540px){
-  main{padding:calc(var(--nh) + 16px) 20px max(70px,env(safe-area-inset-bottom,0px)+50px);}
+  main{padding:calc(var(--nh) + 16px) 16px max(70px,env(safe-area-inset-bottom,0px)+50px);}
+  body{padding-left:4px;padding-right:4px;}
   .hero-row,.daily-row{grid-template-columns:1fr 1fr;gap:8px;}
   .kh{padding:16px 18px;}.kh-val.big{font-size:26px;}.kh-val.md{font-size:20px;}
   .kd{padding:12px 14px;}.kd-num{font-size:18px;}
@@ -525,13 +538,28 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
       <button class="rp-close" onclick="closeResumo()">✕</button>
     </div>
     <div class="rp-body" id="rp-body">
-      <div class="rp-row">
-        <div class="rp-kpi hi"><div class="rp-kl">Meta de Leads</div><div class="rp-kv" id="rp-meta">—</div><div class="rp-ks" id="rp-meta-s">meta D-1</div></div>
-        <div class="rp-kpi"><div class="rp-kl">Leads Captados</div><div class="rp-kv" id="rp-leads">—</div><div class="rp-ks">D-1</div></div>
+      <!-- Linha 1: Meta + Leads lado a lado, com % atingimento abaixo -->
+      <div class="rp-top-row">
+        <div class="rp-kpi hi">
+          <div class="rp-kl">Meta D-1</div>
+          <div class="rp-kv" id="rp-meta">—</div>
+        </div>
+        <div class="rp-kpi">
+          <div class="rp-kl">Leads Captados</div>
+          <div class="rp-kv" id="rp-leads">—</div>
+        </div>
       </div>
-      <div class="rp-row">
-        <div class="rp-kpi"><div class="rp-kl">CPL</div><div class="rp-kv" id="rp-cpl">—</div><div class="rp-ks" id="rp-cpl-s">—</div></div>
-        <div class="rp-kpi"><div class="rp-kl">Taxa de Qualif.</div><div class="rp-kv" id="rp-taxa">—</div><div class="rp-ks">D-1</div></div>
+      <div class="rp-ating-bar" id="rp-ating-wrap">
+        <div class="rp-ating-lbl">Atingimento da meta</div>
+        <div class="rp-ating-row">
+          <div class="rp-ating-track"><div class="rp-ating-fill" id="rp-ating-fill"></div></div>
+          <div class="rp-ating-pct" id="rp-ating-pct">—</div>
+        </div>
+      </div>
+      <!-- Linha 2: CPL e Taxa sem descrição -->
+      <div class="rp-top-row">
+        <div class="rp-kpi"><div class="rp-kl">CPL</div><div class="rp-kv" id="rp-cpl">—</div></div>
+        <div class="rp-kpi"><div class="rp-kl">Qualif.</div><div class="rp-kv" id="rp-taxa">—</div></div>
       </div>
       <div class="rp-divider"></div>
       <div class="rp-cursos" id="rp-cursos"></div>
@@ -849,32 +877,43 @@ function renderAll(){
   document.getElementById('panel-perf').classList.add('on');
   /* update resumo D-1 popup */
   (()=>{
-    /* D-1 key */
     const _hk=dkOf(new Date());
     const _d1k=DBdates.find(d=>d!==_hk)||prevDK(_hk);
     const _d1Leads=hDB?cntDate(_d1k):0;
-    /* meta D-1 */
     const _metaD1=META.found?(META.totalDaily[_d1k]||0):0;
     const _pctMeta=_metaD1>0?(_d1Leads/_metaD1*100):null;
-    /* taxa qualif D-1: ponderar pelos leads do dia por curso */
-    let _d1Qual=0;
+    let _d1Qual=aT;
     if(hDB&&_cQ){
       const _d1Map=DBmap.get(_d1k);
-      if(_d1Map){
-        let tot=0,qualSum=0;
-        _ss.forEach(r=>{const nm=cl(r[_cC]);const cnt=cntCurso(_d1k,nm);const taxa=n(r[_cQ]);qualSum+=Math.round(cnt*(taxa/100));tot+=cnt;});
-        _d1Qual=tot>0?(qualSum/tot)*100:aT;
-      } else {_d1Qual=aT;}
-    } else {_d1Qual=aT;}
-
-    const _rl=document.getElementById('rp-leads');if(_rl)_rl.textContent=fmt(_d1Leads)||'—';
+      if(_d1Map){let tot=0,qs=0;_ss.forEach(r=>{const cnt=cntCurso(_d1k,cl(r[_cC]));qs+=Math.round(cnt*(n(r[_cQ])/100));tot+=cnt;});_d1Qual=tot>0?(qs/tot)*100:aT;}
+    }
+    /* KPIs topo */
     const _rm=document.getElementById('rp-meta');if(_rm)_rm.textContent=_metaD1>0?fmt(_metaD1):'—';
-    const _rms=document.getElementById('rp-meta-s');if(_rms)_rms.textContent=_pctMeta!==null?(_pctMeta.toFixed(0)+'% atingido'):'meta D-1';
-    const _rt=document.getElementById('rp-taxa');if(_rt)_rt.textContent=_d1Qual.toFixed(1)+'%';
+    const _rl=document.getElementById('rp-leads');if(_rl)_rl.textContent=fmt(_d1Leads);
     const _rc=document.getElementById('rp-cpl');if(_rc)_rc.textContent=fmtR(cplD1);
-    const _rcs=document.getElementById('rp-cpl-s');if(_rcs)_rcs.textContent=cplVar<=0?'▼ vs hoje':'▲ vs hoje';
-
-    /* cursos D-1 */
+    const _rt=document.getElementById('rp-taxa');if(_rt)_rt.textContent=_d1Qual.toFixed(1)+'%';
+    /* barra atingimento */
+    const _ap=document.getElementById('rp-ating-pct');
+    const _af=document.getElementById('rp-ating-fill');
+    if(_ap&&_af){
+      const pctVal=_pctMeta!==null?_pctMeta:0;
+      const pctColor=pctVal>=90?'var(--pos)':pctVal>=70?'var(--wrn)':'var(--neg)';
+      _ap.textContent=_pctMeta!==null?_pctMeta.toFixed(1)+'%':'—';
+      _ap.style.color=pctColor;
+      _af.style.width=Math.min(pctVal,100)+'%';
+      _af.style.background=pctColor;
+    }
+    /* cursos */
+    function abrevNome(nm){
+      if(nm.length<=22)return nm;
+      const words=nm.split(' ');
+      let out='';
+      for(const w of words){
+        const test=(out?out+' ':'')+w;
+        if(test.length<=22){out=test;}else{out+=(out?' ':'')+(w.length>4?w.slice(0,3)+'.':w);if(out.length>=18)break;}
+      }
+      return out.slice(0,24);
+    }
     const _rcu=document.getElementById('rp-cursos');
     if(_rcu&&_ss.length){
       _rcu.innerHTML=_ss.map((r,i)=>{
@@ -882,19 +921,29 @@ function renderAll(){
         const col=COLORS[i%COLORS.length];
         const leads=hDB?cntCurso(_d1k,nm):n(r[_cT]);
         const meta=META.found?matchMetaCurso(nm):null;
-        const metaD1Val=meta?meta.dailyMetas[_d1k]||0:0;
+        const metaD1Val=meta?(meta.dailyMetas[_d1k]||0):0;
         const pct=metaD1Val>0?(leads/metaD1Val*100):null;
+        const pctColor=pct===null?'var(--tx3)':pct>=90?'var(--pos)':pct>=70?'var(--wrn)':'var(--neg)';
         const cplV=getCPL(nm).d1;
         const taxa=n(r[_cQ]);
-        const pctColor=pct===null?'var(--tx3)':pct>=90?'var(--pos)':pct>=70?'var(--wrn)':'var(--neg)';
         return`<div class="rp-curso-item">
-          <div class="rp-curso-left" style="border-left-color:${col}">
-            <div class="rp-curso-nm">${nm}</div>
-            ${pct!==null?`<div class="rp-curso-prog" style="color:${pctColor}">${pct.toFixed(0)}% da meta (${fmt(leads)} / ${fmt(metaD1Val)})</div>`:`<div class="rp-curso-prog">${fmt(leads)} leads D-1</div>`}
+          <div class="rp-curso-acc" style="background:${col}"></div>
+          <div class="rp-curso-main">
+            <div class="rp-curso-nm">${abrevNome(nm)}</div>
+            <div class="rp-curso-dot-row">
+              <div class="rp-curso-dot" style="background:${pctColor}"></div>
+              <div class="rp-curso-pct" style="color:${pctColor}">${pct!==null?pct.toFixed(1)+'%':'—'}</div>
+            </div>
           </div>
-          <div class="rp-curso-right">
-            <div><div class="rp-curso-kl">CPL</div><div class="rp-curso-kv">${fmtR(cplV)}</div></div>
-            <div><div class="rp-curso-kl">Qualif.</div><div class="rp-curso-kv">${taxa.toFixed(1)}%</div></div>
+          <div class="rp-curso-metrics">
+            <div class="rp-curso-metric">
+              <div class="rp-curso-mv">R$${cplV.toFixed(3)}</div>
+              <div class="rp-curso-ml">CPL</div>
+            </div>
+            <div class="rp-curso-metric">
+              <div class="rp-curso-mv">${taxa.toFixed(3)}%</div>
+              <div class="rp-curso-ml">Qualif.</div>
+            </div>
           </div>
         </div>`;
       }).join('');
