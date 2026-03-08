@@ -832,7 +832,7 @@ function renderAll(){
   document.getElementById('kpi-row').innerHTML=
     khv('Leads Captados',fmt(tL),'<span class="kh-live-dot"></span>','big')+
     khv('Qualificados',fmt(tQ),null,'big')+
-    khv('Qualificação Geral',aT.toFixed(1)+'%',aT>=90?badge('▲ Alta','pos'):badge('→ Regular','warn'),'md')+
+    khv('Qualificação',aT.toFixed(1)+'%',aT>=90?badge('▲ Alta','pos'):badge('→ Regular','warn'),'md')+
     khv('CPL Geral',fmtR(60),cplVar<=0?badge('▼ Saudável','pos'):badge('▲ Elevado','neg'),'md');
 
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
