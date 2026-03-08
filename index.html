@@ -41,7 +41,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh
 @media(max-width:480px){.ni{padding:0 10px;}.logo{font-size:11px;margin-right:6px;}.tbtn{padding:5px 8px;gap:2px;}.tbtn-txt{display:none;}.th-txt{display:none;}.tsbtn{padding:5px 7px;}}
 
 /* LAYOUT */
-main{max-width:1320px;margin:0 auto;padding:calc(var(--nh) + 28px) 40px max(80px,env(safe-area-inset-bottom,0px)+60px);width:100%;}
+main{max-width:1100px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px,env(safe-area-inset-bottom,0px)+60px);width:100%;}
 .panel{display:none;}.panel.on{display:block;animation:fu .2s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 #loader{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:80px 0;text-align:center;}
@@ -52,7 +52,7 @@ main{max-width:1320px;margin:0 auto;padding:calc(var(--nh) + 28px) 40px max(80px
 .gf{margin-bottom:16px;}
 .card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:22px 26px;box-shadow:var(--sh2);}
 .slbl{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;}
-.sec-hdr{font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin-bottom:14px;display:flex;align-items:center;gap:8px;}.sec-hdr::before{content:"";display:inline-block;width:3px;height:14px;border-radius:2px;background:var(--acc);flex-shrink:0;}
+.sec-hdr{font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin-bottom:14px;}
 .empty{font-size:12px;color:var(--tx3);padding:6px 0;}
 
 /* BADGE */
@@ -69,16 +69,16 @@ main{max-width:1320px;margin:0 auto;padding:calc(var(--nh) + 28px) 40px max(80px
 .pb-fill{height:100%;border-radius:999px;transition:width .8s ease;}
 
 /* TOP-SECTION wrapper — destaque com gradiente e separador */
-.top-section{position:relative;padding:16px 0 32px;margin-bottom:0;}
+.top-section{position:relative;padding:10px 0 18px;margin-bottom:0;}
 .top-section::after{content:'';position:absolute;bottom:0;left:-14px;right:-14px;height:1px;background:linear-gradient(90deg,transparent 0%,var(--bd) 15%,var(--bda) 50%,var(--bd) 85%,transparent 100%);}
-.rest-section{padding-top:28px;}
-.mid-sep{height:1px;margin:22px -14px 24px;background:linear-gradient(90deg,transparent 0%,var(--bd) 15%,var(--bda) 50%,var(--bd) 85%,transparent 100%);}
+.rest-section{padding-top:16px;}
+.mid-sep{height:1px;margin:14px 0 16px;background:var(--bd);opacity:.5;}
 [data-theme=dark] .top-section{background:linear-gradient(180deg,rgba(124,92,252,.055) 0%,transparent 100%);}
 [data-theme=light] .top-section{background:linear-gradient(180deg,rgba(94,56,236,.035) 0%,transparent 100%);}
 [data-theme=beige] .top-section{background:linear-gradient(180deg,rgba(122,85,48,.03) 0%,transparent 100%);}
 
 /* HERO — 4 cards principais */
-.hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;}
+.hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
 .kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:24px 26px;box-shadow:var(--sh);position:relative;overflow:hidden;}
 .kh::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc) 0%,transparent 65%);opacity:.5;}
 [data-theme=light] .kh{border-color:var(--bda);background:var(--sf);}
@@ -90,7 +90,7 @@ main{max-width:1320px;margin:0 auto;padding:calc(var(--nh) + 28px) 40px max(80px
 .kh-sub{display:none;}
 
 /* DAILY — 5 cards */
-.daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2fr;gap:14px;margin-bottom:0;}
+.daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2fr;gap:10px;margin-bottom:0;}
 .kd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:16px 20px;box-shadow:var(--sh2);}
 .kd-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
 .kd-date{font-weight:400;text-transform:none;letter-spacing:0;font-size:9px;color:var(--tx3);}
@@ -307,7 +307,7 @@ main{max-width:1320px;margin:0 auto;padding:calc(var(--nh) + 28px) 40px max(80px
 .dd-btn:hover{border-color:var(--acc);}
 .dd-btn .cr{font-size:8px;opacity:.5;transition:transform var(--tr);}
 .dd-wrap.open .dd-btn .cr{transform:rotate(180deg);}
-.dd-menu{position:absolute;top:calc(100% + 4px);left:0;min-width:155px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rs);padding:3px;box-shadow:var(--sh);opacity:0;pointer-events:none;transform:translateY(-5px);transition:all var(--tr);z-index:200;max-height:200px;overflow-y:auto;}
+.dd-menu{position:absolute;top:calc(100% + 4px);left:auto;right:0;min-width:155px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rs);padding:3px;box-shadow:var(--sh);opacity:0;pointer-events:none;transform:translateY(-5px);transition:all var(--tr);z-index:200;max-height:220px;overflow-y:auto;}
 .dd-wrap.open .dd-menu{opacity:1;pointer-events:all;transform:translateY(0);}
 .dd-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 9px;border-radius:5px;cursor:pointer;font-size:11px;color:var(--tx2);transition:all var(--tr);}
 .dd-item:hover{background:var(--sf);color:var(--tx);}
@@ -441,12 +441,17 @@ main{max-width:1320px;margin:0 auto;padding:calc(var(--nh) + 28px) 40px max(80px
         <div id="share-list"></div>
       </div>
     </div>
+    <div class="gf card">
+      <div class="sec-hdr" style="margin-bottom:4px">CPL por Curso</div>
+      <div style="font-size:9px;color:var(--wrn);margin-bottom:11px">★ dados simulados · do menor para o maior CPL · clique para expandir</div>
+      <div class="cpl-list" id="cpl-list"></div>
+    </div>
     <div class="gf" id="section-meta"></div>
     <div class="gf card">
       <div class="taxa-hdr">
         <div>
           <div class="sec-hdr" style="margin-bottom:4px">Taxa de Qualificação por Curso</div>
-          <div style="font-size:9px;color:var(--tx3)">Do mais qualificado ao menos · clique para ver o diarizado</div>
+          <div style="font-size:9px;color:var(--tx2)">Do mais qualificado ao menos · clique para ver o diarizado</div>
         </div>
         <div class="dd-wrap" id="taxa-dd">
           <button class="dd-btn" onclick="toggleDD('taxa-dd')"><span id="taxa-dd-lbl">Total acumulado</span><span class="cr">▾</span></button>
@@ -454,11 +459,6 @@ main{max-width:1320px;margin:0 auto;padding:calc(var(--nh) + 28px) 40px max(80px
         </div>
       </div>
       <div id="taxa-grid"></div>
-    </div>
-    <div class="gf card">
-      <div class="sec-hdr" style="margin-bottom:4px">CPL por Curso</div>
-      <div style="font-size:9px;color:var(--wrn);margin-bottom:11px">★ dados simulados · do menor para o maior CPL · clique para expandir</div>
-      <div class="cpl-list" id="cpl-list"></div>
     </div>
     <div class="gf card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;flex-wrap:wrap;gap:8px">
@@ -486,6 +486,9 @@ main{max-width:1320px;margin:0 auto;padding:calc(var(--nh) + 28px) 40px max(80px
 <div id="toast"></div>
 <script>
 const PUB='https://docs.google.com/spreadsheets/d/e/2PACX-1vT6iHhSHZBcAWYSw8wlRwyX7r6_jUnaULqG4uyt9dDG578kCD_N-j0NanrwJZvoDOyFidHmc_vaMAVj/pub?output=csv';
+const DB_GID='256138654';
+const META_GID='1630113902';
+const ESC_COLS=['Pós-gradconst PUB='https://docs.google.com/spreadsheets/d/e/2PACX-1vT6iHhSHZBcAWYSw8wlRwyX7r6_jUnaULqG4uyt9dDG578kCD_N-j0NanrwJZvoDOyFidHmc_vaMAVj/pub?output=csv';
 const DB_GID='256138654';
 const META_GID='1630113902';
 const ESC_COLS=['Pós-graduação Completa','Pós-graduação Incompleta','Ensino Superior Completo','Ensino Superior Incompleto','Ensino Médio Completo','Ensino Médio Incompleto'];
@@ -706,13 +709,12 @@ function renderAll(){
   const dHD=d1C>0?(hC-d1C)/d1C*100:null;
   const cplHoje=58.4,cplD1=61.2,cplVar=cplD1>0?(cplHoje-cplD1)/cplD1*100:0;
 
-    const cplDotCol=cplVar<=0?'var(--pos)':'var(--neg)';
-  const cplDotTip=cplVar<=0?'CPL saudável':'CPL elevado';
+    const cplBadge=cplVar<=0?badge('▼ Saudável','pos'):badge('▲ Elevado','neg');
   document.getElementById('kpi-row').innerHTML=
     khv('Leads Captados',fmt(tL),'<span class="kh-live-dot"></span>','big')+
     khv('Qualificados',fmt(tQ),null,'big')+
     khv('Qualificação',aT.toFixed(1)+'%',aT>=90?badge('▲ Alta','pos'):badge('→ Regular','warn'),'md')+
-    khv('CPL Geral',fmtR(60),'<span title="'+cplDotTip+'" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+cplDotCol+';flex-shrink:0"></span>','md');
+    khv('CPL Geral',fmtR(60),cplBadge,'md');
 
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
   const cplVb=vBadge(cplVar,true);
@@ -731,7 +733,8 @@ function renderAll(){
     const bQ=_cQ?[..._ss].sort((a,b)=>n(b[_cQ])-n(a[_cQ]))[0]:null;
     const bQNm=bQ?cl(bQ[_cC]):'—',bQV=bQ?n(bQ[_cQ]):0;
     const bQColor=COLORS[(_ss.indexOf(bQ)>=0?_ss.indexOf(bQ):2)%COLORS.length];
-    const box=(ttl,val,sub,col)=>`<div style="display:flex;align-items:stretch;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden"><div style="width:3px;flex-shrink:0;background:${col}"></div><div style="flex:1;min-width:0;padding:9px 12px"><div style="font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px">${ttl}</div><div style="font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:${col};line-height:1">${val}</div></div><div style="flex-shrink:0;padding:9px 12px;border-left:1px solid var(--bd);min-width:96px;max-width:120px;display:flex;flex-direction:column;justify-content:center"><div style="font-size:8px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Melhor curso</div><div style="font-size:10px;font-weight:700;color:var(--tx);line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${sub}</div></div></div>`;
+    /* col1: label+valor | col2: nome do curso alinhado à direita */
+    const box=(ttl,val,sub,col)=>`<div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:0;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden"><div style="padding:9px 12px;border-left:3px solid ${col}"><div style="font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px">${ttl}</div><div style="font-family:var(--fn);font-size:18px;font-weight:800;letter-spacing:-.04em;color:${col};line-height:1">${val}</div></div><div style="padding:9px 13px;text-align:right;max-width:130px;min-width:80px"><div style="font-size:9px;font-weight:700;color:var(--tx);line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal">${sub}</div></div></div>`;
     return`<div style="display:flex;flex-direction:column;gap:5px">${box('Top Leads Hoje',fmt(topCnt),topNm,topColor)}${box('Menor CPL',fmtR(bCplV),bCplNm,bCplC)}${box('Maior Qualificação',bQV.toFixed(1)+'%',bQNm,bQColor)}</div>`;
   })();
   const d1Vb=''; // sem variação no D-1
@@ -742,7 +745,7 @@ function renderAll(){
     kdv('CPL Hoje',fmtR(cplHoje),cplVb)+
     kdv('CPL D-1',fmtR(cplD1),'')+
     `<div class="kd kd-wide" style="padding:16px 18px">
-      <div style="font-family:var(--fn);font-size:12px;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin-bottom:10px">Destaques do Dia</div>
+      <div style="font-family:var(--fn);font-size:12px;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin-bottom:10px">Resumo</div>
       ${resumoHTML}
     </div>`;
 
@@ -1181,6 +1184,3 @@ function toggleTheme(){document.getElementById('tsw').classList.toggle('open');}
 window.addEventListener('scroll',()=>document.getElementById('btt').classList.toggle('on',window.scrollY>260),{passive:true});
 const _st=localStorage.getItem('fsl-t');if(_st)setTheme(_st);
 load();
-</script>
-</body>
-</html>
