@@ -92,12 +92,12 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 
 /* DAILY — 5 cards */
 .daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2.2fr;gap:12px;margin-bottom:0;}
-.kd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:22px 24px;box-shadow:var(--sh2);position:relative;overflow:hidden;}.kd::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--acc),transparent);opacity:.25;}
+.kd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:22px 24px;box-shadow:var(--sh2);position:relative;}.kd::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--acc),transparent);opacity:.25;pointer-events:none;}
 .kd-lbl{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
 .kd-date{font-weight:400;text-transform:none;letter-spacing:0;font-size:9px;color:var(--tx3);}
-.kd-body{display:flex;align-items:flex-end;justify-content:space-between;gap:5px;}
+.kd-body{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:nowrap;}
 .kd-num{font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
-.kd-vb{flex-shrink:0;padding-bottom:1px;}
+.kd-vb{flex-shrink:0;padding-top:4px;}
 .kd-wide{display:flex;flex-direction:column;min-height:140px;}
 /* Top Curso: nome grande, células limpas */
 .tc-nome{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:9px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1;}
@@ -264,9 +264,9 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 .cpld-sec{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px;}
 .cpld-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--rs);border:1px solid var(--bd);max-height:260px;overflow-y:auto;}
 .cpld-tbl{width:100%;min-width:340px;}
-.cpld-thead{display:grid;grid-template-columns:60px 1fr 60px 64px 80px 70px;background:var(--cdh);position:sticky;top:0;z-index:1;}
+.cpld-thead{display:grid;grid-template-columns:70px 1fr 52px 58px 82px 74px;background:var(--cdh);position:sticky;top:0;z-index:1;}
 .cpld-thead>div{font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;padding:7px 8px;white-space:nowrap;overflow:hidden;}
-.cpld-tr{display:grid;grid-template-columns:60px 1fr 60px 64px 80px 70px;border-top:1px solid var(--bd);}
+.cpld-tr{display:grid;grid-template-columns:70px 1fr 52px 58px 82px 74px;border-top:1px solid var(--bd);}
 .cpld-td{padding:7px 8px;font-size:11px;font-weight:500;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .cpld-td.num{font-family:var(--fn);font-weight:600;color:var(--tx);font-size:11px;text-align:right;}
 .cpld-thead>div:not(:first-child){text-align:right;}
@@ -1146,7 +1146,7 @@ function buildMeta(tL,hk,hDB){
       </div>
       <div class="meta-diario-body${diarOpen?' open':''}">
         <div class="meta-diario-scroll"><div class="meta-diario-tbl">
-          <div class="meta-dthead" style="grid-template-columns:68px 80px 80px 72px 86px 80px;">
+          <div class="meta-dthead" style="grid-template-columns:70px 1fr 80px 68px 90px 84px;">
             <div>Data</div><div style="text-align:right">Meta</div><div style="text-align:right">Leads</div><div style="text-align:right">Diff.</div><div style="text-align:right">Acum. meta</div><div style="text-align:right">Acum. real</div>
           </div>
           ${(()=>{let aM=0,aR=0;return metaDates.map(dk=>{
@@ -1155,7 +1155,7 @@ function buildMeta(tL,hk,hDB){
             aM+=mD;aR+=rD;
             const diff=rD-mD;const dc=diff>=0?'var(--pos)':'var(--neg)';
             const iP=new Date(pdk(dk))<=hkDate;
-            return`<div class="meta-dtr" style="grid-template-columns:68px 80px 80px 72px 86px 80px;${iP?'':'opacity:.4'}">
+            return`<div class="meta-dtr" style="grid-template-columns:70px 1fr 80px 68px 90px 84px;${iP?'':'opacity:.4'}">
               <div class="meta-dtd dt">${dkLbl(dk)}</div>
               <div class="meta-dtd" style="text-align:right">${fmt(mD)}</div>
               <div class="meta-dtd" style="text-align:right;color:${iP?(rD>0?'var(--tx)':'var(--tx3)'):'var(--tx3)'}">${iP?fmt(rD):'—'}</div>
@@ -1279,7 +1279,7 @@ function toggleTaxa(nm){if(_txOpen.has(nm))_txOpen.delete(nm);else _txOpen.add(n
 function buildCPL(){
   /* popular dropdown datas */
   const cplMenu=document.getElementById('cpl-dd-menu');
-  if(cplMenu&&cplMenu.innerHTML===''){
+  if(cplMenu&&DBdates.length>0){
     const mkC=(val,lbl,sel)=>{const d=document.createElement('div');d.className='dd-item'+(sel?' sel':'');d.textContent=lbl;d.onclick=()=>{_cplSel=val;document.getElementById('cpl-dd-lbl').textContent=lbl==='Geral'?'Geral':lbl;document.querySelectorAll('#cpl-dd-menu .dd-item').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');closeDD();buildCPL();};return d;};
     cplMenu.innerHTML='';cplMenu.appendChild(mkC('__total__','Geral',true));
     if(cplMenu.children.length<2){const sep=document.createElement('div');sep.className='dd-sep';cplMenu.appendChild(sep);}
@@ -1287,14 +1287,16 @@ function buildCPL(){
   }
   const isTotal=_cplSel==='__total__';
   const data=_ss.map((r,i)=>{
-    const nm=cl(r[_cC]),tot=isTotal?n(r[_cT]):cntCurso(_cplSel,nm),c=getCPL(nm);
-    /* CPL a exibir: geral ou do dia selecionado */
-    const displayCPL=isTotal?c.g:(()=>{const entry=c.daily?.find?.(x=>x.dk===_cplSel);return entry?entry.cpl:c.g;})();
-    const vHP=c.g>0?(c.h-c.g)/c.g*100:0,vD1P=c.g>0?(c.d1-c.g)/c.g*100:0;
+    const nm=cl(r[_cC]),totGeral=n(r[_cT]),c=getCPL(nm);
+    const tot=isTotal?totGeral:cntCurso(_cplSel,nm);
     const seed=nm.split('').reduce((a,ch)=>a+ch.charCodeAt(0),0);
     const dS=DBdates.length>0?DBdates:(()=>{const arr=[];for(let j=0;j<14;j++){const d=new Date();d.setDate(d.getDate()-j);arr.push(dkOf(d));}return arr;})();
     const baseQ=_cQ?n(r[_cQ]):80;
-    const daily=dS.map((dk,j)=>{const real=cntCurso(dk,nm);const sim=real>0?real:Math.max(0,Math.round(tot*0.03+((seed*(j+2))%18)-6));if(sim===0)return null;return{dk,cnt:sim,cpl:c.g*(0.84+((seed*(j+4))%32)/100),custo:sim*c.g*(0.84+((seed*(j+4))%32)/100),qual:dayQual(nm,dk,baseQ)};}).filter(Boolean);
+    /* daily usa totGeral para simular de forma consistente */
+    const daily=dS.map((dk,j)=>{const real=cntCurso(dk,nm);const sim=real>0?real:Math.max(0,Math.round(totGeral*0.03+((seed*(j+2))%18)-6));if(sim===0)return null;return{dk,cnt:sim,cpl:c.g*(0.84+((seed*(j+4))%32)/100),custo:sim*c.g*(0.84+((seed*(j+4))%32)/100),qual:dayQual(nm,dk,baseQ)};}).filter(Boolean);
+    /* CPL do dia selecionado: busca no daily estável */
+    const displayCPL=isTotal?c.g:(()=>{const entry=daily.find(x=>x.dk===_cplSel);return entry?entry.cpl:c.g;})();
+    const vHP=c.g>0?(c.h-c.g)/c.g*100:0,vD1P=c.g>0?(c.d1-c.g)/c.g*100:0;
     return{nm,color:COLORS[i%COLORS.length],tot,g:c.g,displayCPL,h:c.h,d1:c.d1,vHP,vD1P,daily,baseQ};
   }).sort((a,b)=>a.displayCPL-b.displayCPL);
 
