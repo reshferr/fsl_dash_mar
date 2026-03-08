@@ -1008,11 +1008,13 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   }).join('');
 
   /* share card — topo mostra leads do período selecionado + qualificação REAL sincronizada */
-  const tLSel=isTotal?tL:rows.reduce((s,x)=>s+x.cnt,0);
+  const _tL=_ss.reduce((s,r)=>s+n(r[_cT]),0);
+  const _tQ=_ss.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0);
+  const tLSel=isTotal?_tL:rows.reduce((s,x)=>s+x.cnt,0);
   /* qualificação: se total usa média geral; se dia específico usa taxa ponderada real por curso */
   let tQSel;
   if(isTotal){
-    tQSel=tQ;
+    tQSel=_tQ;
   } else {
     /* para cada curso, pega os leads do dia e aplica a taxa de qualificação daquele curso */
     tQSel=rows.reduce((s,{nm,cnt})=>{
