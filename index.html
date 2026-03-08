@@ -905,6 +905,7 @@ function renderAll(){
   window._escSelFn=()=>_escSel;
   renderEsc();buildTable();
   document.getElementById('panel-perf').classList.add('on');
+  initWelcome();
   /* update resumo D-1 popup */
   (()=>{
     const _hk=dkOf(new Date());
@@ -1578,34 +1579,33 @@ function exportPDF(){
 
 
 /* BOAS-VINDAS */
-(function(){
+function initWelcome(){
   const hr=new Date().getHours();
   const greeting=hr<12?'Bom dia':hr<18?'Boa tarde':'Boa noite';
-  let nome=localStorage.getItem('fsl-nome');
+  const nome=localStorage.getItem('fsl-nome');
   const el=document.getElementById('welcome-msg');
   const llbl=document.getElementById('lancamento-lbl');
   const now=new Date();
   const mes=now.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
   if(llbl)llbl.textContent='Lançamentos '+mes.charAt(0).toUpperCase()+mes.slice(1);
   if(!nome){
-    // Pede nome uma única vez
-    const input=document.createElement('div');
-    input.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);';
-    input.innerHTML=`<div style="background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:32px 36px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.5);">
+    const overlay=document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);';
+    overlay.innerHTML=`<div style="background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:32px 36px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.5);">
       <div style="font-family:var(--fn);font-size:20px;font-weight:800;color:var(--tx);margin-bottom:6px;letter-spacing:-.03em">Olá! 👋</div>
       <div style="font-size:13px;color:var(--tx2);margin-bottom:20px;line-height:1.5">Como posso te chamar?</div>
-      <input id="nome-input" type="text" placeholder="Seu nome" style="width:100%;padding:11px 14px;border-radius:var(--rs);border:1px solid var(--bda);background:var(--sf);color:var(--tx);font-family:var(--f);font-size:14px;outline:none;margin-bottom:14px;">
+      <input id="nome-input" type="text" placeholder="Seu nome" style="width:100%;padding:11px 14px;border-radius:var(--rs);border:1px solid var(--bda);background:var(--sf);color:var(--tx);font-family:var(--f);font-size:14px;outline:none;margin-bottom:14px;box-sizing:border-box;">
       <button id="nome-btn" style="width:100%;height:42px;border-radius:999px;background:var(--acc);color:#fff;border:none;cursor:pointer;font-family:var(--fn);font-size:13px;font-weight:700;letter-spacing:-.01em;">Continuar</button>
     </div>`;
-    document.body.appendChild(input);
+    document.body.appendChild(overlay);
     const inp=document.getElementById('nome-input');
     const btn=document.getElementById('nome-btn');
     inp.focus();
     const save=()=>{
       const v=inp.value.trim();
-      if(!v)return;
+      if(!v){inp.style.borderColor='var(--neg)';return;}
       localStorage.setItem('fsl-nome',v);
-      input.remove();
+      overlay.remove();
       if(el)el.textContent=greeting+', '+v+' 👋';
     };
     btn.onclick=save;
@@ -1613,7 +1613,7 @@ function exportPDF(){
   } else {
     if(el)el.textContent=greeting+', '+nome+' 👋';
   }
-})();
+}
 
 const _st=localStorage.getItem('fsl-t');if(_st)setTheme(_st);
 load();
