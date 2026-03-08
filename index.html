@@ -11,7 +11,7 @@
 [data-theme=light]{--bg:#f0f0f8;--sf:#ffffff;--cd:#ffffff;--cdh:#f6f6fc;--nav:rgba(240,240,248,.97);--bd:rgba(0,0,0,.07);--bda:rgba(0,0,0,.11);--tx:#0e0e1a;--tx2:#4a4a68;--tx3:#9898b8;--acc:#5e38ec;--accg:rgba(94,56,236,.06);--pos:#1a6e48;--neg:#a82828;--wrn:#7a5000;--tagt:#5e38ec;--grd:rgba(0,0,0,.03);--sh:0 2px 12px rgba(0,0,0,.06);--sh2:0 1px 3px rgba(0,0,0,.04);}
 [data-theme=beige]{--bg:#e8dfd4;--sf:#fdf6ed;--cd:#fdf6ed;--cdh:#f3e9dc;--nav:rgba(232,223,212,.97);--bd:rgba(110,80,40,.13);--bda:rgba(90,60,20,.18);--tx:#1c1208;--tx2:#6b4e2e;--tx3:#b09070;--acc:#7a5530;--accg:rgba(122,85,48,.08);--pos:#2a5030;--neg:#782020;--wrn:#7a5000;--tagt:#7a5530;--grd:rgba(90,60,20,.05);--sh:0 2px 10px rgba(40,22,6,.11);--sh2:0 1px 3px rgba(40,22,6,.07);}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html{font-size:14px;scroll-behavior:smooth;overflow-x:hidden;width:100%;}
+html{font-size:14px;scroll-behavior:smooth;overflow-x:hidden;width:100%;-webkit-text-size-adjust:100%;}
 body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh;-webkit-font-smoothing:antialiased;transition:background var(--tr),color var(--tr);overflow-x:hidden;width:100%;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--tx3);border-radius:2px;}
 
@@ -41,7 +41,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh
 @media(max-width:480px){.ni{padding:0 10px;}.logo{font-size:11px;margin-right:6px;}.tbtn{padding:5px 8px;gap:2px;}.tbtn-txt{display:none;}.th-txt{display:none;}.tsbtn{padding:5px 7px;}}
 
 /* LAYOUT */
-main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;width:100%;}
+main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px max(80px,env(safe-area-inset-bottom,0px)+60px);width:100%;}
 .panel{display:none;}.panel.on{display:block;animation:fu .2s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 #loader{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:80px 0;text-align:center;}
@@ -71,7 +71,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .top-section{position:relative;padding:10px 0 26px;margin-bottom:0;}
 .top-section::after{content:'';position:absolute;bottom:0;left:-14px;right:-14px;height:1px;background:linear-gradient(90deg,transparent 0%,var(--bd) 15%,var(--bda) 50%,var(--bd) 85%,transparent 100%);}
 .rest-section{padding-top:22px;}
-.mid-sep{position:relative;height:1px;margin:20px -14px 22px;background:linear-gradient(90deg,transparent 0%,var(--bd) 15%,var(--bda) 50%,var(--bd) 85%,transparent 100%);}
+.mid-sep{height:1px;margin:18px -14px 20px;background:linear-gradient(90deg,transparent 0%,var(--bd) 15%,var(--bda) 50%,var(--bd) 85%,transparent 100%);}
 [data-theme=dark] .top-section{background:linear-gradient(180deg,rgba(124,92,252,.055) 0%,transparent 100%);}
 [data-theme=light] .top-section{background:linear-gradient(180deg,rgba(94,56,236,.035) 0%,transparent 100%);}
 [data-theme=beige] .top-section{background:linear-gradient(180deg,rgba(122,85,48,.03) 0%,transparent 100%);}
@@ -96,7 +96,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .kd-body{display:flex;align-items:flex-end;justify-content:space-between;gap:5px;}
 .kd-num{font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
 .kd-vb{flex-shrink:0;padding-bottom:1px;}
-.kd-wide{display:flex;flex-direction:column;min-height:140px;}
+.kd-wide{display:flex;flex-direction:column;min-height:160px;}
 /* Top Curso: nome grande, células limpas */
 .tc-nome{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:9px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1;}
 .tc-row{display:flex;gap:5px;}
@@ -183,7 +183,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .meta-dtd{padding:6px 9px;font-family:var(--fn);font-size:11px;font-weight:600;color:var(--tx);}
 .meta-dtd.dt{font-family:var(--f);font-weight:500;color:var(--tx2);font-size:11px;}
 /* cursos */
-.meta-cursos-hdr{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;}
+.meta-cursos-hdr{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin:12px 0 7px;}
 .meta-crow{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;margin-bottom:5px;}
 .meta-crow:last-child{margin-bottom:0;}
 .meta-crow.open{border-color:var(--bda);}
@@ -290,7 +290,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 .esc-bp{font-size:11px;font-weight:800;margin-top:1px;}
 
 /* TABLE */
-.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:300px;overflow-y:auto;}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:300px;overflow-y:auto;touch-action:pan-x pan-y;}
 .dtbl{width:100%;border-collapse:collapse;font-size:11px;min-width:400px;}
 .dtbl th{padding:6px 9px;font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--bd);white-space:nowrap;background:var(--sf);position:sticky;top:0;z-index:2;text-align:left;}
 .dtbl th.r,.dtbl td.r{text-align:right;}
@@ -322,11 +322,11 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
 #btt.on{opacity:1;pointer-events:all;transform:translateY(0);}
 #toast{position:fixed;bottom:54px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--cd);border:1px solid var(--bd);color:var(--tx2);padding:6px 14px;border-radius:999px;font-size:11px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--sh);}
 @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
-.kh-live-dot{width:7px;height:7px;border-radius:50%;background:var(--pos);display:inline-block;animation:pulse-dot 2s ease-in-out infinite;flex-shrink:0;}
-.kh.kh-pos{border-color:rgba(52,211,153,.35);}
-[data-theme=light] .kh.kh-pos{border-color:rgba(26,110,72,.3);}
-[data-theme=beige] .kh.kh-pos{border-color:rgba(42,80,48,.3);}
+@keyframes pdot{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(52,211,153,.6)}60%{transform:scale(1.3);box-shadow:0 0 0 6px rgba(52,211,153,0)}}
+.kh-live-dot{width:8px;height:8px;border-radius:50%;background:var(--pos);display:inline-block;animation:pdot 2.4s ease-in-out infinite;flex-shrink:0;margin-left:2px;}
+.kh.kh-green{border-color:rgba(52,211,153,.42);}
+[data-theme=light] .kh.kh-green{border-color:rgba(26,110,72,.38);}
+[data-theme=beige] .kh.kh-green{border-color:rgba(42,80,48,.38);}
 
 /* RESPONSIVE */
 @media(max-width:1100px){.daily-row{grid-template-columns:repeat(2,1fr) 2fr;}.daily-row .kd-wide{grid-column:3;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
@@ -349,7 +349,7 @@ main{max-width:1400px;margin:0 auto;padding:calc(var(--nh) + 14px) 14px 80px;wid
   .meta-cnm-short{display:block;}
 }
 @media(max-width:540px){
-  main{padding:calc(var(--nh) + 8px) 10px 70px;}
+  main{padding:calc(var(--nh) + 8px) 10px max(70px,env(safe-area-inset-bottom,0px)+50px);}
   .hero-row,.daily-row{grid-template-columns:1fr 1fr;gap:8px;}
   .kh{padding:12px 13px;}.kh-val.big{font-size:22px;}.kh-val.md{font-size:18px;}
   .kd{padding:10px 11px;}.kd-num{font-size:18px;}
@@ -705,69 +705,37 @@ function renderAll(){
     khv('Leads Captados',fmt(tL),'<span class="kh-live-dot"></span>','big')+
     khv('Qualificados',fmt(tQ),null,'big')+
     khv('Qualificação',aT.toFixed(1)+'%',aT>=90?badge('▲ Alta','pos'):badge('→ Regular','warn'),'md')+
-    khv('CPL Geral',fmtR(60),cplVar!==null?`<span style="font-size:11px;font-weight:700;color:${cplVar<=0?'var(--pos)':'var(--neg)'}">${cplVar<=0?'▼':'▲'}${Math.abs(cplVar).toFixed(1)}%</span>`:null,'md','kh-pos');
+    khv('CPL Geral',fmtR(60),cplVar!==null?`<span style="font-size:11px;font-weight:700;color:${cplVar<=0?'var(--pos)':'var(--neg)'}">${cplVar<=0?'▼':'▲'}${Math.abs(cplVar).toFixed(1)}%</span>`:null,'md','kh-green');
 
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
   const cplVb=vBadge(cplVar,true);
 
-  /* Resumo panel — 3 boxes verticais: melhor curso/leads, melhor CPL, melhor qualificação */
+  /* Resumo: 3 boxes verticais — Melhor Leads, CPL, Qualificação */
   const resumoHTML=(()=>{
-    if(!hDB&&!_ss.length){return`<div style="font-size:11px;color:var(--tx3)">Sem dados para análise</div>`;}
+    if(!_ss.length)return'<div style="font-size:11px;color:var(--tx3)">Sem dados</div>';
     const mH=hDB?DBmap.get(hk):null;
-    const todayList=mH?Array.from(mH.entries()).sort((a,b)=>b[1]-a[1]):[];
-    /* melhor curso por leads hoje (ou total se sem DB) */
-    const topLeadNm=todayList[0]?.[0]||(cl(_ss[0]?.[_cC])||'—');
-    const topLeadCnt=todayList[0]?.[1]||(hDB?0:n(_ss[0]?.[_cT]||0));
-    const topLeadColor=todayList[0]?COLORS[_ss.findIndex(r=>cl(r[_cC])===topLeadNm)%COLORS.length]:COLORS[0];
-    /* melhor CPL (menor custo) — com base simulada */
-    const cplData=_ss.map((r,i)=>{const nm=cl(r[_cC]);const c=getCPL(nm);return{nm,g:c.g,color:COLORS[i%COLORS.length]};}).sort((a,b)=>a.g-b.g);
-    const bestCplNm=cplData[0]?.nm||'—';
-    const bestCplVal=cplData[0]?.g||0;
-    const bestCplColor=cplData[0]?.color||COLORS[0];
-    /* melhor qualificação */
-    const bestQual=_cQ?[..._ss].sort((a,b)=>n(b[_cQ])-n(a[_cQ]))[0]:null;
-    const bestQNm=bestQual?cl(bestQual[_cC]):'—';
-    const bestQV=bestQual?n(bestQual[_cQ]):0;
-    const bestQColor=bestQual?COLORS[_ss.indexOf(bestQual)%COLORS.length]:COLORS[2];
-
-    const box=(icon,title,value,sub,color)=>`
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs)">
-        <div style="width:3px;align-self:stretch;border-radius:2px;background:${color};flex-shrink:0"></div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px">${title}</div>
-          <div style="font-family:var(--fn);font-size:16px;font-weight:800;letter-spacing:-.04em;color:${color};line-height:1.1;margin-bottom:2px">${value}</div>
-          <div style="font-size:10px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub}</div>
-        </div>
-        <div style="font-size:18px;opacity:.5;flex-shrink:0">${icon}</div>
-      </div>`;
-
-    return`<div style="display:flex;flex-direction:column;gap:7px">
-      ${box('🏆','Melhor Curso · Leads',fmt(topLeadCnt),topLeadNm,topLeadColor)}
-      ${box('💰','Melhor CPL',fmtR(bestCplVal),bestCplNm,bestCplColor)}
-      ${box('⭐','Melhor Qualificação',bestQV.toFixed(1)+'%',bestQNm,bestQColor)}
-    </div>`;
+    const today=mH?Array.from(mH.entries()).sort((a,b)=>b[1]-a[1]):[];
+    const topNm=today[0]?.[0]||(cl(_ss[0]?.[_cC])||'—');
+    const topCnt=today[0]?.[1]||(hDB?0:n(_ss[0]?.[_cT]||0));
+    const topIdx=_ss.findIndex(r=>cl(r[_cC])===topNm);
+    const topColor=COLORS[(topIdx>=0?topIdx:0)%COLORS.length];
+    const cplList=_ss.map((r,i)=>({nm:cl(r[_cC]),g:getCPL(cl(r[_cC])).g,c:COLORS[i%COLORS.length]})).sort((a,b)=>a.g-b.g);
+    const bCplNm=cplList[0]?.nm||'—',bCplV=cplList[0]?.g||0,bCplC=cplList[0]?.c||COLORS[0];
+    const bQ=_cQ?[..._ss].sort((a,b)=>n(b[_cQ])-n(a[_cQ]))[0]:null;
+    const bQNm=bQ?cl(bQ[_cC]):'—',bQV=bQ?n(bQ[_cQ]):0;
+    const bQColor=COLORS[(_ss.indexOf(bQ)>=0?_ss.indexOf(bQ):2)%COLORS.length];
+    const box=(ico,ttl,val,sub,col)=>`<div style="display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs)"><div style="width:3px;align-self:stretch;border-radius:2px;background:${col};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:2px">${ttl}</div><div style="font-family:var(--fn);font-size:14px;font-weight:800;letter-spacing:-.04em;color:${col};line-height:1.1;margin-bottom:1px">${val}</div><div style="font-size:10px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub}</div></div><div style="font-size:15px;opacity:.4;flex-shrink:0">${ico}</div></div>`;
+    return`<div style="display:flex;flex-direction:column;gap:5px">${box('🏆','Melhor Curso · Leads',fmt(topCnt),topNm,topColor)}${box('💰','Melhor CPL',fmtR(bCplV),bCplNm,bCplC)}${box('⭐','Melhor Qualif.',bQV.toFixed(1)+'%',bQNm,bQColor)}</div>`;
   })();
-
-  /* badge de variação acima da meta para D-1 */
-  const d1PacePct=(()=>{
-    const metaAteD1_quick=META.found&&META.totalMeta>0?(()=>{
-      const hkD=new Date(pdk(hk));
-      const d1kD=DBdates.find(d=>d!==hk&&new Date(pdk(d))<hkD)||prevDK(hk);
-      const d1D=new Date(pdk(d1kD));
-      return META.dates?META.dates.reduce((s,dk)=>{if(new Date(pdk(dk))<=d1D)s+=Object.values(META.cursos).reduce((ss,c)=>ss+(c.dailyMetas[dk]||0),0)||META.totalDaily[dk]||0;return s;},0):0;
-    })():0;
-    if(metaAteD1_quick>0)return((d1C-metaAteD1_quick)/metaAteD1_quick)*100;
-    return dHD; /* fallback: variação vs D-2 */
-  })();
-  const d1VbPct=d1PacePct!==null?`<span style="font-size:10px;font-weight:700;color:${d1PacePct>=0?'var(--pos)':'var(--neg)'}">${d1PacePct>=0?'▲':'▼'}${Math.abs(d1PacePct).toFixed(1)}%</span>`:'';
+  const d1Vb=dHD!==null?`<span style="font-size:10px;font-weight:700;color:${dHD>=0?'var(--pos)':'var(--neg)'}">${dHD>=0?'▲':'▼'}${Math.abs(dHD).toFixed(1)}%</span>`:'';
 
   document.getElementById('kpi-diario').innerHTML=
     kdv('Leads Hoje',hDB?fmt(hC):'—',leadsVb)+
-    kdv('Captados D-1',hDB?fmt(d1C):'—',d1VbPct)+
+    kdv('Captados D-1',hDB?fmt(d1C):'—',d1Vb)+
     kdv('CPL Hoje',fmtR(cplHoje),cplVb)+
     kdv('CPL D-1',fmtR(cplD1),'')+
-    `<div class="kd kd-wide" style="padding:13px 14px">
-      <div class="kd-lbl" style="margin-bottom:9px;font-size:9px;letter-spacing:.1em">Resumo</div>
+    `<div class="kd kd-wide" style="padding:12px 13px">
+      <div class="kd-lbl" style="margin-bottom:8px">Resumo</div>
       ${resumoHTML}
     </div>`;
 
@@ -781,7 +749,7 @@ function renderAll(){
   renderEsc();buildTable();
   document.getElementById('panel-perf').classList.add('on');
 }
-function khv(lbl,val,extra,sz,cls){return`<div class="kh${cls?' '+cls:''}">${extra?`<div style="position:absolute;top:10px;right:12px">${extra}</div>`:''}<div class="kh-lbl">${lbl}</div><div class="kh-val ${sz}">${val}</div></div>`;}
+function khv(lbl,val,extra,sz,cls){return`<div class="kh${cls?' '+cls:''}"><div class="kh-lbl">${lbl}</div>${extra?`<div style="position:absolute;top:9px;right:11px;display:flex;align-items:center">${extra}</div>`:''}<div class="kh-val ${sz}">${val}</div></div>`;}
 function kdv(lbl,val,vb){return`<div class="kd"><div class="kd-lbl">${lbl}</div><div class="kd-body"><div class="kd-num">${val}</div>${vb?`<div class="kd-vb">${vb}</div>`:''}</div></div>`;}
 
 /* DATE PANEL + SHARE */
@@ -894,37 +862,38 @@ function buildMeta(tL,hk,hDB){
   const ring=(pct,col,sz,sw)=>{sz=sz||110;sw=sw||10;const rc=(sz/2-sw/2);const circ=2*Math.PI*rc;const fill=Math.min(pct,100)/100*circ;
     return`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="display:block"><circle cx="${sz/2}" cy="${sz/2}" r="${rc}" fill="none" stroke="var(--grd)" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${rc}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-dasharray="${fill.toFixed(2)} ${(circ-fill).toFixed(2)}" stroke-linecap="round" transform="rotate(-90 ${sz/2} ${sz/2})"/></svg>`;};
 
+  /* SVG ring helper (% only) */
+  const ring=(pct,col,sz,sw)=>{sz=sz||96;sw=sw||9;const rc=sz/2-sw/2;const circ=2*Math.PI*rc;const fill=Math.min(pct,100)/100*circ;
+    return`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="display:block"><circle cx="${sz/2}" cy="${sz/2}" r="${rc.toFixed(1)}" fill="none" stroke="var(--grd)" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${rc.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-dasharray="${fill.toFixed(2)} ${(circ-fill).toFixed(2)}" stroke-linecap="round" transform="rotate(-90 ${sz/2} ${sz/2})"/></svg>`};
+  const capBg=progColor==='var(--pos)'?'rgba(52,211,153,.09)':progColor==='var(--wrn)'?'rgba(251,191,36,.09)':'rgba(248,113,113,.09)';
+  const capBd=progColor==='var(--pos)'?'rgba(52,211,153,.3)':progColor==='var(--wrn)'?'rgba(251,191,36,.3)':'rgba(248,113,113,.3)';
+
   sec.innerHTML=`<div class="card">
     <div class="slbl" style="margin-bottom:14px">Meta de Leads</div>
-    <!-- HERO: anel % + 3 boxes -->
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap">
-      <!-- Anel — só % -->
       <div style="position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center">
-        ${ring(pctGeral,progColor,100,9)}
-        <div style="position:absolute;text-align:center">
-          <div style="font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:${progColor};line-height:1">${pctGeral.toFixed(0)}<span style="font-size:11px">%</span></div>
+        ${ring(pctGeral,progColor,96,9)}
+        <div style="position:absolute;text-align:center;pointer-events:none">
+          <div style="font-family:var(--fn);font-size:19px;font-weight:800;letter-spacing:-.05em;color:${progColor};line-height:1">${pctGeral.toFixed(0)}<span style="font-size:11px">%</span></div>
         </div>
       </div>
-      <!-- 3 boxes -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;flex:1;min-width:180px">
-        <div style="background:${progColor==='var(--pos)'?'rgba(52,211,153,.08)':progColor==='var(--wrn)'?'rgba(251,191,36,.08)':'rgba(248,113,113,.08)'};border:1px solid ${progColor==='var(--pos)'?'rgba(52,211,153,.25)':progColor==='var(--wrn)'?'rgba(251,191,36,.25)':'rgba(248,113,113,.25)'};border-radius:var(--rs);padding:10px 13px">
-          <div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Captados</div>
-          <div style="font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.05em;color:${progColor};line-height:1">${fmt(realAcum)}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;flex:1;min-width:160px">
+        <div style="background:${capBg};border:1px solid ${capBd};border-radius:var(--rs);padding:10px 12px">
+          <div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px">Captados</div>
+          <div style="font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:${progColor};line-height:1">${fmt(realAcum)}</div>
         </div>
-        <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:10px 13px">
-          <div style="font-size:8px;font-weight:700;color:var(--tagt);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Meta Total</div>
-          <div style="font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1">${fmt(metaTotal)}</div>
+        <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:10px 12px">
+          <div style="font-size:8px;font-weight:700;color:var(--tagt);text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px">Meta Total</div>
+          <div style="font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1">${fmt(metaTotal)}</div>
         </div>
-        <div style="grid-column:1/-1;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:8px">
-          <div>
-            <div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Restante</div>
-            <div style="font-family:var(--fn);font-size:18px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1">${fmt(Math.max(metaTotal-realAcum,0))}</div>
-          </div>
-          <div style="flex:1;max-width:120px">${progBar(Math.min(pctGeral,100),progColor,5)}</div>
+        <div style="grid-column:1/-1;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <div><div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px">Restante</div><div style="font-family:var(--fn);font-size:17px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1">${fmt(Math.max(metaTotal-realAcum,0))}</div></div>
+          <div style="flex:1;max-width:110px">${progBar(Math.min(pctGeral,100),progColor,5)}</div>
         </div>
       </div>
     </div>
     <!-- KPI: meta/real do dia -->
+    <!-- KPI: meta/real do dia (sem descrição) -->
     <div class="meta-kpis" style="margin-bottom:10px">
       <div class="meta-kpi hi"><div class="meta-kpi-l">Meta do Dia</div><div class="meta-kpi-v">${fmt(metaHoje)}</div></div>
       <div class="meta-kpi"><div class="meta-kpi-l">Realizado Hoje</div><div class="meta-kpi-v" style="color:${hojeColor}">${fmt(leadsHoje)}</div><div class="meta-kpi-s" style="color:${hojeColor}">${pctHoje.toFixed(0)}% · restam ${fmt(restanteHoje)}</div></div>
@@ -1032,17 +1001,14 @@ function buildTaxa(){
     `<div class="dd-item${txSel==='__total__'?' sel':''}" onclick="setTaxaSel('__total__')">Total acumulado</div><div class="dd-sep"></div>`+
     DBdates.slice(0,20).map(dk=>`<div class="dd-item${dk===txSel?' sel':''}" onclick="setTaxaSel('${dk}')">${dkLbl(dk)}<span class="dd-count">${fmt(cntDate(dk))}</span></div>`).join('');
   const isTotal=txSel==='__total__';
+  const _skip=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
   const sQ=[..._ss].map((r,i)=>{
     const nm=cl(r[_cC]),baseV=n(r[_cQ]),v=isTotal?baseV:dayQual(nm,txSel,baseV),tot=n(r[_cT]),qual=Math.round(tot*(baseV/100));
-    /* abbreviate name: first word + initials of rest (skip prepositions) */
-    const skip=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
-    const words=nm.split(/\s+/);
-    const nmAbbr=words.length>3?words[0]+' '+words.slice(1).map(w=>skip.has(w.toLowerCase())?'':w[0].toUpperCase()+'.').filter(Boolean).join(' '):nm;
-    const color=COLORS[i%COLORS.length];
-    return{nm,nmAbbr,v,baseV,tot,qual,color,idx:i};
+    const ws=nm.split(/\s+/);const nmA=ws.length>3?ws[0]+' '+ws.slice(1).map(w=>_skip.has(w.toLowerCase())?'':w[0].toUpperCase()+'.').filter(Boolean).join(' '):nm;
+    return{nm,nmA,v,baseV,tot,qual,color:COLORS[i%COLORS.length]};
   }).sort((a,b)=>b.v-a.v);
 
-  const listHTML=sQ.map(({nm,nmAbbr,v,baseV,tot,qual,color})=>{
+  const listHTML=sQ.map(({nm,nmA,v,baseV,tot,qual,color})=>{
     const col=v>=90?'var(--pos)':'var(--neg)';
     const isOpen=_txOpen.has(nm);
     const dailyRows=isOpen?DBdates.slice(0,20).map(dk=>{
@@ -1056,10 +1022,7 @@ function buildTaxa(){
     </div>`:'';
     return`<div class="txl-row${isOpen?' open':''}">
       <div class="txl-top" onclick="toggleTaxa('${nm.replace(/'/g,"\\'")}')">
-        <div style="display:flex;align-items:center;gap:8px;min-width:0;overflow:hidden">
-          <div style="width:3px;height:28px;border-radius:2px;background:${color};flex-shrink:0"></div>
-          <div class="txl-nome" title="${nm}">${nmAbbr}</div>
-        </div>
+        <div style="display:flex;align-items:center;gap:7px;min-width:0;overflow:hidden"><div style="width:3px;height:26px;border-radius:2px;background:${color};flex-shrink:0"></div><div class="txl-nome" title="${nm}">${nmA}</div></div>
         <div class="txl-numcol">${fmt(tot)}</div>
         <div class="txl-numcol hide-m" style="color:${col}">${fmt(qual)}</div>
         <div class="txl-pctcol" style="color:${col}">${v.toFixed(1)}<span class="txl-sym">%</span></div>
@@ -1178,7 +1141,7 @@ function renderEsc(){
     return`<text x="${p.lx.toFixed(1)}" y="${(p.ly+4).toFixed(1)}" text-anchor="${anchor}" font-size="9" font-family="Inter,sans-serif" fill="var(--tx2)" font-weight="600">${ESC_SH[i]}</text>`;
   }).join('');
 
-  document.getElementById('esc-radar').innerHTML=
+  const _radarEl=document.getElementById('esc-radar');if(_radarEl)_radarEl.innerHTML=
     `<svg viewBox="0 0 260 240" xmlns="http://www.w3.org/2000/svg">
       ${rings}${axes}
       <polygon points="${poly}" fill="${COLORS[0]}" fill-opacity=".18" stroke="${COLORS[0]}" stroke-width="2" stroke-linejoin="round"/>
