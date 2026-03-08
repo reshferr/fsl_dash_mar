@@ -4,9 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>FSL Lançamentos</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--f:'Inter',sans-serif;--fn:'Montserrat',sans-serif;--tr:.18s ease;--r:14px;--rs:10px;--nh:60px;}
+:root{--f:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;--fn:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;--tr:.18s ease;--r:14px;--rs:10px;--nh:60px;}
 [data-theme=dark]{--bg:#0c0c10;--sf:#16161c;--cd:#19191f;--cdh:#21212a;--nav:rgba(12,12,16,.97);--bd:rgba(255,255,255,.1);--bda:rgba(255,255,255,.18);--tx:#f0f0f8;--tx2:#a8a8c8;--tx3:#6868a0;--acc:#7c5cfc;--accg:rgba(124,92,252,.16);--pos:#34d399;--neg:#f87171;--wrn:#fbbf24;--tagt:#a78bfa;--grd:rgba(255,255,255,.06);--sh:0 6px 28px rgba(0,0,0,.6);--sh2:0 1px 6px rgba(0,0,0,.35);}
 [data-theme=light]{--bg:#f0f0f8;--sf:#ffffff;--cd:#ffffff;--cdh:#f6f6fc;--nav:rgba(240,240,248,.97);--bd:rgba(0,0,0,.07);--bda:rgba(0,0,0,.11);--tx:#0e0e1a;--tx2:#4a4a68;--tx3:#7878a8;--acc:#5e38ec;--accg:rgba(94,56,236,.06);--pos:#1a6e48;--neg:#a82828;--wrn:#7a5000;--tagt:#5e38ec;--grd:rgba(0,0,0,.03);--sh:0 2px 12px rgba(0,0,0,.06);--sh2:0 1px 3px rgba(0,0,0,.04);}
 [data-theme=beige]{--bg:#e8dfd4;--sf:#fdf6ed;--cd:#fdf6ed;--cdh:#f3e9dc;--nav:rgba(232,223,212,.97);--bd:rgba(110,80,40,.13);--bda:rgba(90,60,20,.18);--tx:#1c1208;--tx2:#6b4e2e;--tx3:#907050;--acc:#7a5530;--accg:rgba(122,85,48,.08);--pos:#2a5030;--neg:#782020;--wrn:#7a5000;--tagt:#7a5530;--grd:rgba(90,60,20,.05);--sh:0 2px 10px rgba(40,22,6,.11);--sh2:0 1px 3px rgba(40,22,6,.07);}
@@ -80,14 +79,14 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 
 /* HERO — 4 cards principais */
 .hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;}
-.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:34px 36px;box-shadow:var(--sh);position:relative;overflow:hidden;}
-.kh::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 0%,rgba(124,92,252,.6) 50%,transparent 100%);background-size:400% 100%;animation:barslide 7s ease-in-out infinite;opacity:.35;}
+.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:26px 30px;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.kh::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--acc) 50%,transparent 100%);background-size:250% 100%;background-position:200% 0;animation:barslide 6s ease-in-out infinite;opacity:.55;}
 [data-theme=light] .kh{border-color:var(--bda);background:var(--sf);}
 [data-theme=beige] .kh{border-color:var(--bda);background:var(--sf);}
-.kh-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.13em;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.kh-lbl{font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.13em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
 .kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
-.kh-val.big{font-size:48px;}
-.kh-val.md{font-size:34px;}
+.kh-val.big{font-size:38px;}
+.kh-val.md{font-size:26px;}
 .kh-sub{display:none;}
 
 /* DAILY — 5 cards */
@@ -329,7 +328,7 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 #toast{position:fixed;bottom:54px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--cd);border:1px solid var(--bd);color:var(--tx2);padding:6px 14px;border-radius:999px;font-size:11px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--sh);}
 @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes pdot{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(52,211,153,.6)}60%{transform:scale(1.3);box-shadow:0 0 0 6px rgba(52,211,153,0)}}
-@keyframes barslide{0%,100%{background-position:150% 0}50%{background-position:-50% 0}}
+@keyframes barslide{0%{background-position:200% 0}50%{background-position:-100% 0}100%{background-position:200% 0}}
 .kh-live-dot{width:8px;height:8px;border-radius:50%;background:var(--pos);display:inline-block;animation:pdot 2.4s ease-in-out infinite;flex-shrink:0;margin-left:2px;}
 .kh.kh-green{border-color:var(--bd);}
 [data-theme=light] .kh.kh-green{border-color:var(--bda);}
@@ -465,7 +464,7 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
   <div id="loader"><div class="spin"></div><p>Carregando dados…</p></div>
   <div id="err"></div>
   <div class="panel" id="panel-perf">
-    <div style="margin-bottom:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;">
       <div>
         <div style="font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Faculdade Sírio-Libanês</div>
         <div style="font-family:var(--fn);font-size:18px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1.1">Performance de Lançamentos</div>
