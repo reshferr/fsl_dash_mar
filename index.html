@@ -320,8 +320,8 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 /* MISC */
 .lockp{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:10px;text-align:center;}
 .lockico{font-size:26px;opacity:.25;}.lockt{font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx3);}
-#btt{position:fixed;bottom:24px;right:24px;z-index:400;height:42px;padding:0 20px;border-radius:999px;background:var(--acc);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:var(--fn);font-size:12px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;box-shadow:0 4px 20px rgba(124,92,252,.45);opacity:0;pointer-events:none;transform:translateY(10px);transition:all var(--tr);}
-#btt.on{opacity:1;pointer-events:all;transform:translateY(0);}
+#btt{position:fixed;bottom:24px;right:24px;z-index:400;height:42px;padding:0 20px;border-radius:999px;background:var(--acc);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:var(--fn);font-size:12px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;box-shadow:0 4px 20px rgba(124,92,252,.45);opacity:1;pointer-events:all;transform:translateY(0);transition:all var(--tr);}
+#btt.on{opacity:0;pointer-events:none;transform:translateY(10px);}
 #toast{position:fixed;bottom:54px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--cd);border:1px solid var(--bd);color:var(--tx2);padding:6px 14px;border-radius:999px;font-size:11px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--sh);}
 @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes pdot{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(52,211,153,.6)}60%{transform:scale(1.3);box-shadow:0 0 0 6px rgba(52,211,153,0)}}
@@ -336,7 +336,7 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 #resumo-popup.open{pointer-events:all;}
 #resumo-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;transition:opacity .25s ease;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
 #resumo-popup.open #resumo-backdrop{opacity:1;}
-#resumo-sheet{background:var(--cd);border:1px solid var(--bd);border-radius:20px 20px 16px 16px;width:100%;max-width:520px;box-shadow:0 -4px 40px rgba(0,0,0,.35);transform:translateY(24px);opacity:0;transition:transform .28s cubic-bezier(.2,.8,.4,1),opacity .25s ease;}
+#resumo-sheet{background:var(--cd);border:1px solid var(--bd);border-radius:20px 20px 16px 16px;width:100%;max-width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 -4px 40px rgba(0,0,0,.35);transform:translateY(24px);opacity:0;transition:transform .28s cubic-bezier(.2,.8,.4,1),opacity .25s ease;}
 #resumo-popup.open #resumo-sheet{transform:translateY(0);opacity:1;}
 .rp-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;}
 .rp-title{font-family:var(--fn);font-size:14px;font-weight:800;letter-spacing:-.02em;color:var(--tx);}
@@ -352,6 +352,14 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
 .rp-ks{font-size:10px;font-weight:600;color:var(--tx2);}
 .rp-divider{height:1px;background:var(--bd);margin:2px 0;}
 .rp-best-row{display:flex;flex-direction:column;gap:5px;}
+.rp-cursos{display:flex;flex-direction:column;gap:5px;}
+.rp-curso-item{display:grid;grid-template-columns:1fr auto;align-items:center;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;}
+.rp-curso-left{padding:9px 12px;border-left:3px solid var(--acc);}
+.rp-curso-nm{font-size:11px;font-weight:700;color:var(--tx);margin-bottom:2px;line-height:1.3;}
+.rp-curso-prog{font-size:9px;color:var(--tx3);margin-top:2px;}
+.rp-curso-right{padding:8px 12px;border-left:1px solid var(--bd);display:flex;flex-direction:column;gap:3px;align-items:flex-end;min-width:90px;}
+.rp-curso-kv{font-family:var(--fn);font-size:13px;font-weight:800;letter-spacing:-.03em;color:var(--tx);line-height:1;}
+.rp-curso-kl{font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;}
 
 /* RESPONSIVE */
 @media(max-width:1100px){.daily-row{grid-template-columns:repeat(2,1fr) 2fr;}.daily-row .kd-wide{grid-column:3;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
@@ -374,7 +382,7 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
   .meta-cnm-short{display:block;}
 }
 @media(max-width:540px){
-  main{padding:calc(var(--nh) + 16px) 16px max(70px,env(safe-area-inset-bottom,0px)+50px);}
+  main{padding:calc(var(--nh) + 16px) 20px max(70px,env(safe-area-inset-bottom,0px)+50px);}
   .hero-row,.daily-row{grid-template-columns:1fr 1fr;gap:8px;}
   .kh{padding:16px 18px;}.kh-val.big{font-size:26px;}.kh-val.md{font-size:20px;}
   .kd{padding:12px 14px;}.kd-num{font-size:18px;}
@@ -513,20 +521,20 @@ main{max-width:1020px;margin:0 auto;padding:calc(var(--nh) + 28px) 24px max(80px
   <div id="resumo-backdrop" onclick="closeResumo()"></div>
   <div id="resumo-sheet">
     <div class="rp-hdr">
-      <div class="rp-title">Resumo</div>
+      <div class="rp-title">Resumo D-1</div>
       <button class="rp-close" onclick="closeResumo()">✕</button>
     </div>
     <div class="rp-body" id="rp-body">
       <div class="rp-row">
-        <div class="rp-kpi hi"><div class="rp-kl">Total Leads</div><div class="rp-kv" id="rp-leads">—</div><div class="rp-ks">captados</div></div>
-        <div class="rp-kpi"><div class="rp-kl">Qualificados</div><div class="rp-kv" id="rp-qual">—</div><div class="rp-ks" id="rp-qual-s">—</div></div>
+        <div class="rp-kpi hi"><div class="rp-kl">Meta de Leads</div><div class="rp-kv" id="rp-meta">—</div><div class="rp-ks" id="rp-meta-s">meta D-1</div></div>
+        <div class="rp-kpi"><div class="rp-kl">Leads Captados</div><div class="rp-kv" id="rp-leads">—</div><div class="rp-ks">D-1</div></div>
       </div>
       <div class="rp-row">
-        <div class="rp-kpi"><div class="rp-kl">Qualificação</div><div class="rp-kv" id="rp-taxa">—</div><div class="rp-ks">taxa geral</div></div>
-        <div class="rp-kpi"><div class="rp-kl">CPL Geral</div><div class="rp-kv" id="rp-cpl">—</div><div class="rp-ks" id="rp-cpl-s">—</div></div>
+        <div class="rp-kpi"><div class="rp-kl">CPL</div><div class="rp-kv" id="rp-cpl">—</div><div class="rp-ks" id="rp-cpl-s">—</div></div>
+        <div class="rp-kpi"><div class="rp-kl">Taxa de Qualif.</div><div class="rp-kv" id="rp-taxa">—</div><div class="rp-ks">D-1</div></div>
       </div>
       <div class="rp-divider"></div>
-      <div class="rp-best-row" id="rp-best"></div>
+      <div class="rp-cursos" id="rp-cursos"></div>
     </div>
   </div>
 </div>
@@ -839,26 +847,59 @@ function renderAll(){
   window._escSelFn=()=>_escSel;
   renderEsc();buildTable();
   document.getElementById('panel-perf').classList.add('on');
-  /* update resumo popup values */
-  const _rl=document.getElementById('rp-leads');if(_rl)_rl.textContent=fmt(tL);
-  const _rq=document.getElementById('rp-qual');if(_rq)_rq.textContent=fmt(tQ);
-  const _rqs=document.getElementById('rp-qual-s');if(_rqs)_rqs.textContent=(tL>0?(tQ/tL*100).toFixed(1)+'%':'—')+' do total';
-  const _rt=document.getElementById('rp-taxa');if(_rt)_rt.textContent=aT.toFixed(1)+'%';
-  const _rc=document.getElementById('rp-cpl');if(_rc)_rc.textContent=fmtR(60);
-  const _rcs=document.getElementById('rp-cpl-s');if(_rcs)_rcs.textContent=cplVar<=0?'▼ Saudável':'▲ Elevado';
-  /* best per category */
-  const _rb=document.getElementById('rp-best');
-  if(_rb&&_ss.length){
-    const mH2=DBdates.length>0?DBmap.get(dkOf(new Date())):null;
-    const today2=mH2?Array.from(mH2.entries()).sort((a,b)=>b[1]-a[1]):[];
-    const topNm2=today2[0]?.[0]||(cl(_ss[0]?.[_cC])||'—');
-    const topCnt2=today2[0]?.[1]||(0);
-    const bQ2=_cQ?[..._ss].sort((a,b)=>n(b[_cQ])-n(a[_cQ]))[0]:null;
-    const bQNm2=bQ2?cl(bQ2[_cC]):'—',bQV2=bQ2?n(bQ2[_cQ]):0;
-    const bCpl2=_ss.map((r,i)=>({nm:cl(r[_cC]),g:getCPL(cl(r[_cC])).g})).sort((a,b)=>a.g-b.g)[0];
-    const row=(lbl,val,nm,col)=>`<div style="display:grid;grid-template-columns:1fr auto;align-items:center;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden"><div style="padding:8px 12px;border-left:3px solid ${col}"><div style="font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">${lbl}</div><div style="font-family:var(--fn);font-size:16px;font-weight:800;letter-spacing:-.04em;color:${col};line-height:1">${val}</div></div><div style="padding:8px 12px;text-align:right;max-width:140px;border-left:1px solid var(--bd)"><div style="font-size:10px;font-weight:700;color:var(--tx);line-height:1.3;word-break:break-word">${nm}</div></div></div>`;
-    _rb.innerHTML=row('Top Leads Hoje',fmt(topCnt2),topNm2,COLORS[0])+row('Menor CPL',fmtR(bCpl2?.g||0),bCpl2?.nm||'—',COLORS[1])+row('Maior Qualif.',bQV2.toFixed(1)+'%',bQNm2,COLORS[2]);
-  }
+  /* update resumo D-1 popup */
+  (()=>{
+    /* D-1 key */
+    const _hk=dkOf(new Date());
+    const _d1k=DBdates.find(d=>d!==_hk)||prevDK(_hk);
+    const _d1Leads=hDB?cntDate(_d1k):0;
+    /* meta D-1 */
+    const _metaD1=META.found?(META.totalDaily[_d1k]||0):0;
+    const _pctMeta=_metaD1>0?(_d1Leads/_metaD1*100):null;
+    /* taxa qualif D-1: ponderar pelos leads do dia por curso */
+    let _d1Qual=0;
+    if(hDB&&_cQ){
+      const _d1Map=DBmap.get(_d1k);
+      if(_d1Map){
+        let tot=0,qualSum=0;
+        _ss.forEach(r=>{const nm=cl(r[_cC]);const cnt=cntCurso(_d1k,nm);const taxa=n(r[_cQ]);qualSum+=Math.round(cnt*(taxa/100));tot+=cnt;});
+        _d1Qual=tot>0?(qualSum/tot)*100:aT;
+      } else {_d1Qual=aT;}
+    } else {_d1Qual=aT;}
+
+    const _rl=document.getElementById('rp-leads');if(_rl)_rl.textContent=fmt(_d1Leads)||'—';
+    const _rm=document.getElementById('rp-meta');if(_rm)_rm.textContent=_metaD1>0?fmt(_metaD1):'—';
+    const _rms=document.getElementById('rp-meta-s');if(_rms)_rms.textContent=_pctMeta!==null?(_pctMeta.toFixed(0)+'% atingido'):'meta D-1';
+    const _rt=document.getElementById('rp-taxa');if(_rt)_rt.textContent=_d1Qual.toFixed(1)+'%';
+    const _rc=document.getElementById('rp-cpl');if(_rc)_rc.textContent=fmtR(cplD1);
+    const _rcs=document.getElementById('rp-cpl-s');if(_rcs)_rcs.textContent=cplVar<=0?'▼ vs hoje':'▲ vs hoje';
+
+    /* cursos D-1 */
+    const _rcu=document.getElementById('rp-cursos');
+    if(_rcu&&_ss.length){
+      _rcu.innerHTML=_ss.map((r,i)=>{
+        const nm=cl(r[_cC]);
+        const col=COLORS[i%COLORS.length];
+        const leads=hDB?cntCurso(_d1k,nm):n(r[_cT]);
+        const meta=META.found?matchMetaCurso(nm):null;
+        const metaD1Val=meta?meta.dailyMetas[_d1k]||0:0;
+        const pct=metaD1Val>0?(leads/metaD1Val*100):null;
+        const cplV=getCPL(nm).d1;
+        const taxa=n(r[_cQ]);
+        const pctColor=pct===null?'var(--tx3)':pct>=90?'var(--pos)':pct>=70?'var(--wrn)':'var(--neg)';
+        return`<div class="rp-curso-item">
+          <div class="rp-curso-left" style="border-left-color:${col}">
+            <div class="rp-curso-nm">${nm}</div>
+            ${pct!==null?`<div class="rp-curso-prog" style="color:${pctColor}">${pct.toFixed(0)}% da meta (${fmt(leads)} / ${fmt(metaD1Val)})</div>`:`<div class="rp-curso-prog">${fmt(leads)} leads D-1</div>`}
+          </div>
+          <div class="rp-curso-right">
+            <div><div class="rp-curso-kl">CPL</div><div class="rp-curso-kv">${fmtR(cplV)}</div></div>
+            <div><div class="rp-curso-kl">Qualif.</div><div class="rp-curso-kv">${taxa.toFixed(1)}%</div></div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  })();
 }
 function khv(lbl,val,extra,sz,cls){return`<div class="kh${cls?' '+cls:''}"><div class="kh-lbl">${lbl}</div>${extra?`<div style="position:absolute;top:9px;right:11px;display:flex;align-items:center">${extra}</div>`:''}<div class="kh-val ${sz}">${val}</div></div>`;}
 function kdv(lbl,val,vb){return`<div class="kd"><div class="kd-lbl">${lbl}</div><div class="kd-body"><div class="kd-num">${val}</div>${vb?`<div class="kd-vb">${vb}</div>`:''}</div></div>`;}
@@ -1217,7 +1258,7 @@ function toggleCPL(nm){if(_cplOpen.has(nm))_cplOpen.delete(nm);else _cplOpen.add
 function renderEsc(){
   const chosen={value:window._escSelFn?window._escSelFn():'__all__'};
   const escA=ESC_COLS.map(e=>SH.find(h=>h.trim()===e)||SH.find(h=>h.trim().toLowerCase()===e.toLowerCase())||null);
-  const sub=chosen==='__all__'?SD:SD.filter(r=>r[_cC]===chosen);
+  const sub=chosen.value==='__all__'?SD:SD.filter(r=>r[_cC]===chosen.value);
   const tL=sub.reduce((s,r)=>s+n(r[_cT]),0)||1;
   const tQtot=sub.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0);
   const aT=tL>0?(tQtot/tL)*100:0;
@@ -1286,7 +1327,7 @@ function setTheme(th){document.body.setAttribute('data-theme',th);document.getEl
 function toggleTheme(){document.getElementById('tsw').classList.toggle('open');}
 window.addEventListener('scroll',()=>{
   const btt=document.getElementById('btt');
-  if(window.scrollY>200){btt.classList.add('on');}else{btt.classList.remove('on');closeResumo();}
+  if(window.scrollY>120){btt.classList.add('on');closeResumo();}else{btt.classList.remove('on');}
 },{passive:true});
 function openResumo(){document.getElementById('resumo-popup').classList.add('open');document.body.style.overflow='hidden';}
 function closeResumo(){document.getElementById('resumo-popup').classList.remove('open');document.body.style.overflow='';}
