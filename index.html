@@ -561,23 +561,6 @@ async function load(){
       <button onclick="location.reload()" style="padding:7px 20px;border-radius:999px;border:1px solid var(--acc);background:var(--accg);color:var(--acc);cursor:pointer;font-size:12px;font-weight:700;font-family:var(--f)">Tentar novamente</button>
     </div>`;
   };
-
-  /* Helper: tenta fetch direto; se falhar por CORS/rede, tenta via proxy allorigins */
-  async function fetchCSV(url){
-    /* 1ª tentativa: direto */
-    try{
-      const r=await fetch(url,{cache:'no-store'});
-      if(r.ok){const t=await r.text();if(t&&t.trim().length>10)return t;}
-    }catch(_){}
-    /* 2ª tentativa: proxy allorigins */
-    try{
-      const proxy='https://api.allorigins.win/get?url='+encodeURIComponent(url);
-      const r=await fetch(proxy,{cache:'no-store'});
-      if(r.ok){const j=await r.json();if(j&&j.contents&&j.contents.trim().length>10)return j.contents;}
-    }catch(_){}
-    return null;
-  }
-
   if(location.protocol==='file:'){
     showErr('Arquivo aberto localmente',
       'O dashboard precisa ser servido via HTTP para acessar a planilha.<br><br>'+
@@ -587,14 +570,24 @@ async function load(){
       '· Terminal: <code style="background:var(--grd);padding:2px 6px;border-radius:4px">python3 -m http.server 8080</code>');
     return;
   }
-
+  async function gfetch(url){
+    try{
+      const r=await fetch(url,{cache:'no-store',redirect:'follow'});
+      if(r.ok){const t=await r.text();if(t&&t.trim().length>10)return t;}
+    }catch(_){}
+    const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url));
+    if(!r.ok)throw new Error('Proxy falhou');
+    const j=await r.json();
+    if(!j||!j.contents||j.contents.trim().length<10)throw new Error('Resposta vazia do proxy');
+    return j.contents;
+  }
   try{
     const[t1,t2,t3]=await Promise.all([
-      fetchCSV(PUB),
-      fetchCSV(PUB+'&gid='+DB_GID),
-      fetchCSV(PUB+'&gid='+META_GID)
+      gfetch(PUB),
+      gfetch(PUB+'&gid='+DB_GID).catch(()=>null),
+      gfetch(PUB+'&gid='+META_GID).catch(()=>null)
     ]);
-    if(!t1)throw new Error('Planilha Summary não encontrada ou vazia. Verifique se a aba principal está publicada.');
+    if(!t1)throw new Error('Planilha Summary vazia');
     parseSummary(t1);
     if(t2)parseDB(t2);
     if(t3)parseMeta(t3);
@@ -602,8 +595,7 @@ async function load(){
     renderAll();
   }catch(e){
     showErr('Erro ao carregar dados',
-      'Verifique se a planilha está publicada em <b>Arquivo → Publicar na web → Planilha inteira</b> com formato CSV.<br><br>'+
-      '<b>Erro:</b> '+e.message);
+      'Verifique se a planilha está publicada em <b>Arquivo → Publicar na web</b>.<br><br>Erro: '+e.message);
   }
 }
 
