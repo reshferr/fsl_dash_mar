@@ -12,7 +12,7 @@
 [data-theme=beige]{--bg:#e8dfd4;--sf:#fdf6ed;--cd:#fdf6ed;--cdh:#f3e9dc;--nav:rgba(232,223,212,.97);--bd:rgba(110,80,40,.13);--bda:rgba(90,60,20,.18);--tx:#1c1208;--tx2:#6b4e2e;--tx3:#907050;--acc:#7a5530;--accg:rgba(122,85,48,.08);--pos:#2a5030;--neg:#782020;--wrn:#7a5000;--tagt:#7a5530;--grd:rgba(90,60,20,.05);--sh:0 2px 10px rgba(40,22,6,.11);--sh2:0 1px 3px rgba(40,22,6,.07);}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{font-size:14px;scroll-behavior:smooth;overflow-x:hidden;width:100%;-webkit-text-size-adjust:100%;}
-body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh;-webkit-font-smoothing:antialiased;transition:background var(--tr),color var(--tr);overflow-x:hidden;width:100%;box-sizing:border-box;}
+body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh;-webkit-font-smoothing:antialiased;transition:background var(--tr),color var(--tr);width:100%;box-sizing:border-box;overflow-x:clip;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--tx3);border-radius:2px;}
 
 /* NAV */
@@ -43,7 +43,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh
 @media(max-width:480px){.ni{padding:0 10px;}.logo{font-size:11px;margin-right:6px;}.tbtn{padding:5px 8px;gap:2px;}.tbtn-txt{display:none;}.th-txt{display:none;}.tsbtn{padding:5px 7px;}}
 
 /* LAYOUT */
-main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 28px) 16px max(70px,env(safe-area-inset-bottom,0px)+50px);width:100%;box-sizing:border-box;overflow-x:hidden;}
+main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 36px) 16px max(70px,env(safe-area-inset-bottom,0px)+50px);width:100%;box-sizing:border-box;}
 .panel{display:none;}.panel.on{display:block;animation:fu .2s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 #loader{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:80px 0;text-align:center;}
@@ -70,7 +70,7 @@ main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 28px) 16px max(70px
 .pb-fill{height:100%;border-radius:999px;transition:width .8s ease;}
 
 /* TOP-SECTION wrapper — destaque com gradiente e separador */
-.top-section{position:relative;padding:16px 0 20px;margin-bottom:0;}
+.top-section{position:relative;padding:20px 0 24px;margin-bottom:0;}
 .top-section::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--bd);}
 .rest-section{padding-top:20px;}
 .mid-sep{height:1px;margin:16px 0 16px;background:var(--bd);opacity:.35;}
@@ -407,7 +407,7 @@ main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 28px) 16px max(70px
   .meta-cnm-short{display:block;}
 }
 @media(max-width:540px){
-  main{padding:calc(var(--nh) + 12px) 10px max(70px,env(safe-area-inset-bottom,0px)+50px);}
+  main{padding:calc(var(--nh) + 24px) 10px max(70px,env(safe-area-inset-bottom,0px)+50px);}
   .hero-row,.daily-row{grid-template-columns:1fr 1fr;gap:8px;}
   .kh{padding:16px 18px;}.kh-val.big{font-size:26px;}.kh-val.md{font-size:26px;}
   .kd{padding:12px 14px;}.kd-num{font-size:18px;}
@@ -462,17 +462,15 @@ main{max-width:1200px;margin:0 auto;padding:calc(var(--nh) + 28px) 16px max(70px
 </header>
 <main>
 
+  <div id="status-bar" style="display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:nowrap;">
+    <div style="width:7px;height:7px;border-radius:50%;background:var(--pos);animation:pu 2s infinite;flex-shrink:0;"></div>
+    <span style="font-size:11px;color:var(--tx2);">Atualizado</span>
+    <span id="tslabel" style="font-size:11px;font-weight:700;color:var(--tx);">—</span>
+    <span id="hero-date" style="font-size:11px;color:var(--tx3);">—</span>
+  </div>
   <div id="loader"><div class="spin"></div><p>Carregando dados…</p></div>
   <div id="err"></div>
   <div class="panel" id="panel-perf">
-    <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;min-height:24px;">
-      <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2);">
-        <div style="width:7px;height:7px;border-radius:50%;background:var(--pos);animation:pu 2s infinite;flex-shrink:0"></div>
-        <span>Atualizado</span>
-        <span id="tslabel" style="font-weight:700;color:var(--tx)">—</span>
-        <span id="hero-date" style="color:var(--tx3)">—</span>
-      </div>
-    </div>
     <div class="top-section">
     <div class="hero-row" id="kpi-row"></div>
     </div>
