@@ -486,7 +486,7 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
     <div class="rest-section">
     <div class="daily-row" id="kpi-diario" style="margin-bottom:0"></div>
     <div class="mid-sep"></div>
-    <div class="g-ls gf">
+    <div class="gf">
       <div class="card">
         <div class="lpd-hdr">
           <div class="slbl" style="margin-bottom:0">Leads por Curso</div>
@@ -497,11 +497,20 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
         </div>
         <div class="lpd-list" id="lpd-list"></div>
       </div>
-      <div class="card">
-        <div class="slbl" style="margin-bottom:9px">Share por Curso</div>
-        <div class="sh-toprow" id="sh-toprow"></div>
-        <div id="share-list"></div>
+    </div>
+    <div class="gf card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px">
+        <div>
+          <div class="slbl" style="margin-bottom:2px">Taxa de Qualificação por Curso</div>
+          <div style="font-size:9px;color:var(--tx2)">Do mais qualificado ao menos · filtro sincronizado com Leads por Curso</div>
+        </div>
       </div>
+      <div id="taxa-grid"></div>
+    </div>
+    <div class="gf card">
+      <div class="slbl" style="margin-bottom:9px">Share por Curso</div>
+      <div class="sh-toprow" id="sh-toprow"></div>
+      <div id="share-list"></div>
     </div>
     <div class="gf card">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:3px">
@@ -515,19 +524,6 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
       <div class="cpl-list" id="cpl-list"></div>
     </div>
     <div class="gf" id="section-meta"></div>
-    <div class="gf card">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px">
-        <div>
-          <div class="slbl" style="margin-bottom:2px">Taxa de Qualificação por Curso</div>
-          <div style="font-size:9px;color:var(--tx2)">Do mais qualificado ao menos · clique para ver o diarizado</div>
-        </div>
-        <div class="dd-wrap" id="taxa-dd" style="flex-shrink:0">
-          <button class="dd-btn" onclick="toggleDD('taxa-dd')"><span id="taxa-dd-lbl">Total</span><span class="cr">▾</span></button>
-          <div class="dd-menu" id="taxa-dd-menu"></div>
-        </div>
-      </div>
-      <div id="taxa-grid"></div>
-    </div>
     <div class="gf card">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px">
         <div class="slbl" style="margin-bottom:0">Distribuição por Escolaridade</div>
@@ -1062,7 +1058,7 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   }).join('');
   raf(()=>document.querySelectorAll('.sh-bar[data-w]').forEach(el=>el.style.width=el.dataset.w+'%'));
 }
-function selectDate(dk){selDate=dk;closeDD();buildDatePanel();}
+function selectDate(dk){selDate=dk;_txSel=dk;closeDD();buildDatePanel();buildTaxa();}
 
 /* META */
 function buildMeta(tL,hk,hDB){
@@ -1233,11 +1229,7 @@ function toggleMetaCurso(nm){if(_metaCOpen.has(nm))_metaCOpen.delete(nm);else _m
 /* TAXA */
 function buildTaxa(){
   if(!_cQ)return;
-  const txSel=_txSel||'__total__';
-  document.getElementById('taxa-dd-lbl').textContent=txSel==='__total__'?'Total':(txSel?dkLbl(txSel):'Total');
-  document.getElementById('taxa-dd-menu').innerHTML=
-    `<div class="dd-item${txSel==='__total__'?' sel':''}" onclick="setTaxaSel('__total__')">Total</div><div class="dd-sep"></div>`+
-    DBdates.slice(0,20).map(dk=>`<div class="dd-item${dk===txSel?' sel':''}" onclick="setTaxaSel('${dk}')">${dkLbl(dk)}<span class="dd-count">${fmt(cntDate(dk))}</span></div>`).join('');
+  const txSel=_txSel||selDate||'__total__';
   const isTotal=txSel==='__total__';
   const _skip=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
   const sQ=[..._ss].map((r,i)=>{
