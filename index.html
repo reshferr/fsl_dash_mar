@@ -832,7 +832,7 @@ function renderAll(){
   document.getElementById('kpi-row').innerHTML=
     khv('Leads Captados',fmt(tL),'<span class="kh-live-dot"></span>','big')+
     khv('Qualificados',fmt(tQ),null,'big')+
-    khv('Qualificação',aT.toFixed(1)+'%',aT>=90?badge('▲ Alta','pos'):badge('→ Regular','warn'),'md')+
+    khv('Qualificação Geral',aT.toFixed(1)+'%',aT>=90?badge('▲ Alta','pos'):badge('→ Regular','warn'),'md')+
     khv('CPL Geral',fmtR(60),cplVar<=0?badge('▼ Saudável','pos'):badge('▲ Elevado','neg'),'md');
 
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
@@ -857,11 +857,18 @@ function renderAll(){
   })();
   const d1Vb='';
 
+  /* qualif real de hoje: ponderada pelos leads de hoje por curso */
+  let qualHojeQ=0;
+  if(hDB&&hC>0&&_cQ){
+    _ss.forEach(r=>{const cnt=cntCurso(hk,cl(r[_cC]));qualHojeQ+=Math.round(cnt*(n(r[_cQ])/100));});
+  } else {qualHojeQ=Math.round(hC*(aT/100));}
+  const qualHojePct=hC>0?(qualHojeQ/hC)*100:aT;
+
   document.getElementById('kpi-diario').innerHTML=
     kdv('Leads Hoje',hDB?fmt(hC):'—',leadsVb)+
     kdv('Captados D-1',hDB?fmt(d1C):'—',d1Vb)+
     kdv('CPL Hoje',fmtR(cplHoje),cplVb)+
-    kdv('Qualif. Hoje',aT.toFixed(1)+'%',hDB?badge(fmt(Math.round(hC*(aT/100)))+' leads','neu'):'') +
+    kdv('Qualif. Hoje',hDB?fmt(qualHojeQ):'—',badge(qualHojePct.toFixed(1)+'%',qualHojePct>=90?'pos':'warn'))+
     `<div class="kd kd-wide" style="padding:12px 13px">
       <div style="font-family:var(--fn);font-size:12px;font-weight:800;letter-spacing:-.02em;color:var(--tx);margin-bottom:10px">Resumo</div>
       ${resumoHTML}
@@ -956,7 +963,7 @@ function renderAll(){
             </div>
           </div>
           <div class="rp-curso-metrics">
-            <div class="rp-curso-metric"><div class="rp-curso-mv"><span class="rp-curso-mv-prefix">R$</span>${Math.round(cplV)}</div></div>
+            <div class="rp-curso-metric"><div class="rp-curso-mv" style="font-size:12px">${fmtR(cplV).replace("R$\u00a0","R$ ")}</div></div>
             <div class="rp-curso-metric"><div class="rp-curso-mv">${Math.round(taxa)}%</div></div>
           </div>
         </div>`;
@@ -1001,11 +1008,11 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   }).join('');
 
   /* share card — topo mostra leads do período selecionado + qualificação REAL sincronizada */
-  const tLSel=isTotal?_ss.reduce((s,r)=>s+n(r[_cT]),0):rows.reduce((s,x)=>s+x.cnt,0);
+  const tLSel=isTotal?tL:rows.reduce((s,x)=>s+x.cnt,0);
   /* qualificação: se total usa média geral; se dia específico usa taxa ponderada real por curso */
   let tQSel;
   if(isTotal){
-    tQSel=_ss.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0);
+    tQSel=tQ;
   } else {
     /* para cada curso, pega os leads do dia e aplica a taxa de qualificação daquele curso */
     tQSel=rows.reduce((s,{nm,cnt})=>{
