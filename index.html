@@ -94,6 +94,39 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 .kh-foot-lbl{font-size:10px;color:var(--tx3);font-weight:500;}
 .kh-foot-dot{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 9px;font-size:10px;font-weight:800;flex-shrink:0;}
 
+
+/* ── HEADER BAR (separador + título + seletor de curso) ── */
+#dash-header{padding:20px 0 0;}
+.dash-sep{height:1px;background:var(--bd);margin-bottom:20px;opacity:.5;}
+.dash-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.dash-title{font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;}
+.dash-title span{color:var(--acc);}
+/* seletor de curso */
+.curso-sel{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.curso-pill{font-size:11px;font-weight:700;padding:5px 13px;border-radius:999px;border:1px solid var(--bd);background:var(--sf);color:var(--tx2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.curso-pill:hover{border-color:var(--bda);color:var(--tx);}
+.curso-pill.act{background:var(--acc);border-color:var(--acc);color:#fff;}
+/* ── SELETOR DE PERÍODO estilo Meta Ads ── */
+#periodo-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+.periodo-presets{display:flex;align-items:center;gap:4px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:4px;}
+.periodo-btn{font-size:11px;font-weight:600;padding:5px 12px;border-radius:7px;border:none;background:transparent;color:var(--tx2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.periodo-btn:hover{background:var(--cdh);color:var(--tx);}
+.periodo-btn.act{background:var(--acc);color:#fff;font-weight:700;}
+.periodo-custom{display:flex;align-items:center;gap:6px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:5px 12px;}
+.periodo-custom input[type=date]{background:transparent;border:none;color:var(--tx);font-size:11px;font-weight:600;font-family:var(--f);cursor:pointer;outline:none;width:110px;}
+.periodo-custom input[type=date]::-webkit-calendar-picker-indicator{filter:var(--date-ico,invert(1));opacity:.4;cursor:pointer;}
+[data-theme=light] .periodo-custom input[type=date]::-webkit-calendar-picker-indicator{filter:none;}
+.periodo-sep-txt{font-size:11px;color:var(--tx3);}
+.periodo-apply{font-size:11px;font-weight:700;padding:4px 12px;border-radius:7px;border:1px solid var(--acc);background:var(--accg);color:var(--acc);cursor:pointer;transition:all .15s;}
+.periodo-apply:hover{background:var(--acc);color:#fff;}
+/* ── DOTS HOJE / D-1 / GERAL ── */
+.ctx-dots{display:flex;align-items:center;gap:6px;}
+.ctx-dot{font-size:11px;font-weight:700;padding:4px 13px;border-radius:999px;border:1px solid var(--bd);background:var(--sf);color:var(--tx2);cursor:pointer;transition:all .15s;}
+.ctx-dot:hover{border-color:var(--bda);color:var(--tx);}
+.ctx-dot.act{background:var(--acc);border-color:var(--acc);color:#fff;}
+/* ── DOT DE VARIAÇÃO nos leads por curso ── */
+.lpd-varpct{display:inline-flex;align-items:center;gap:3px;border-radius:999px;padding:2px 6px;font-size:10px;font-weight:700;margin-left:4px;flex-shrink:0;}
+
 /* DAILY — 5 cards */
 .daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2.2fr;gap:14px;margin-bottom:0;}
 .kd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:24px 26px;box-shadow:var(--sh2);position:relative;}
@@ -493,6 +526,41 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
     <button onclick="exportPDF()" title="Exportar PDF" style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;min-width:30px;border-radius:50%;border:1px solid var(--bd);background:var(--sf);color:var(--tx3);cursor:pointer;opacity:.55;transition:opacity .2s;flex-shrink:0;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='.55'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
   </div>
   <div style="height:8px;"></div>
+  <!-- HEADER DO DASHBOARD -->
+  <div id="dash-header">
+    <div class="dash-sep"></div>
+    <div class="dash-title-row">
+      <div>
+        <div class="dash-title" id="dash-title-txt">Visão <span>Geral</span></div>
+      </div>
+      <div class="curso-sel" id="curso-sel-wrap">
+        <!-- preenchido por JS após carregar cursos -->
+      </div>
+    </div>
+    <div id="periodo-bar">
+      <div class="periodo-presets">
+        <button class="periodo-btn" onclick="setPeriodo('hoje')">Hoje</button>
+        <button class="periodo-btn" onclick="setPeriodo('ontem')">Ontem</button>
+        <button class="periodo-btn act" id="pbtn-mtd" onclick="setPeriodo('mtd')">Mês atual</button>
+        <button class="periodo-btn" onclick="setPeriodo('7d')">Últimos 7 dias</button>
+        <button class="periodo-btn" onclick="setPeriodo('30d')">Últimos 30 dias</button>
+        <button class="periodo-btn" onclick="setPeriodo('custom')" id="pbtn-custom">Personalizado</button>
+      </div>
+      <div class="periodo-custom" id="periodo-custom-inputs" style="display:none;">
+        <input type="date" id="periodo-de" />
+        <span class="periodo-sep-txt">até</span>
+        <input type="date" id="periodo-ate" />
+        <button class="periodo-apply" onclick="applyCustomPeriodo()">Aplicar</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;">
+      <div class="ctx-dots" id="ctx-dots">
+        <button class="ctx-dot" onclick="setCtx('hoje')">Hoje</button>
+        <button class="ctx-dot act" onclick="setCtx('d1')">D-1</button>
+        <button class="ctx-dot" onclick="setCtx('geral')">Geral</button>
+      </div>
+    </div>
+  </div>
   <div id="loader"><div class="spin"></div><p>Carregando dados…</p></div>
   <div id="err"></div>
   <div class="panel" id="panel-perf">
@@ -639,6 +707,7 @@ const COLORS=['#7c5cfc','#e05f8e','#34d399','#fbbf24','#60a5fa','#f97316','#a78b
 let SH=[],SD=[],DBmap=new Map(),DBdates=[],selDate='__total__';
 let _cC,_cT,_cQ,_cS,_ss;
 let _cplOpen=new Set(),_txOpen=new Set(),_txSel=null,_cplSel='__total__',_metaCOpen=new Set(),_metaDiarOpen=false;
+let _periodoAtual='mtd',_periodoDE=null,_periodoATE=null,_ctxAtual='d1',_cursoFiltro='__all__';
 let META={found:false};
 let VISAO={found:false,invTotal:0,cplGeral:0,cursos:{}};
 
@@ -1197,7 +1266,74 @@ function renderAll(){
   }
   window._resumoData={hk:_hk,d1k:_d1k,calcResumoData,fmtR,abrevNome};
   fillResumo('d1');
+  buildCursoSel();
+  setPeriodo('mtd');
 }
+/* ── PERÍODO & CONTEXTO ── */
+function setPeriodo(p){
+  _periodoAtual=p;
+  document.querySelectorAll('.periodo-btn').forEach(b=>b.classList.remove('act'));
+  const map={hoje:'hoje',ontem:'ontem',mtd:'mtd','7d':'7d','30d':'30d',custom:'custom'};
+  document.querySelectorAll('.periodo-btn').forEach(b=>{
+    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+p+"'"))b.classList.add('act');
+  });
+  const ci=document.getElementById('periodo-custom-inputs');
+  if(ci)ci.style.display=p==='custom'?'flex':'none';
+  if(p!=='custom'){
+    const now=new Date();
+    let de=new Date(),ate=new Date();
+    if(p==='hoje'){de=new Date();ate=new Date();}
+    else if(p==='ontem'){de=new Date(now-864e5);ate=new Date(now-864e5);}
+    else if(p==='mtd'){de=new Date(now.getFullYear(),now.getMonth(),1);ate=new Date();}
+    else if(p==='7d'){de=new Date(now-6*864e5);ate=new Date();}
+    else if(p==='30d'){de=new Date(now-29*864e5);ate=new Date();}
+    _periodoDE=de;_periodoATE=ate;
+    updatePeriodoLabel(de,ate);
+  }
+}
+function applyCustomPeriodo(){
+  const de=document.getElementById('periodo-de')?.value;
+  const ate=document.getElementById('periodo-ate')?.value;
+  if(!de||!ate)return;
+  _periodoDE=new Date(de+'T00:00:00');
+  _periodoATE=new Date(ate+'T00:00:00');
+  _periodoAtual='custom';
+  updatePeriodoLabel(_periodoDE,_periodoATE);
+  document.getElementById('periodo-custom-inputs').style.display='none';
+}
+function updatePeriodoLabel(de,ate){
+  /* noop — presets já têm labels; poderia atualizar um label global aqui */
+}
+function setCtx(ctx){
+  _ctxAtual=ctx;
+  document.querySelectorAll('.ctx-dot').forEach(b=>{
+    b.classList.toggle('act',b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+ctx+"'"));
+  });
+  buildDatePanel();buildTaxa();
+}
+function buildCursoSel(){
+  const wrap=document.getElementById('curso-sel-wrap');if(!wrap)return;
+  const cursos=[{nm:'Todos',val:'__all__'},..._ss.map((r,i)=>({nm:cl(r[_cC]),val:cl(r[_cC]),col:COLORS[i%COLORS.length]}))];
+  wrap.innerHTML=cursos.map(({nm,val,col})=>{
+    const isAll=val==='__all__';
+    const act=_cursoFiltro===val;
+    const dot=col&&!isAll?`<span style="width:6px;height:6px;border-radius:50%;background:${col};display:inline-block;margin-right:3px;"></span>`:'';
+    return`<button class="curso-pill${act?' act':''}" onclick="setCursoFiltro('${val.replace(/'/g,"\'")}')">${dot}${nm.length>20?nm.slice(0,18)+'…':nm}</button>`;
+  }).join('');
+  /* atualizar título */
+  const titleEl=document.getElementById('dash-title-txt');
+  if(titleEl){
+    if(_cursoFiltro==='__all__')titleEl.innerHTML='Visão <span>Geral</span>';
+    else titleEl.innerHTML=`<span>${_cursoFiltro}</span>`;
+  }
+}
+function setCursoFiltro(val){
+  _cursoFiltro=val;
+  buildCursoSel();
+  buildDatePanel();buildTaxa();buildCPL();buildShare();
+}
+function buildShare(){buildDatePanel();}
+
 function khv(lbl,val,extra,sz,cls){return`<div class="kh${cls?' '+cls:''}"><div class="kh-lbl">${lbl}</div>${extra?`<div style="position:absolute;top:9px;right:11px;display:flex;align-items:center">${extra}</div>`:''}<div class="kh-val ${sz}">${val}</div></div>`;}
 function kdv(lbl,val,vb){return`<div class="kd"><div class="kd-lbl">${lbl}</div><div class="kd-body"><div class="kd-num">${val}</div>${vb?`<div class="kd-vb">${vb}</div>`:''}</div></div>`;}
 
@@ -1230,9 +1366,18 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   const _skipW=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
   function _abrev(n){const w=n.split(/\s+/);if(w.length<=3)return n;return w[0]+' '+w.slice(1).map(x=>_skipW.has(x.toLowerCase())?'':x[0].toUpperCase()+'.').filter(Boolean).join(' ');}
   document.getElementById('lpd-list').innerHTML=rows.map(({nm,cnt,prev,color})=>{
-    let dH='';
-    if(!isTotal&&cnt>0){const d=cnt-prev;dH=d>0?badge('+'+fmt(d),'pos sm'):d<0?badge(fmt(d),'neg sm'):badge('=','neu sm');}
-    return`<div class="lpd-item"><div class="lpd-acc" style="background:${color}"></div><div class="lpd-nome" title="${nm}">${_abrev(nm)}</div><div class="lpd-right"><div class="lpd-cnt">${fmt(cnt)}</div>${dH}</div></div>`;
+    let dH='',varPct='';
+    if(!isTotal&&prev>0){
+      const d=cnt-prev;
+      const pctVar=prev>0?((d/prev)*100):0;
+      const col=d>0?'var(--pos)':d<0?'var(--neg)':'var(--tx3)';
+      dH=d>0?badge('+'+fmt(d),'pos sm'):d<0?badge(fmt(d),'neg sm'):badge('=','neu sm');
+      varPct=`<span class="lpd-varpct" style="background:${col}22;color:${col};">
+        <span style="width:5px;height:5px;border-radius:50%;background:${col};display:inline-block;"></span>
+        ${pctVar>=0?'+':''}${pctVar.toFixed(1)}%
+      </span>`;
+    }
+    return`<div class="lpd-item"><div class="lpd-acc" style="background:${color}"></div><div class="lpd-nome" title="${nm}">${_abrev(nm)}</div><div class="lpd-right"><div class="lpd-cnt">${fmt(cnt)}</div><div style="display:flex;align-items:center;gap:3px;">${dH}${varPct}</div></div></div>`;
   }).join('');
 
   /* share card — topo mostra leads do período selecionado + qualificação REAL sincronizada */
