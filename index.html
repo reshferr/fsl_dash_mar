@@ -1069,17 +1069,8 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
     return`<div style="height:100%;width:${pct}%;background:${color};transition:width .7s ease;" title="${pct}%"></div>`;
   }).join('');
   document.getElementById('sh-toprow').innerHTML=
-    `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--bd);">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;">Distribuição total</div>
-        <div style="font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx);letter-spacing:-.03em;">${fmt(shTotGeral)} <span style="font-size:10px;font-weight:600;color:var(--tx3);">leads</span></div>
-      </div>
-      <div style="height:12px;border-radius:999px;overflow:hidden;display:flex;background:var(--grd);">
-        ${stackedBar}
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;">
-        ${shRows.map(({nm,color})=>`<div style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;"></span><span style="font-size:10px;color:var(--tx2);">${abv2(nm)}</span></div>`).join('')}
-      </div>
+    `<div style="height:18px;border-radius:999px;overflow:hidden;display:flex;background:var(--grd);margin-bottom:16px;padding-bottom:0;">
+      ${stackedBar}
     </div>`;
   document.getElementById('share-list').innerHTML=
     `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;">
