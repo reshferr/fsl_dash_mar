@@ -51,9 +51,9 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 @keyframes sp{to{transform:rotate(360deg)}}
 #loader p{font-size:12px;color:var(--tx3);}
 #err{display:none;text-align:center;padding:50px 20px;font-size:13px;line-height:1.9;}
-.gf{margin-bottom:18px;}
+.gf{margin-bottom:22px;}
 .card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:20px 24px;box-shadow:var(--sh2);}
-.slbl{font-family:var(--fn);font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin-bottom:14px;}
+.slbl{font-family:var(--fn);font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin-bottom:18px;}
 .empty{font-size:12px;color:var(--tx3);padding:6px 0;}
 
 /* BADGE */
@@ -70,17 +70,17 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 .pb-fill{height:100%;border-radius:999px;transition:width .8s ease;}
 
 /* TOP-SECTION wrapper — destaque com gradiente e separador */
-.top-section{position:relative;padding:4px 0 16px;margin-bottom:0;}
+.top-section{position:relative;padding:4px 0 20px;margin-bottom:0;}
 .top-section::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--bd);}
-.rest-section{padding-top:12px;}
-.mid-sep{height:1px;margin:10px 0 10px;background:var(--bd);opacity:.35;}
+.rest-section{padding-top:16px;}
+.mid-sep{height:1px;margin:16px 0 16px;background:var(--bd);opacity:.35;}
 [data-theme=dark] .top-section{background:linear-gradient(180deg,rgba(124,92,252,.055) 0%,transparent 100%);}
 [data-theme=light] .top-section{background:linear-gradient(180deg,rgba(94,56,236,.035) 0%,transparent 100%);}
 [data-theme=beige] .top-section{background:linear-gradient(180deg,rgba(122,85,48,.03) 0%,transparent 100%);}
 
 /* HERO — 4 cards principais */
-.hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;}
-.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:26px 30px;box-shadow:var(--sh);position:relative;overflow:clip;}
+.hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:28px 32px;box-shadow:var(--sh);position:relative;overflow:clip;}
 .kh::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--acc) 50%,transparent 100%);background-size:250% 100%;background-position:200% 0;animation:barslide 6s ease-in-out infinite;opacity:.55;}
 [data-theme=light] .kh{border-color:var(--bda);background:var(--sf);}
 [data-theme=beige] .kh{border-color:var(--bda);background:var(--sf);}
@@ -91,8 +91,8 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 .kh-sub{display:none;}
 
 /* DAILY — 5 cards */
-.daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2.2fr;gap:12px;margin-bottom:0;}
-.kd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:22px 24px;box-shadow:var(--sh2);position:relative;}
+.daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2.2fr;gap:14px;margin-bottom:0;}
+.kd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:24px 26px;box-shadow:var(--sh2);position:relative;}
 .kd-lbl{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
 .kd-date{font-weight:400;text-transform:none;letter-spacing:0;font-size:9px;color:var(--tx3);}
 .kd-body{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:nowrap;}
@@ -943,87 +943,38 @@ function renderAll(){
   window._escSelFn=()=>_escSel;
   renderEsc();buildTable();
   document.getElementById('panel-perf').classList.add('on');
-  /* update resumo D-1 popup */
-  (()=>{
-    const _hk=dkOf(new Date());
-    const _d1k=DBdates.find(d=>d!==_hk)||prevDK(_hk);
-    const _d1Leads=hDB?cntDate(_d1k):0;
-    const _metaD1=META.found?(META.totalDaily[_d1k]||0):0;
-    const _pctMeta=_metaD1>0?(_d1Leads/_metaD1*100):null;
-    let _d1Qual=aT;
-    if(hDB&&_cQ){
-      const _d1Map=DBmap.get(_d1k);
-      if(_d1Map){let tot=0,qs=0;_ss.forEach(r=>{const cnt=cntCurso(_d1k,cl(r[_cC]));qs+=Math.round(cnt*(n(r[_cQ])/100));tot+=cnt;});_d1Qual=tot>0?(qs/tot)*100:aT;}
-    }
-    /* KPIs topo */
-    const _rm=document.getElementById('rp-meta');if(_rm)_rm.textContent=_metaD1>0?fmt(_metaD1):'—';
-    const _rl=document.getElementById('rp-leads');if(_rl)_rl.textContent=fmt(_d1Leads);
-    const _rc=document.getElementById('rp-cpl');if(_rc)_rc.textContent=fmtR(cplD1);
-    const _rt=document.getElementById('rp-taxa');if(_rt)_rt.textContent=_d1Qual.toFixed(1)+'%';
-    /* barra atingimento */
-    const _ap=document.getElementById('rp-ating-pct');
-    const _af=document.getElementById('rp-ating-fill');
-    if(_ap&&_af){
-      const pctVal=_pctMeta!==null?_pctMeta:0;
-      const pctColor=pctVal>=90?'var(--pos)':pctVal>=70?'var(--wrn)':'var(--neg)';
-      _ap.textContent=_pctMeta!==null?_pctMeta.toFixed(1)+'%':'—';
-      _ap.style.color=pctColor;
-      _af.style.width=Math.min(pctVal,100)+'%';
-      _af.style.background=pctColor;
-    }
-    /* cursos */
-    function abrevNome(nm){
-      if(nm.length<=22)return nm;
-      const words=nm.split(' ');
-      let out='';
-      for(const w of words){
-        const test=(out?out+' ':'')+w;
-        if(test.length<=22){out=test;}else{out+=(out?' ':'')+(w.length>4?w.slice(0,3)+'.':w);if(out.length>=18)break;}
-      }
-      return out.slice(0,24);
-    }
-    const _rcu=document.getElementById('rp-cursos');
-    if(_rcu&&_ss.length){
-      /* build list with pct for sorting */
-      const cursosList=_ss.map((r,i)=>{
-        const nm=cl(r[_cC]);
-        const col=COLORS[i%COLORS.length];
-        const leads=hDB?cntCurso(_d1k,nm):n(r[_cT]);
-        const meta=META.found?matchMetaCurso(nm):null;
-        const metaD1Val=meta?(meta.dailyMetas[_d1k]||0):0;
-        const pct=metaD1Val>0?(leads/metaD1Val*100):null;
-        const pctColor=pct===null?'var(--tx3)':pct>=90?'var(--pos)':pct>=70?'var(--wrn)':'var(--neg)';
-        const cplV=getCPL(nm).d1;
-        const taxa=n(r[_cQ]);
-        return{nm,col,pct,pctColor,cplV,taxa};
-      }).sort((a,b)=>(b.pct||0)-(a.pct||0));
-      /* header row */
-      const header=`<div class="rp-curso-header">
-        <div class="rp-curso-header-nm">Curso</div>
-        <div class="rp-curso-header-cols">
-          <div class="rp-curso-header-col">CPL</div>
-          <div class="rp-curso-header-col">Qualif.</div>
-        </div>
-      </div>`;
-      const rows=cursosList.map(({nm,col,pct,pctColor,cplV,taxa})=>{
-        return`<div class="rp-curso-item">
-          <div class="rp-curso-acc" style="background:${col}"></div>
-          <div class="rp-curso-main">
-            <div class="rp-curso-nm">${abrevNome(nm)}</div>
-            <div class="rp-curso-dot-row">
-              <div class="rp-curso-dot" style="background:${pctColor}"></div>
-              <div class="rp-curso-pct" style="color:${pctColor}">${pct!==null?pct.toFixed(1)+'%':'—'}</div>
-            </div>
-          </div>
-          <div class="rp-curso-metrics">
-            <div class="rp-curso-metric"><div class="rp-curso-mv" style="font-size:12px">${fmtR(cplV).replace("R$\u00a0","R$ ")}</div></div>
-            <div class="rp-curso-metric"><div class="rp-curso-mv">${Math.round(taxa)}%</div></div>
-          </div>
-        </div>`;
-      }).join('');
-      _rcu.innerHTML=header+rows;
-    }
-  })();
+  /* store resumo data for tab switching */
+  const _hk=dkOf(new Date());
+  const _d1k=DBdates.find(d=>d!==_hk)||prevDK(_hk);
+  function abrevNome(nm){
+    if(nm.length<=22)return nm;
+    const words=nm.split(' ');let out='';
+    for(const w of words){const test=(out?out+' ':'')+w;if(test.length<=22){out=test;}else{out+=(out?' ':'')+(w.length>4?w.slice(0,3)+'.':w);if(out.length>=18)break;}}
+    return out.slice(0,24);
+  }
+  function calcResumoData(dk){
+    const isHoje=dk===_hk;
+    const leads=hDB?cntDate(dk):0;
+    const metaVal=META.found?(META.totalDaily[dk]||0):0;
+    const pctMeta=metaVal>0?(leads/metaVal*100):null;
+    let qual=aT;
+    if(hDB&&_cQ){let tot=0,qs=0;_ss.forEach(r=>{const cnt=cntCurso(dk,cl(r[_cC]));qs+=Math.round(cnt*(n(r[_cQ])/100));tot+=cnt;});qual=tot>0?(qs/tot)*100:aT;}
+    const cplVal=isHoje?cplHoje:cplD1;
+    const cursos=_ss.map((r,i)=>{
+      const nm=cl(r[_cC]);const col=COLORS[i%COLORS.length];
+      const cnt=hDB?cntCurso(dk,nm):n(r[_cT]);
+      const meta=META.found?matchMetaCurso(nm):null;
+      const metaDk=meta?(meta.dailyMetas[dk]||0):0;
+      const pct=metaDk>0?(cnt/metaDk*100):null;
+      const pctColor=pct===null?'var(--tx3)':pct>=90?'var(--pos)':pct>=70?'var(--wrn)':'var(--neg)';
+      const cplV=isHoje?getCPL(nm).hoje:getCPL(nm).d1;
+      const taxa=n(r[_cQ]);
+      return{nm,col,pct,pctColor,cplV,taxa};
+    }).sort((a,b)=>(b.pct||0)-(a.pct||0));
+    return{leads,metaVal,pctMeta,qual,cplVal,cursos};
+  }
+  window._resumoData={hk:_hk,d1k:_d1k,calcResumoData,fmtR,abrevNome};
+  fillResumo('d1');
 }
 function khv(lbl,val,extra,sz,cls){return`<div class="kh${cls?' '+cls:''}"><div class="kh-lbl">${lbl}</div>${extra?`<div style="position:absolute;top:9px;right:11px;display:flex;align-items:center">${extra}</div>`:''}<div class="kh-val ${sz}">${val}</div></div>`;}
 function kdv(lbl,val,vb){return`<div class="kd"><div class="kd-lbl">${lbl}</div><div class="kd-body"><div class="kd-num">${val}</div>${vb?`<div class="kd-vb">${vb}</div>`:''}</div></div>`;}
@@ -1091,16 +1042,17 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   const filtered=shRows.filter(x=>x.cnt>0);
   const segments=filtered.map(({cnt,color,nm})=>{
     const pct=(cnt/shTotGeral*100);
-    return`<div style="flex:${pct.toFixed(3)};min-width:2px;background:${color};" title="${abv2(nm)}: ${pct.toFixed(1)}%"></div>`;
-  }).join('<div style="width:3px;background:var(--cd);flex-shrink:0;"></div>');
+    const label=pct>=8?`<span style="font-size:9px;font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);white-space:nowrap;overflow:hidden;">${pct.toFixed(0)}%</span>`:'';
+    return`<div style="flex:${pct.toFixed(3)};min-width:${pct<3?'4px':'0'};background:${color};display:flex;align-items:center;justify-content:center;overflow:hidden;" title="${abv2(nm)}: ${pct.toFixed(1)}%">${label}</div>`;
+  }).join('');
   document.getElementById('sh-toprow').innerHTML=
     `<div style="display:flex;align-items:stretch;gap:10px;margin-bottom:14px;">
       <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:12px 16px;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;width:90px;">
         <div style="font-size:9px;font-weight:700;color:var(--tagt);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;white-space:nowrap;">Total Leads</div>
         <div style="font-family:var(--fn);font-size:26px;font-weight:800;letter-spacing:-.06em;color:var(--tx);line-height:1;">${fmt(shTotGeral)}</div>
       </div>
-      <div style="flex:1;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);display:flex;align-items:center;padding:0 14px;min-width:0;">
-        <div style="display:flex;height:28px;border-radius:6px;overflow:hidden;width:100%;">${segments}</div>
+      <div style="flex:1;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;min-width:0;">
+        <div style="display:flex;height:100%;min-height:60px;">${segments}</div>
       </div>
     </div>`;
   document.getElementById('share-list').innerHTML=
@@ -1494,25 +1446,55 @@ window.addEventListener('scroll',()=>{
     btt3.style.transition='opacity .3s,width .3s,margin .3s';
   }
 },{passive:true});
-let _rpTab='hoje';
-function setResumoTab(tab){
+let _rpTab='d1';
+function fillResumo(tab){
   _rpTab=tab;
+  const rd=window._resumoData;if(!rd)return;
+  const dk=tab==='hoje'?rd.hk:rd.d1k;
+  const d=rd.calcResumoData(dk);
+  const isHoje=tab==='hoje';
+  /* tab styles */
   const tH=document.getElementById('rp-tab-hoje');
   const tD=document.getElementById('rp-tab-d1');
-  const actS='background:var(--acc);color:#fff;border-color:var(--bda);';
-  const idlS='background:transparent;color:var(--tx2);border-color:var(--bd);';
-  if(tH)tH.style.cssText=tH.style.cssText.replace(/background:[^;]+;color:[^;]+;border-color:[^;]+;/,'')+( tab==='hoje'?actS:idlS);
-  if(tD)tD.style.cssText=tD.style.cssText.replace(/background:[^;]+;color:[^;]+;border-color:[^;]+;/,'')+( tab==='d1'?actS:idlS);
-  updateResumoTab();
-}
-function updateResumoTab(){
-  /* swap content labels between Hoje / D-1 */
-  const isHoje=_rpTab==='hoje';
+  const actBase='font-family:var(--fn);font-size:12px;font-weight:700;padding:5px 14px;border-radius:999px;cursor:pointer;transition:all .15s;';
+  if(tH){tH.style.cssText=actBase+(tab==='hoje'?'background:var(--acc);color:#fff;border:1px solid var(--bda);':'background:transparent;color:var(--tx2);border:1px solid var(--bd);');}
+  if(tD){tD.style.cssText=actBase+(tab==='d1'?'background:var(--acc);color:#fff;border:1px solid var(--bda);':'background:transparent;color:var(--tx2);border:1px solid var(--bd);');}
+  /* labels */
   const metaLbl=document.querySelector('#rp-body .rp-kpi.hi .rp-kl');
   if(metaLbl)metaLbl.textContent=isHoje?'Meta Hoje':'Meta D-1';
   const leadsLbl=document.querySelectorAll('#rp-body .rp-kpi .rp-kl')[1];
-  if(leadsLbl)leadsLbl.textContent=isHoje?'Leads Hoje':'Leads Captados';
+  if(leadsLbl)leadsLbl.textContent=isHoje?'Leads Hoje':'Leads D-1';
+  /* values */
+  const _rm=document.getElementById('rp-meta');if(_rm)_rm.textContent=d.metaVal>0?fmt(d.metaVal):'—';
+  const _rl=document.getElementById('rp-leads');if(_rl)_rl.textContent=fmt(d.leads);
+  const _rc=document.getElementById('rp-cpl');if(_rc)_rc.textContent=fmtR(d.cplVal);
+  const _rt=document.getElementById('rp-taxa');if(_rt)_rt.textContent=d.qual.toFixed(1)+'%';
+  const _ap=document.getElementById('rp-ating-pct');const _af=document.getElementById('rp-ating-fill');
+  if(_ap&&_af){
+    const pctVal=d.pctMeta!==null?d.pctMeta:0;
+    const pctColor=pctVal>=90?'var(--pos)':pctVal>=70?'var(--wrn)':'var(--neg)';
+    _ap.textContent=d.pctMeta!==null?d.pctMeta.toFixed(1)+'%':'—';
+    _ap.style.color=pctColor;_af.style.width=Math.min(pctVal,100)+'%';_af.style.background=pctColor;
+  }
+  /* cursos */
+  const _rcu=document.getElementById('rp-cursos');
+  if(_rcu&&d.cursos.length){
+    const header=`<div class="rp-curso-header"><div class="rp-curso-header-nm">Curso</div><div class="rp-curso-header-cols"><div class="rp-curso-header-col">CPL</div><div class="rp-curso-header-col">Qualif.</div></div></div>`;
+    const rows=d.cursos.map(({nm,col,pct,pctColor,cplV,taxa})=>`<div class="rp-curso-item">
+      <div class="rp-curso-acc" style="background:${col}"></div>
+      <div class="rp-curso-main">
+        <div class="rp-curso-nm">${rd.abrevNome(nm)}</div>
+        <div class="rp-curso-dot-row"><div class="rp-curso-dot" style="background:${pctColor}"></div><div class="rp-curso-pct" style="color:${pctColor}">${pct!==null?pct.toFixed(1)+'%':'—'}</div></div>
+      </div>
+      <div class="rp-curso-metrics">
+        <div class="rp-curso-metric"><div class="rp-curso-mv" style="font-size:12px">${rd.fmtR(cplV).replace('R ','R ')}</div></div>
+        <div class="rp-curso-metric"><div class="rp-curso-mv">${Math.round(taxa)}%</div></div>
+      </div>
+    </div>`).join('');
+    _rcu.innerHTML=header+rows;
+  }
 }
+function setResumoTab(tab){fillResumo(tab);}
 function toggleNav(){
   const m=document.getElementById('nav-menu');
   m.style.display=m.style.display==='none'?'block':'none';
