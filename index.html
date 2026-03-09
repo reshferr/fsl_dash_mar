@@ -117,27 +117,22 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 .dash-title em{color:inherit;font-style:normal;}
 [data-theme=light] .dash-title{color:var(--tx);}
 [data-theme=beige] .dash-title{color:var(--tx);}
-/* ── MENU CURSOS (botão + dropdown) ── */
+/* ── MENU CURSOS ── */
 #menu-cursos-wrap{position:relative;}
-#menu-cursos-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:auto;min-width:44px;height:36px;padding:0 14px;border-radius:999px;border:1.5px solid var(--acc);background:var(--accg);color:var(--acc);font-size:11px;font-weight:800;cursor:pointer;transition:all .15s;font-family:var(--f);letter-spacing:.01em;}
-#menu-cursos-btn:hover{background:var(--acc);color:#fff;}
-#menu-cursos-btn.open{background:var(--acc);color:#fff;border-color:var(--acc);}
-#menu-cursos-btn .mc-ring{width:10px;height:10px;border-radius:50%;border:2px solid currentColor;flex-shrink:0;position:relative;}
-#menu-cursos-btn .mc-ring::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:4px;height:4px;border-radius:50%;background:currentColor;}
-#menu-cursos-dropdown{display:none;position:fixed;background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:10px;width:220px;max-width:90vw;box-shadow:0 8px 40px rgba(0,0,0,.38);z-index:900;}
+#menu-cursos-btn{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;font-family:var(--f);}
+#menu-cursos-btn:hover{border-color:var(--bda);background:var(--cdh);}
+#menu-cursos-btn.act,#menu-cursos-btn.open{border-color:var(--acc);background:var(--accg);color:var(--acc);}
+#menu-cursos-btn .mc-chevron{font-size:8px;opacity:.5;transition:transform .15s;}
+#menu-cursos-btn.open .mc-chevron{transform:rotate(180deg);}
+#menu-cursos-dropdown{display:none;position:fixed;background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:6px;width:200px;max-width:88vw;box-shadow:0 6px 32px rgba(0,0,0,.35);z-index:900;}
 #menu-cursos-dropdown.open{display:block;}
-.mc-grid{display:grid;grid-template-columns:1fr;gap:4px;max-height:60vh;overflow-y:auto;}
-.mc-item{padding:9px 12px 9px 16px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;gap:10px;position:relative;overflow:hidden;}
-.mc-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--bd);border-radius:0 2px 2px 0;transition:background .15s;}
-.mc-item:hover::before{background:var(--bda);}
-.mc-item.act::before{background:var(--acc);}
-.mc-item:hover{border-color:var(--bda);background:var(--cdh);}
-.mc-item.act{border-color:var(--acc);background:var(--accg);}
-.mc-item-dot{display:none;}
-.mc-item-lbl{font-size:12px;font-weight:600;color:var(--tx);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.mc-geral{background:var(--accg);border-color:var(--bda);}
-.mc-geral::before{background:var(--acc)!important;}
-.mc-geral.act{border-color:var(--acc);}
+.mc-list{display:flex;flex-direction:column;gap:1px;max-height:55vh;overflow-y:auto;}
+.mc-item{padding:8px 10px;border-radius:6px;cursor:pointer;transition:background .1s;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:500;color:var(--tx2);}
+.mc-item:hover{background:var(--cdh);color:var(--tx);}
+.mc-item.act{background:var(--accg);color:var(--acc);font-weight:700;}
+.mc-item-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:var(--tx3);}
+.mc-item.act .mc-item-dot{background:var(--acc);}
+.mc-sep{height:1px;background:var(--bd);margin:4px 0;opacity:.5;}
 /* ── SELETOR DE PERÍODO ── */
 #periodo-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .periodo-presets{display:flex;align-items:center;gap:3px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:3px;}
@@ -564,11 +559,11 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
       <div class="dash-title" id="dash-title-txt">Visão <em>Geral</em></div>
       <div id="menu-cursos-wrap">
         <button id="menu-cursos-btn" onclick="toggleMenuCursos()">
-          <span class="mc-ring"></span>
-          <span id="menu-cursos-lbl">GERAL</span>
+          <span id="menu-cursos-lbl">Geral</span>
+          <span class="mc-chevron">▼</span>
         </button>
         <div id="menu-cursos-dropdown">
-          <div id="mc-grid-inner" class="mc-grid"></div>
+          <div id="mc-list-inner" class="mc-list"></div>
         </div>
       </div>
     </div>
@@ -752,7 +747,9 @@ async function load(){
     er.innerHTML=`<div style="max-width:400px;margin:0 auto;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:24px 28px;text-align:left">
       <div style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--neg);margin-bottom:8px">${title}</div>
       <div style="font-size:12px;color:var(--tx2);line-height:1.8;margin-bottom:16px">${body}</div>
-      <button onclick="location.reload()" style="padding:7px 20px;border-radius:999px;border:1px solid var(--acc);background:var(--accg);color:var(--acc);cursor:pointer;font-size:12px;font-weight:700;font-family:var(--f)">Tentar novamente</button>
+      <button onclick="location.reload()" style="padding:7px 20px;border-radius:999px;border:1px solid var(--acc);background:var(--accg);color:var(--acc);cursor:pointer;font-size:12px;font-weight:700;font-family:var(--f);margin-right:8px">Tentar novamente</button>
+      <button onclick="document.getElementById('dbg').style.display=document.getElementById('dbg').style.display==='none'?'block':'none'" style="padding:7px 14px;border-radius:999px;border:1px solid var(--bd);background:transparent;color:var(--tx3);cursor:pointer;font-size:11px;font-family:var(--f)">Debug</button>
+      <pre id="dbg" style="display:none;margin-top:12px;font-size:10px;color:var(--tx3);white-space:pre-wrap;word-break:break-all;max-height:200px;overflow-y:auto;background:var(--grd);padding:8px;border-radius:8px">${body.replace(/<[^>]+>/g,'')}</pre>
     </div>`;
   };
   if(location.protocol==='file:'){
@@ -765,15 +762,27 @@ async function load(){
     return;
   }
   async function gfetch(url){
+    /* 1ª tentativa: fetch direto (funciona quando CORS permite) */
     try{
       const r=await fetch(url,{cache:'no-store',redirect:'follow'});
-      if(r.ok){const t=await r.text();if(t&&t.trim().length>10)return t;}
-    }catch(_){}
-    const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url));
-    if(!r.ok)throw new Error('Proxy falhou');
-    const j=await r.json();
-    if(!j||!j.contents||j.contents.trim().length<10)throw new Error('Resposta vazia do proxy');
-    return j.contents;
+      if(r.ok){const t=await r.text();if(t&&t.trim().length>10){console.log('[fetch] direto OK');return t;}}
+    }catch(e){console.log('[fetch] direto falhou:',e.message);}
+    /* 2ª: allorigins */
+    try{
+      const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url),{cache:'no-store'});
+      if(r.ok){const j=await r.json();if(j&&j.contents&&j.contents.trim().length>10){console.log('[fetch] allorigins OK');return j.contents;}}
+    }catch(e){console.log('[fetch] allorigins falhou:',e.message);}
+    /* 3ª: corsproxy.io */
+    try{
+      const r2=await fetch('https://corsproxy.io/?'+encodeURIComponent(url),{cache:'no-store'});
+      if(r2.ok){const t=await r2.text();if(t&&t.trim().length>10){console.log('[fetch] corsproxy OK');return t;}}
+    }catch(e){console.log('[fetch] corsproxy falhou:',e.message);}
+    /* 4ª: api.codetabs.com */
+    try{
+      const r3=await fetch('https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url),{cache:'no-store'});
+      if(r3.ok){const t=await r3.text();if(t&&t.trim().length>10){console.log('[fetch] codetabs OK');return t;}}
+    }catch(e){console.log('[fetch] codetabs falhou:',e.message);}
+    throw new Error('Todos os proxies falharam. Verifique a conexão.');
   }
   try{
     const[t1,t2,t3,t4]=await Promise.all([
@@ -1528,13 +1537,11 @@ function renderAll(){
   }
   window._resumoData={hk:_hk,d1k:_d1k,calcResumoData,fmtR,abrevNome};
   fillResumo('d1');
+  _periodoDE=null;_periodoATE=null;_periodoAtual='geral';
   buildCursoSel();
-  /* período inicial: geral (sem filtro) */
-  if(!_periodoAtual||_periodoAtual==='mtd'){
-    _periodoDE=null;_periodoATE=null;_periodoAtual='geral';
-  }
+  /* marcar botão Geral como ativo */
   document.querySelectorAll('.periodo-btn').forEach(b=>{
-    b.classList.toggle('act',(b.getAttribute('onclick')||'').includes("'"+_periodoAtual+"'"));
+    b.classList.toggle('act',(b.getAttribute('onclick')||'').includes("'geral'"));
   });
 }
 
@@ -1614,43 +1621,42 @@ function refreshAll(){
 }
 function setCtx(ctx){_ctxAtual=ctx;buildDatePanel();buildTaxa();}
 function buildCursoSel(){
-  const grid=document.getElementById('mc-grid-inner');if(!grid)return;
+  /* lista dentro do dropdown */
+  const list=document.getElementById('mc-list-inner');if(!list)return;
   const geralAct=_cursoFiltro==='__all__';
-  let items=`<div class="mc-item mc-geral${geralAct?' act':''}" onclick="setCursoFiltro('__all__')">
-    <span class="mc-item-lbl">Geral</span>
-  </div>`;
+  /* abreviar nomes longos */
+  const abrev=(s)=>{
+    if(s.length<=26)return s;
+    const stop=new Set(['de','da','do','dos','das','em','e','a','o','com','para']);
+    const words=s.split(/\s+/);
+    let out=words[0];
+    for(let i=1;i<words.length;i++){
+      const w=words[i];
+      if(stop.has(w.toLowerCase()))continue;
+      const part=w.length>5?w.slice(0,4)+'.':w;
+      if((out+' '+part).length>26)break;
+      out+=' '+part;
+    }
+    return out;
+  };
+  let html=`<div class="mc-item${geralAct?' act':''}" onclick="setCursoFiltro('__all__')">
+    <span class="mc-item-dot"></span>Todos os cursos
+  </div><div class="mc-sep"></div>`;
   _ss.forEach((r,i)=>{
-    const nm=cl(r[_cC]);const col=COLORS[i%COLORS.length];const act=_cursoFiltro===nm;
-        /* abreviar nome do curso para caber no menu */
-    const abrevNmC=(s)=>{
-      if(s.length<=22)return s;
-      const stop=new Set(['de','da','do','dos','das','em','e','a','o','com']);
-      return s.split(/\s+/).map(w=>stop.has(w.toLowerCase())?null:w.length>4?w.slice(0,3)+'.':w).filter(Boolean).join(' ').slice(0,24);
-    };
-    items+=`<div class="mc-item${act?' act':''}" onclick="setCursoFiltro('${nm.replace(/'/g,"\'")}')">
-      <span class="mc-item-dot" style="background:${col};"></span>
-      <span class="mc-item-lbl">${abrevNmC(nm)}</span>
+    const nm=cl(r[_cC]);const col=COLORS[i%COLORS.length];const act=nm===_cursoFiltro;
+    html+=`<div class="mc-item${act?' act':''}" onclick="setCursoFiltro('${nm.replace(/'/g,"\'")}')">
+      <span class="mc-item-dot" style="background:${col};"></span>${abrev(nm)}
     </div>`;
   });
-  grid.innerHTML=items;
-  /* label do botão */
+  list.innerHTML=html;
+  /* botão — mostrar "Geral" ou nome abreviado do curso */
   const lbl=document.getElementById('menu-cursos-lbl');
-  if(lbl){
-    if(_cursoFiltro==='__all__'){lbl.textContent='GERAL';}
-    else{
-      /* iniciais: primeira letra de cada palavra significativa */
-      const stop=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na','em','ao']);
-      const words=_cursoFiltro.split(/\s+/).filter(w=>w.length>1&&!stop.has(w.toLowerCase()));
-      const initials=words.slice(0,4).map(w=>w[0].toUpperCase()).join('');
-      lbl.textContent=initials||_cursoFiltro.slice(0,4).toUpperCase();
-    }
-  }
-  /* título */
-  const titleEl=document.getElementById('dash-title-txt');
-  if(titleEl){
-    if(_cursoFiltro==='__all__')titleEl.innerHTML='Visão <em>Geral</em>';
-    else titleEl.innerHTML=`<em>${_cursoFiltro}</em>`;
-  }
+  const btn=document.getElementById('menu-cursos-btn');
+  if(lbl){lbl.textContent=geralAct?'Geral':abrev(_cursoFiltro);}
+  if(btn){btn.classList.toggle('act',!geralAct);}
+  /* título do dashboard */
+  const ttl=document.getElementById('dash-title-txt');
+  if(ttl){ttl.innerHTML=geralAct?'Visão <em>Geral</em>':_cursoFiltro;}
 }
 function toggleMenuCursos(){
   const dd=document.getElementById('menu-cursos-dropdown');
@@ -1689,21 +1695,10 @@ function _closeMC(e){
 }
 function setCursoFiltro(val){
   _cursoFiltro=val;
-  /* fechar dropdown */
   const dd=document.getElementById('menu-cursos-dropdown');
   const btn=document.getElementById('menu-cursos-btn');
   if(dd)dd.classList.remove('open');
   if(btn)btn.classList.remove('open');
-  /* atualizar título do dashboard */
-  const titleEl=document.getElementById('dash-title-txt');
-  if(titleEl){
-    if(val==='__all__') titleEl.innerHTML='Visão <em>Geral</em>';
-    else {
-      const stop=new Set(['de','da','do','dos','das','em','e','a','o','com','no','na','por','ao']);
-      const words=val.split(/\s+/).filter(w=>w.length>2&&!stop.has(w.toLowerCase()));
-      titleEl.innerHTML=words.slice(0,3).join(' ');
-    }
-  }
   buildCursoSel();
   refreshAll();
 }
