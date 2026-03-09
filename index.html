@@ -80,16 +80,19 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 
 /* HERO — 4 cards principais */
 .hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
-.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:28px 32px;box-shadow:var(--sh);position:relative;overflow:clip;}
+.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:28px 32px;box-shadow:var(--sh);position:relative;overflow:clip;display:flex;flex-direction:column;}
 .kh::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--acc) 50%,transparent 100%);background-size:250% 100%;background-position:200% 0;animation:barslide 6s ease-in-out infinite;opacity:.55;}
 [data-theme=light] .kh{border-color:var(--bda);background:var(--sf);}
 [data-theme=beige] .kh{border-color:var(--bda);background:var(--sf);}
 .kh-lbl{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
 .kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
 .kh-val.big{font-size:36px;}
-.kh-val.md{font-size:36px;}
-.kh-val.sm{font-size:22px;line-height:1.15;}
-.kh-sub{display:none;}
+.kh-val.md{font-size:30px;}
+.kh-val.sm{font-size:22px;line-height:1.2;}
+.kh-sub{font-size:11px;color:var(--tx3);margin-top:6px;}
+.kh-foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.kh-foot-lbl{font-size:10px;color:var(--tx3);font-weight:500;}
+.kh-foot-dot{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 9px;font-size:10px;font-weight:800;flex-shrink:0;}
 
 /* DAILY — 5 cards */
 .daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2.2fr;gap:14px;margin-bottom:0;}
@@ -420,7 +423,7 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 @media(max-width:540px){
   main{padding-top:0;padding-left:10px;padding-right:10px;}
   .hero-row,.daily-row{grid-template-columns:1fr 1fr;gap:8px;}
-  .kh{padding:16px 18px;}.kh-val.big{font-size:26px;}.kh-val.md{font-size:26px;}
+  .kh{padding:16px 18px;}.kh-val.big{font-size:26px;}.kh-val.md{font-size:22px;}.kh-val.sm{font-size:17px;}
   .kd{padding:12px 14px;}.kd-num{font-size:18px;}
   .card{padding:12px;}
   .esc-kv{font-size:18px;}.esc-blocks{grid-template-columns:repeat(2,1fr);}
@@ -987,16 +990,67 @@ function renderAll(){
 
   /* investimento e CPL reais da aba Visão */
   const invTotal=VISAO.found&&VISAO.invTotal>0?VISAO.invTotal:null;
-  /* Investimento por extenso: "R$ 528.816,96" */
   const invFmt=invTotal?invTotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';
-  /* CPL Geral = Investimento Total ÷ Total de Leads (planilha principal) */
+  /* CPL Geral = Investimento Total ÷ Total de Leads */
   const cplReal=invTotal&&tL>0?(invTotal/tL):null;
   const cplFmt2=cplReal?cplReal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';
+
+  /* Metas para os 4 cards */
+  const metaLeadsTotal=META.found?Object.values(META.cursos).reduce((s,c)=>s+c.metaTotal,0):0;
+  const pctLeadsMeta=metaLeadsTotal>0?Math.min((tL/metaLeadsTotal)*100,100):0;
+  const pctLeadsColor=pctLeadsMeta>=100?'var(--pos)':pctLeadsMeta>=70?'var(--wrn)':'var(--neg)';
+
+  const cplRef=60;
+  const cplVarPct=cplReal?((cplReal-cplRef)/cplRef)*100:null;
+  const cplColor=cplReal&&cplReal<=cplRef?'var(--pos)':'var(--neg)';
+
+  const qualRef=90;
+  const qualVarPct=((aT-qualRef)/qualRef)*100;
+  const qualColor=aT>=qualRef?'var(--pos)':aT>=70?'var(--wrn)':'var(--neg)';
+
+  /* dot colorido com % */
+  const dot=(pct,col,prefix)=>`<span class="kh-foot-dot" style="background:${col}22;color:${col};">
+    <span style="width:6px;height:6px;border-radius:50%;background:${col};flex-shrink:0;display:inline-block;"></span>
+    ${prefix||''}${Math.abs(pct).toFixed(1)}%
+  </span>`;
+
+  /* card hero expandido */
+  const khFull=(lbl,val,valSz,subLbl,subVal,dotHtml,extraTop)=>`<div class="kh">
+    <div class="kh-lbl">${lbl}${extraTop?`<span style="display:flex;align-items:center">${extraTop}</span>`:''}</div>
+    <div class="kh-val ${valSz}" style="margin-bottom:4px;">${val}</div>
+    <div class="kh-sub">${subLbl}</div>
+    <div class="kh-foot">
+      <span class="kh-foot-lbl">${subVal}</span>
+      ${dotHtml}
+    </div>
+  </div>`;
+
   document.getElementById('kpi-row').innerHTML=
-    khv('Leads Captados',fmt(tL),'<span class="kh-live-dot"></span>','big')+
-    khv('Investimento Total',invFmt,null,'sm')+
-    khv('CPL Geral',cplFmt2,cplReal?(cplReal<=70?badge('▼ Saudável','pos'):badge('▲ Elevado','neg')):null,'md')+
-    khv('Qualificação',aT.toFixed(1)+'%',aT>=90?badge('▲ Alta','pos'):badge('→ Regular','warn'),'md');
+    khFull(
+      'Leads Captados', fmt(tL), 'big',
+      metaLeadsTotal>0?`Meta: ${fmt(metaLeadsTotal)} leads`:'',
+      metaLeadsTotal>0?`${pctLeadsMeta.toFixed(0)}% atingido`:'Sem meta',
+      metaLeadsTotal>0?dot(pctLeadsMeta,pctLeadsColor):'',
+      '<span class="kh-live-dot"></span>'
+    )+
+    khFull(
+      'Investimento Total', invFmt, 'sm',
+      invTotal?'Investimento realizado':'',
+      invTotal?invFmt:'—',
+      invTotal&&metaLeadsTotal>0?dot(pctLeadsMeta,pctLeadsColor,''):''
+    )+
+    khFull(
+      'CPL Geral', cplFmt2, 'md',
+      `CPL Esperado: R$ ${cplRef.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+      cplReal?`${cplReal<=cplRef?'▼ Abaixo':'▲ Acima'} do esperado`:'—',
+      cplVarPct!==null?dot(cplVarPct,cplColor,(cplVarPct>=0?'+':'')):''
+    )+
+    khFull(
+      'Qualificação', aT.toFixed(1)+'%', 'md',
+      `Qualif. Esperada: ${qualRef}%`,
+      `${aT>=qualRef?'▲ Acima':'▼ Abaixo'} do esperado`,
+      dot(qualVarPct,qualColor,(qualVarPct>=0?'+':''))
+    );
 
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
   const cplVb=vBadge(cplVar,true);
