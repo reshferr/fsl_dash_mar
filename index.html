@@ -51,7 +51,7 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 @keyframes sp{to{transform:rotate(360deg)}}
 #loader p{font-size:12px;color:var(--tx3);}
 #err{display:none;text-align:center;padding:50px 20px;font-size:13px;line-height:1.9;}
-.gf{margin-bottom:16px;}
+.gf{margin-bottom:12px;}
 .card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:20px 24px;box-shadow:var(--sh2);}
 .slbl{font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin-bottom:14px;}
 .empty{font-size:12px;color:var(--tx3);padding:6px 0;}
@@ -70,10 +70,10 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 .pb-fill{height:100%;border-radius:999px;transition:width .8s ease;}
 
 /* TOP-SECTION wrapper — destaque com gradiente e separador */
-.top-section{position:relative;padding:8px 0 24px;margin-bottom:0;}
+.top-section{position:relative;padding:4px 0 16px;margin-bottom:0;}
 .top-section::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--bd);}
-.rest-section{padding-top:20px;}
-.mid-sep{height:1px;margin:16px 0 16px;background:var(--bd);opacity:.35;}
+.rest-section{padding-top:12px;}
+.mid-sep{height:1px;margin:10px 0 10px;background:var(--bd);opacity:.35;}
 [data-theme=dark] .top-section{background:linear-gradient(180deg,rgba(124,92,252,.055) 0%,transparent 100%);}
 [data-theme=light] .top-section{background:linear-gradient(180deg,rgba(94,56,236,.035) 0%,transparent 100%);}
 [data-theme=beige] .top-section{background:linear-gradient(180deg,rgba(122,85,48,.03) 0%,transparent 100%);}
@@ -465,9 +465,9 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 </header>
 <main>
   <!-- spacer para navbar -->
-  <div style="height:calc(var(--nh) + 20px);"></div>
+  <div style="height:calc(var(--nh) + 8px);"></div>
   <!-- DOTS DE ATUALIZAÇÃO -->
-  <div id="status-bar" style="margin-bottom:24px;">
+  <div id="status-bar" style="margin-bottom:10px;">
     <span style="display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:999px;">
       <span style="width:7px;height:7px;min-width:7px;border-radius:50%;background:var(--pos);display:inline-block;animation:pu 2s infinite;"></span>
       <span style="font-size:11px;color:var(--tx2);">Atualizado</span>
@@ -475,8 +475,7 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
       <span id="hero-date" style="font-size:11px;color:var(--tx3);">—</span>
     </span>
   </div>
-  <!-- espaço entre dots e painéis -->
-  <div style="height:20px;"></div>
+  <div style="height:8px;"></div>
   <div id="loader"><div class="spin"></div><p>Carregando dados…</p></div>
   <div id="err"></div>
   <div class="panel" id="panel-perf">
@@ -508,11 +507,6 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
       <div id="taxa-grid"></div>
     </div>
     <div class="gf card">
-      <div class="slbl" style="margin-bottom:9px">Share por Curso</div>
-      <div class="sh-toprow" id="sh-toprow"></div>
-      <div id="share-list"></div>
-    </div>
-    <div class="gf card">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:3px">
         <div class="slbl" style="margin-bottom:0">CPL por Curso</div>
         <div class="dd-wrap" id="cpl-dd" style="flex-shrink:0">
@@ -524,6 +518,11 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
       <div class="cpl-list" id="cpl-list"></div>
     </div>
     <div class="gf" id="section-meta"></div>
+    <div class="gf card">
+      <div class="slbl" style="margin-bottom:9px">Share por Curso</div>
+      <div class="sh-toprow" id="sh-toprow"></div>
+      <div id="share-list"></div>
+    </div>
     <div class="gf card">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px">
         <div class="slbl" style="margin-bottom:0">Distribuição por Escolaridade</div>
@@ -883,7 +882,6 @@ function renderAll(){
     <div class="kd-lbl">Leads Hoje</div>
     <div class="kd-body">
       <div class="kd-num">${hDB?fmt(hC):'—'}</div>
-      ${leadsVb?`<div class="kd-vb">${leadsVb}</div>`:''}
     </div>
     ${metaHoje>0?`<div style="margin-top:10px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
@@ -1060,15 +1058,28 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   const qBorder=qualSel>=90?'rgba(52,211,153,.28)':'rgba(251,191,36,.22)';
   const qBg=qualSel>=90?'rgba(52,211,153,.06)':'rgba(251,191,36,.06)';
   const selLbl=isTotal?'Total Geral':dkLbl(selDate);
+  /* anel de distribuição */
+  const shRing=(()=>{
+    const sz=110,cx=55,cy=55,r=42,stroke=8;
+    const circ=2*Math.PI*r;
+    let offset=0;
+    const slices=rows.filter(x=>x.cnt>0).map(({cnt,color})=>{
+      const pct=cnt/(shareTot||1);
+      const dash=pct*circ;
+      const s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" stroke-linecap="butt"/>`;
+      offset+=dash;
+      return s;
+    });
+    return`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="transform:rotate(-90deg);flex-shrink:0;">${slices.join('')}</svg>`;
+  })();
   document.getElementById('sh-toprow').innerHTML=
-    `<div class="sh-topcard" style="background:var(--accg);border-color:var(--bda)">
-       <div class="sh-toplbl" style="color:var(--tagt)">${selLbl}</div>
-       <div class="sh-topval">${fmt(tLSel)}<span class="sh-topunit"> leads</span></div>
-     </div>
-     <div class="sh-topcard" style="background:${qBg};border-color:${qBorder}">
-       <div class="sh-toplbl" style="color:${qColor}">Qualificação</div>
-       <div class="sh-topval" style="color:${qColor}">${qualSel.toFixed(1)}<span class="sh-topunit">%</span></div>
-     </div>`;
+    `<div style="display:flex;align-items:center;gap:16px;margin-bottom:10px;">
+      ${shRing}
+      <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:12px 16px;flex:1;">
+        <div class="sh-toplbl" style="color:var(--tagt);margin-bottom:4px;">${selLbl}</div>
+        <div style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;">${fmt(tLSel)}<span style="font-size:12px;font-weight:600;color:var(--tx2);margin-left:4px;">leads</span></div>
+      </div>
+    </div>`;
 
   /* share bars — usa contagem do dia selecionado (ou total) */
   const shareTot=rows.reduce((s,x)=>s+x.cnt,0)||1;
