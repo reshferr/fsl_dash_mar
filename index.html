@@ -741,66 +741,77 @@ function csvL(line){
 }
 
 async function load(){
-  const showErr=(title,body)=>{
-    document.getElementById('loader').style.display='none';
-    const er=document.getElementById('err');er.style.display='block';
-    er.innerHTML=`<div style="max-width:400px;margin:0 auto;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:24px 28px;text-align:left">
-      <div style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--neg);margin-bottom:8px">${title}</div>
-      <div style="font-size:12px;color:var(--tx2);line-height:1.8;margin-bottom:16px">${body}</div>
-      <button onclick="location.reload()" style="padding:7px 20px;border-radius:999px;border:1px solid var(--acc);background:var(--accg);color:var(--acc);cursor:pointer;font-size:12px;font-weight:700;font-family:var(--f);margin-right:8px">Tentar novamente</button>
-      <button onclick="document.getElementById('dbg').style.display=document.getElementById('dbg').style.display==='none'?'block':'none'" style="padding:7px 14px;border-radius:999px;border:1px solid var(--bd);background:transparent;color:var(--tx3);cursor:pointer;font-size:11px;font-family:var(--f)">Debug</button>
-      <pre id="dbg" style="display:none;margin-top:12px;font-size:10px;color:var(--tx3);white-space:pre-wrap;word-break:break-all;max-height:200px;overflow-y:auto;background:var(--grd);padding:8px;border-radius:8px">${body.replace(/<[^>]+>/g,'')}</pre>
-    </div>`;
-  };
+  const L=document.getElementById('loader');
+  const setMsg=function(m){var p=L&&L.querySelector('p');if(p)p.textContent=m;};
+
+  function showErr(msg,detail){
+    if(L)L.style.display='none';
+    var er=document.getElementById('err');
+    if(!er)return;
+    er.style.display='block';
+    var dtl=detail?('<pre style="font-size:10px;color:var(--tx3);background:var(--grd);padding:10px;border-radius:8px;white-space:pre-wrap;word-break:break-all;max-height:160px;overflow-y:auto;margin-bottom:16px">'+detail+'</pre>'):'';
+    er.innerHTML='<div style="max-width:460px;margin:40px auto;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:28px;font-family:var(--f)"><div style="font-size:13px;font-weight:800;color:var(--neg);margin-bottom:8px">Erro ao carregar dados</div><div style="font-size:12px;color:var(--tx2);margin-bottom:16px">'+msg+'</div>'+dtl+'<button onclick="location.reload()" style="padding:7px 20px;border-radius:999px;border:1px solid var(--acc);background:var(--accg);color:var(--acc);cursor:pointer;font-size:12px;font-weight:700">Tentar novamente</button></div>';
+  }
+
   if(location.protocol==='file:'){
-    showErr('Arquivo aberto localmente',
-      'O dashboard precisa ser servido via HTTP para acessar a planilha.<br><br>'+
-      '<b>Opções:</b><br>'+
-      '· Abra pelo preview do Claude<br>'+
-      '· Use VSCode + Live Server<br>'+
-      '· Terminal: <code style="background:var(--grd);padding:2px 6px;border-radius:4px">python3 -m http.server 8080</code>');
+    showErr('Abra via HTTP. Use o preview do Claude ou: python3 -m http.server 8080');
     return;
   }
+
   async function gfetch(url){
-    /* 1ª tentativa: fetch direto (funciona quando CORS permite) */
-    try{
-      const r=await fetch(url,{cache:'no-store',redirect:'follow'});
-      if(r.ok){const t=await r.text();if(t&&t.trim().length>10){console.log('[fetch] direto OK');return t;}}
-    }catch(e){console.log('[fetch] direto falhou:',e.message);}
-    /* 2ª: allorigins */
-    try{
-      const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url),{cache:'no-store'});
-      if(r.ok){const j=await r.json();if(j&&j.contents&&j.contents.trim().length>10){console.log('[fetch] allorigins OK');return j.contents;}}
-    }catch(e){console.log('[fetch] allorigins falhou:',e.message);}
-    /* 3ª: corsproxy.io */
-    try{
-      const r2=await fetch('https://corsproxy.io/?'+encodeURIComponent(url),{cache:'no-store'});
-      if(r2.ok){const t=await r2.text();if(t&&t.trim().length>10){console.log('[fetch] corsproxy OK');return t;}}
-    }catch(e){console.log('[fetch] corsproxy falhou:',e.message);}
-    /* 4ª: api.codetabs.com */
-    try{
-      const r3=await fetch('https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url),{cache:'no-store'});
-      if(r3.ok){const t=await r3.text();if(t&&t.trim().length>10){console.log('[fetch] codetabs OK');return t;}}
-    }catch(e){console.log('[fetch] codetabs falhou:',e.message);}
-    throw new Error('Todos os proxies falharam. Verifique a conexão.');
+    var proxies=[
+      function(u){return {url:u, json:false};},
+      function(u){return {url:'https://api.allorigins.win/get?url='+encodeURIComponent(u), json:true};},
+      function(u){return {url:'https://corsproxy.io/?'+encodeURIComponent(u), json:false};}
+    ];
+    for(var i=0;i<proxies.length;i++){
+      var p=proxies[i](url);
+      try{
+        var ac=new AbortController();
+        var tm=setTimeout(function(){ac.abort();},12000);
+        var r=await fetch(p.url,{cache:'no-store',redirect:'follow',signal:ac.signal});
+        clearTimeout(tm);
+        if(!r.ok)continue;
+        if(p.json){
+          var j=await r.json();
+          var txt=(j&&j.contents)||'';
+          if(txt.trim().length>10)return txt;
+        }else{
+          var txt=await r.text();
+          if(txt.trim().length>10)return txt;
+        }
+      }catch(e){}
+    }
+    return null;
   }
+
   try{
-    const[t1,t2,t3,t4]=await Promise.all([
-      gfetch(PUB),
-      gfetch(PUB+'&gid='+DB_GID).catch(()=>null),
-      gfetch(PUB+'&gid='+META_GID).catch(()=>null),
-      gfetch(PUB+'&gid='+VISAO_GID).catch(()=>null)
+    setMsg('Conectando a planilha...');
+    var t1=await gfetch(PUB);
+    if(!t1){
+      showErr(
+        'Nao foi possivel acessar a planilha.',
+        'Verifique: 1) Planilha publicada (Arquivo > Publicar na web > CSV)' +
+        '  2) Permissao publica  3) Conexao com internet ativa'
+      );
+      return;
+    }
+    setMsg('Carregando historico e metas...');
+    var r2=await Promise.all([
+      gfetch(PUB+'&gid='+DB_GID),
+      gfetch(PUB+'&gid='+META_GID),
+      gfetch(PUB+'&gid='+VISAO_GID)
     ]);
-    if(!t1)throw new Error('Planilha Summary vazia');
+    var t2=r2[0], t3=r2[1], t4=r2[2];
+    setMsg('Processando...');
     parseSummary(t1);
     if(t2)parseDB(t2);
     if(t3)parseMeta(t3);
     if(t4)parseVisao(t4);
-    document.getElementById('loader').style.display='none';
+    if(L)L.style.display='none';
     renderAll();
   }catch(e){
-    showErr('Erro ao carregar dados',
-      'Verifique se a planilha está publicada em <b>Arquivo → Publicar na web</b>.<br><br>Erro: '+e.message);
+    showErr('Erro inesperado: '+e.message);
   }
 }
 
