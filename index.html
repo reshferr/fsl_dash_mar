@@ -43,7 +43,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh
 @media(max-width:480px){.ni{padding:0 10px;}.logo{font-size:11px;margin-right:6px;}.tbtn{padding:5px 8px;gap:2px;}.tbtn-txt{display:none;}.th-txt{display:none;}.tsbtn{padding:5px 7px;}}
 
 /* LAYOUT */
-main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-right:16px;padding-bottom:max(70px,env(safe-area-inset-bottom,0px)+50px);width:100%;box-sizing:border-box;overflow-x:clip;}
+main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-right:16px;padding-bottom:max(120px,env(safe-area-inset-bottom,0px)+100px);width:100%;box-sizing:border-box;overflow-x:clip;}
 .panel{display:none;}.panel.on{display:block;animation:fu .2s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 #loader{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:80px 0;text-align:center;}
@@ -1057,36 +1057,56 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   const qColor=qualSel>=90?'var(--pos)':'var(--wrn)';
   const qBorder=qualSel>=90?'rgba(52,211,153,.28)':'rgba(251,191,36,.22)';
   const qBg=qualSel>=90?'rgba(52,211,153,.06)':'rgba(251,191,36,.06)';
-  const selLbl=isTotal?'Total Geral':dkLbl(selDate);
-  /* share bars — usa contagem do dia selecionado (ou total) */
-  const shareTot=rows.reduce((s,x)=>s+x.cnt,0)||1;
-  /* anel de distribuição */
+  /* share — sempre usa total acumulado de cada curso */
+  const shTotGeral=_ss.reduce((s,r)=>s+n(r[_cT]),0)||1;
+  const shRows=_ss.map((r,i)=>({nm:cl(r[_cC]),cnt:n(r[_cT]),color:COLORS[i%COLORS.length]})).sort((a,b)=>b.cnt-a.cnt);
+  /* anel */
   const shRing=(()=>{
-    const sz=110,cx=55,cy=55,r=42,stroke=8;
-    const circ=2*Math.PI*r;
-    let offset=0;
-    const slices=rows.filter(x=>x.cnt>0).map(({cnt,color})=>{
-      const pct=cnt/shareTot;
-      const dash=pct*circ;
-      const s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" stroke-linecap="butt"/>`;
-      offset+=dash;
-      return s;
+    const sz=120,cx=60,cy=60,r=48,stroke=10,circ=2*Math.PI*r;
+    let off=0;
+    const slices=shRows.filter(x=>x.cnt>0).map(({cnt,color})=>{
+      const dash=(cnt/shTotGeral)*circ;
+      const s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" stroke-linecap="butt"/>`;
+      off+=dash; return s;
     });
-    return`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="transform:rotate(-90deg);flex-shrink:0;">${slices.join('')}</svg>`;
+    return`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="transform:rotate(-90deg);flex-shrink:0;display:block;">${slices.join('')}</svg>`;
   })();
+  /* abreviação */
+  const _sk2=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
+  const abv2=n2=>{const w=n2.split(/\s+/);return w.length<=3?n2:w[0]+' '+w.slice(1).map(x=>_sk2.has(x.toLowerCase())?'':x[0].toUpperCase()+'.').filter(Boolean).join(' ');};
   document.getElementById('sh-toprow').innerHTML=
-    `<div style="display:flex;align-items:center;gap:16px;margin-bottom:10px;">
-      ${shRing}
-      <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:12px 16px;flex:1;">
-        <div class="sh-toplbl" style="color:var(--tagt);margin-bottom:4px;">${selLbl}</div>
-        <div style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;">${fmt(tLSel)}<span style="font-size:12px;font-weight:600;color:var(--tx2);margin-left:4px;">leads</span></div>
+    `<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bd);">
+      <div style="position:relative;flex-shrink:0;">
+        ${shRing}
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(0deg)">
+          <div style="font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx);letter-spacing:-.03em;line-height:1">${fmt(shTotGeral)}</div>
+          <div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-top:2px">total</div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Total por Curso</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          ${shRows.slice(0,3).map(({nm,cnt,color})=>`<div style="display:flex;align-items:center;gap:6px;"><span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;"></span><span style="font-size:10px;color:var(--tx2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${abv2(nm)}</span><span style="font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx);">${fmt(cnt)}</span></div>`).join('')}
+        </div>
       </div>
     </div>`;
-  document.getElementById('share-list').innerHTML=rows.map(({nm,cnt,color})=>{
-    const pct=cnt/shareTot*100;
-    return`<div class="sh-item"><span class="sh-dot" style="background:${color}"></span><div class="sh-mid"><div class="sh-nome">${nm}</div><div class="sh-bw"><div class="sh-bar" style="background:${color}" data-w="${pct.toFixed(1)}"></div></div></div><div class="sh-pct" style="color:${color}">${pct.toFixed(1)}<span class="sh-sym">%</span></div></div>`;
-  }).join('');
-  raf(()=>document.querySelectorAll('.sh-bar[data-w]').forEach(el=>el.style.width=el.dataset.w+'%'));
+  document.getElementById('share-list').innerHTML=
+    `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;">
+    ${shRows.map(({nm,cnt,color})=>{
+      const pct=(cnt/shTotGeral*100).toFixed(1);
+      return`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:10px 12px;display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;"></span>
+          <span style="font-size:10px;font-weight:600;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;" title="${nm}">${abv2(nm)}</span>
+        </div>
+        <div style="font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;">${fmt(cnt)}</div>
+        <div style="display:inline-flex;align-items:center;gap:5px;background:${color}22;border-radius:999px;padding:2px 8px;width:fit-content;">
+          <span style="width:5px;height:5px;border-radius:50%;background:${color};"></span>
+          <span style="font-size:10px;font-weight:700;color:${color};">${pct}%</span>
+        </div>
+      </div>`;
+    }).join('')}
+    </div>`;
 }
 function selectDate(dk){selDate=dk;_txSel=dk;closeDD();buildDatePanel();buildTaxa();}
 
