@@ -54,6 +54,7 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 .gf{margin-bottom:22px;}
 .card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:20px 24px;box-shadow:var(--sh2);}
 .slbl{font-family:var(--fn);font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin-bottom:18px;}
+[data-theme=dark] .slbl{color:#fff;}
 [data-theme=dark] .slbl{color:#ffffff;}
 [data-theme=dark] .kd-lbl{color:#ffffff;}
 .empty{font-size:12px;color:var(--tx3);padding:6px 0;}
@@ -81,28 +82,39 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 [data-theme=beige] .top-section{background:linear-gradient(180deg,rgba(122,85,48,.03) 0%,transparent 100%);}
 
 /* HERO — 4 cards principais */
-.hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
-.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:24px 28px;box-shadow:var(--sh);position:relative;display:flex;flex-direction:column;gap:0;}
+.hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:22px 24px 20px;box-shadow:var(--sh);position:relative;display:flex;flex-direction:column;}
 .kh::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--acc) 50%,transparent 100%);background-size:250% 100%;background-position:200% 0;animation:barslide 6s ease-in-out infinite;opacity:.55;}
 [data-theme=light] .kh{border-color:var(--bda);background:var(--sf);}
 [data-theme=beige] .kh{border-color:var(--bda);background:var(--sf);}
-.kh-lbl{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
-[data-theme=dark] .kh-lbl{color:rgba(255,255,255,.6);}
-.kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;margin-bottom:8px;}
-.kh-val.big{font-size:38px;}
-.kh-val.md{font-size:32px;}
-.kh-val.sm{font-size:24px;line-height:1.2;}
-.kh-meta{font-family:var(--fn);font-size:19px;font-weight:700;color:var(--tx3);letter-spacing:-.03em;line-height:1;margin-bottom:16px;}
-.kh-foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:flex-end;}
-.kh-dot{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 14px;font-size:14px;font-weight:800;flex-shrink:0;}
+.kh-lbl{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.14em;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
+[data-theme=dark] .kh-lbl{color:rgba(255,255,255,.45);}
+.kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;margin-bottom:14px;}
+.kh-val.big{font-size:40px;}
+.kh-val.md{font-size:34px;}
+.kh-val.sm{font-size:26px;line-height:1.2;}
+/* linha de meta: descrição + valor */
+.kh-meta-row{margin-bottom:14px;}
+.kh-meta-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:3px;}
+.kh-meta-val{font-family:var(--fn);font-size:20px;font-weight:700;color:var(--tx2);letter-spacing:-.03em;line-height:1;}
+/* dot circular com % dentro */
+.kh-foot{margin-top:auto;display:flex;align-items:center;justify-content:flex-start;gap:8px;}
+.kh-dot{position:relative;width:56px;height:56px;flex-shrink:0;}
+.kh-dot svg{width:56px;height:56px;transform:rotate(-90deg);}
+.kh-dot-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--fn);font-size:11px;font-weight:800;line-height:1;color:var(--tx);}
+.kh-dot-sub{font-size:7px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+.kh-foot-desc{font-size:10px;color:var(--tx3);font-weight:500;line-height:1.4;}
 
+
+@media(max-width:900px){.hero-row{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.hero-row{grid-template-columns:1fr 1fr;}.kh-val.big{font-size:30px;}.kh-val.md{font-size:26px;}.kh-val.sm{font-size:20px;}.kh-dot{width:44px;height:44px;}.kh-dot svg{width:44px;height:44px;}}
 
 /* ── HEADER BAR ── */
 #dash-header{padding:10px 0 0;}
 .dash-sep{height:1px;background:var(--bd);margin:0 0 16px;opacity:.4;}
 .dash-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
 .dash-title{font-family:var(--fn);font-size:32px;font-weight:900;letter-spacing:-.05em;color:#fff;line-height:1;}
-.dash-title em{color:var(--acc);font-style:normal;}
+.dash-title em{color:inherit;font-style:normal;}
 [data-theme=light] .dash-title{color:var(--tx);}
 [data-theme=beige] .dash-title{color:var(--tx);}
 /* ── MENU CURSOS (botão + dropdown) ── */
@@ -112,15 +124,19 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 #menu-cursos-btn.open{background:var(--acc);color:#fff;border-color:var(--acc);}
 #menu-cursos-btn .mc-ring{width:10px;height:10px;border-radius:50%;border:2px solid currentColor;flex-shrink:0;position:relative;}
 #menu-cursos-btn .mc-ring::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:4px;height:4px;border-radius:50%;background:currentColor;}
-#menu-cursos-dropdown{display:none;position:fixed;top:auto;left:50%;transform:translateX(-50%);background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:12px;width:min(320px,90vw);box-shadow:0 8px 40px rgba(0,0,0,.38);z-index:900;}
+#menu-cursos-dropdown{display:none;position:fixed;background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:10px;width:220px;max-width:90vw;box-shadow:0 8px 40px rgba(0,0,0,.38);z-index:900;}
 #menu-cursos-dropdown.open{display:block;}
-.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.mc-item{padding:10px 12px;border-radius:9px;border:1px solid var(--bd);background:var(--sf);cursor:pointer;transition:all .15s;text-align:left;}
+.mc-grid{display:grid;grid-template-columns:1fr;gap:4px;max-height:60vh;overflow-y:auto;}
+.mc-item{padding:9px 12px 9px 16px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;gap:10px;position:relative;overflow:hidden;}
+.mc-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--bd);border-radius:0 2px 2px 0;transition:background .15s;}
+.mc-item:hover::before{background:var(--bda);}
+.mc-item.act::before{background:var(--acc);}
 .mc-item:hover{border-color:var(--bda);background:var(--cdh);}
 .mc-item.act{border-color:var(--acc);background:var(--accg);}
-.mc-item-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle;}
-.mc-item-lbl{font-size:11px;font-weight:700;color:var(--tx);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.mc-geral{grid-column:1/-1;background:var(--accg);border-color:var(--bda);}
+.mc-item-dot{display:none;}
+.mc-item-lbl{font-size:12px;font-weight:600;color:var(--tx);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mc-geral{background:var(--accg);border-color:var(--bda);}
+.mc-geral::before{background:var(--acc)!important;}
 .mc-geral.act{border-color:var(--acc);}
 /* ── SELETOR DE PERÍODO ── */
 #periodo-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
@@ -129,7 +145,9 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 .periodo-btn:hover{background:var(--cdh);color:var(--tx);}
 .periodo-btn.act{background:var(--acc);color:#fff;font-weight:700;}
 .periodo-custom{display:flex;align-items:center;gap:8px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:6px 14px;}
-.periodo-custom input[type=date]{background:transparent;border:none;color:var(--tx);font-size:11px;font-weight:600;font-family:var(--f);cursor:pointer;outline:none;width:120px;}
+.periodo-custom input[type=date]{background:transparent;border:none;color:var(--tx);font-size:11px;font-weight:600;font-family:var(--f);cursor:pointer;outline:none;width:130px;position:relative;z-index:1;}
+.periodo-custom input[type=date]::-webkit-datetime-edit{cursor:pointer;}
+.periodo-custom input[type=date]::-webkit-datetime-edit-fields-wrapper{cursor:pointer;padding:0;}
 .periodo-custom input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.4;cursor:pointer;}
 [data-theme=light] .periodo-custom input[type=date]::-webkit-calendar-picker-indicator{filter:none;}
 [data-theme=beige] .periodo-custom input[type=date]::-webkit-calendar-picker-indicator{filter:none;opacity:.6;}
@@ -556,7 +574,7 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
     </div>
     <div id="periodo-bar">
       <div class="periodo-presets">
-        <button class="periodo-btn act" onclick="setPeriodo('hoje')">Hoje</button>
+        <button class="periodo-btn" onclick="setPeriodo('geral')">Geral</button><button class="periodo-btn act" onclick="setPeriodo('hoje')">Hoje</button>
         <button class="periodo-btn" onclick="setPeriodo('ontem')">Ontem</button>
         <button class="periodo-btn" onclick="setPeriodo('custom')">Personalizado</button>
       </div>
@@ -717,7 +735,7 @@ const COLORS=['#7c5cfc','#e05f8e','#34d399','#fbbf24','#60a5fa','#f97316','#a78b
 let SH=[],SD=[],DBmap=new Map(),DBdates=[],selDate='__total__';
 let _cC,_cT,_cQ,_cS,_ss;
 let _cplOpen=new Set(),_txOpen=new Set(),_txSel=null,_cplSel='__total__',_metaCOpen=new Set(),_metaDiarOpen=false;
-let _periodoAtual='mtd',_periodoDE=null,_periodoATE=null,_ctxAtual='d1',_cursoFiltro='__all__';
+let _periodoAtual='geral',_periodoDE=null,_periodoATE=null,_ctxAtual='d1',_cursoFiltro='__all__';
 let META={found:false};
 let VISAO={found:false,invTotal:0,cplGeral:0,cursos:{}};
 
@@ -954,7 +972,85 @@ function parseVisao(txt){
   }
 
   VISAO.cplGeral=VISAO.totalLeads>0&&VISAO.invTotal>0?(VISAO.invTotal/VISAO.totalLeads):0;
-  console.log('[VISAO] invTotal='+VISAO.invTotal+' totalLeads='+VISAO.totalLeads);
+
+  /* ── B22:H24 — investimento por curso (linhas 21-23 no índice 0-based) ──
+     Estrutura esperada:
+       linha 21 (row22): labels dos cursos
+       linha 22 (row23): "Investimento" ou similar  
+       linha 23 (row24): valores de investimento por curso
+     Busca a linha com "INVESTIMENTO TOTAL" e pega os valores logo antes/depois */
+  VISAO.invPorCurso = {}; // { nomeCurso: { inv, metaInv, metaLeads } }
+
+  /* Estratégia: buscar linhas 21-23 diretamente e também por label */
+  /* Primeiro: tentar B22:H24 diretamente = lines[21..23] */
+  const tryRows22_24 = [21,22,23].map(i=>lines[i]||[]);
+  /* Encontrar linha de nomes de cursos no bloco 22-24 */
+  let cursoLabelRow = null, invValueRow = null;
+  for(const row of tryRows22_24){
+    const joined = row.join('|').toLowerCase();
+    if(joined.includes('geront')||joined.includes('gestão')||joined.includes('corp')||joined.includes('pós')||joined.includes('enfer')){
+      cursoLabelRow = row;
+    }
+    if(row.some(c=>n(c)>1000)){
+      invValueRow = row;
+    }
+  }
+  /* fallback: varrer todo o arquivo procurando linha com múltiplos valores monetários */
+  if(!invValueRow){
+    for(let i=15;i<Math.min(30,lines.length);i++){
+      const vals = lines[i].map(c=>n(c)).filter(v=>v>1000);
+      if(vals.length>=3){ invValueRow=lines[i]; break; }
+    }
+  }
+  if(!cursoLabelRow){
+    for(let i=18;i<Math.min(25,lines.length);i++){
+      const joined = lines[i].join('|');
+      if((joined.match(/\[Formulário\]/g)||[]).length>=2){ cursoLabelRow=lines[i]; break; }
+    }
+  }
+
+  /* ── A29:C39 — metas por curso: col A=curso, B=meta leads, C=meta inv ──
+     lines[28..38] */
+  VISAO.metasPorCurso = {}; // { nomeCurso: { metaLeads, metaInv } }
+  for(let i=27;i<Math.min(40,lines.length);i++){
+    const row=lines[i]||[];
+    const nm=(row[0]||'').replace(/\[Formulário\]\s*/i,'').trim();
+    if(!nm||/^(curso|total|nome|meta|leads|invest)/i.test(nm))continue;
+    const metaLeads=n(row[1]||'');
+    const metaInv=n(row[2]||'');
+    if(nm.length>2)VISAO.metasPorCurso[nm]={metaLeads,metaInv};
+  }
+
+  /* Associar investimento real por curso usando VISAO.cursosInv já populado */
+  /* e metas de VISAO.metasPorCurso */
+  Object.keys(VISAO.cursosInv).forEach(nm=>{
+    /* tentar match com metasPorCurso */
+    const mk = Object.keys(VISAO.metasPorCurso).find(k=>{
+      const a=nm.toLowerCase().replace(/\s+/g,' ').trim();
+      const b=k.toLowerCase().replace(/\s+/g,' ').trim();
+      if(a===b)return true;
+      /* word overlap */
+      const aw=new Set(a.split(/\s+/).filter(w=>w.length>3));
+      return b.split(/\s+/).filter(w=>w.length>3).some(w=>aw.has(w));
+    });
+    VISAO.invPorCurso[nm]={
+      inv: VISAO.cursosInv[nm].inv,
+      leads: VISAO.cursosInv[nm].leads,
+      cpl: VISAO.cursosInv[nm].cpl,
+      metaLeads: mk?VISAO.metasPorCurso[mk].metaLeads:0,
+      metaInv:   mk?VISAO.metasPorCurso[mk].metaInv:0,
+    };
+  });
+
+  /* B39 = linha índice 38, col 1 — meta de investimento total do mês */
+  const row38=lines[38]||[];
+  VISAO.invMeta=n(row38[1]||row38[2]||'');
+  if(!VISAO.invMeta){
+    /* fallback: soma das metas individuais */
+    VISAO.invMeta=Object.values(VISAO.metasPorCurso).reduce((s,v)=>s+(v.metaInv||0),0);
+  }
+
+  console.log('[VISAO] invTotal='+VISAO.invTotal+' invMeta='+VISAO.invMeta+' cursos='+JSON.stringify(Object.keys(VISAO.invPorCurso)));
 }
 
 /* utils */
@@ -1037,22 +1133,91 @@ function progBar(pct,col,height){const p=Math.min(pct,100);return`<div class="pb
 function metaRing(pct,col,sz){sz=sz||100;const sw=8,rc=(sz/2-sw/2).toFixed(1);const circ=2*Math.PI*parseFloat(rc);const fill=(Math.min(pct,100)/100)*circ;
   return`<div class="meta-ring" style="width:${sz}px;height:${sz}px"><svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${rc}" fill="none" stroke="var(--grd)" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${rc}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-dasharray="${fill.toFixed(2)} ${(circ-fill).toFixed(2)}" stroke-linecap="round" transform="rotate(-90 ${sz/2} ${sz/2})"/></svg><div class="meta-ring-pct" style="color:${col}">${pct.toFixed(0)}<span style="font-size:11px">%</span><span class="meta-ring-sub">da meta</span></div></div>`;}
 
-/* HERO HELPERS — globais para uso em renderAll e renderHeroes */
-function heroDot(pct, col, prefix) {
-  prefix = prefix || '';
-  return '<span class="kh-dot" style="background:'+col+'20;border:1px solid '+col+'44;color:'+col+';">'
-       + '<span style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0;display:inline-block;"></span>'
-       + prefix + Math.abs(pct).toFixed(1) + '%</span>';
+function buildResumo(){
+  const el=document.getElementById('resumo-container');
+  if(!el||!_ss||!_ss.length)return;
+  const hDB=DBdates.length>0;
+  const hk=dkOf(new Date());
+  const box=(ttl,val,sub,col,sub2)=>`<div style="display:grid;grid-template-columns:1fr auto;align-items:center;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden"><div style="padding:9px 12px;border-left:3px solid ${col}"><div style="font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px">${ttl}</div><div style="font-family:var(--fn);font-size:18px;font-weight:800;letter-spacing:-.04em;color:${col};line-height:1">${val}</div></div><div style="padding:8px 12px;border-left:1px solid var(--bd);min-width:90px;max-width:120px;text-align:right"><div style="font-size:10px;font-weight:700;color:var(--tx);line-height:1.3;word-break:break-word">${sub}</div>${sub2?`<div style="font-size:9px;color:var(--tx3);margin-top:3px">${sub2}</div>`:''}</div></div>`;
+  if(_cursoFiltro!=='__all__'){
+    const rC=_ss.find(r=>cl(r[_cC])===_cursoFiltro);
+    const colC=COLORS[_ss.findIndex(r=>cl(r[_cC])===_cursoFiltro)%COLORS.length]||COLORS[0];
+    const leadsC=rC?n(rC[_cT]):0;
+    const cplC=getCPL(_cursoFiltro);
+    const ck=Object.keys(VISAO.invPorCurso||{}).find(k=>{
+      const a=k.toLowerCase(),b=_cursoFiltro.toLowerCase();
+      return a===b||a.split(' ').some(w=>w.length>3&&b.includes(w));
+    });
+    const visC=ck?(VISAO.invPorCurso||{})[ck]:null;
+    const invC=visC?visC.inv:0;
+    const metaLC=visC?visC.metaLeads:0;
+    const metaIC=visC?visC.metaInv:0;
+    const pctLC=metaLC>0?Math.min(leadsC/metaLC*100,100):null;
+    const pctIC=metaIC>0?Math.min(invC/metaIC*100,100):null;
+    el.innerHTML=`<div style="display:flex;flex-direction:column;gap:5px">
+      ${box('Leads Captados',fmt(leadsC),metaLC>0?'Meta: '+fmt(metaLC):'Acumulado',colC,pctLC!==null?'Ating.: '+pctLC.toFixed(0)+'%':null)}
+      ${box('Investimento',fmtR(invC),metaIC>0?'Meta: '+fmtR(metaIC):'Realizado',colC,pctIC!==null?'Ating.: '+pctIC.toFixed(0)+'%':null)}
+      ${box('CPL',fmtR(cplC.g),_cursoFiltro.split(' ').slice(0,2).join(' '),colC,null)}
+    </div>`;
+    return;
+  }
+  const mH=hDB?DBmap.get(hk):null;
+  const today=mH?Array.from(mH.entries()).sort((a,b)=>b[1]-a[1]):[];
+  const topNm=today[0]?.[0]||(cl(_ss[0]?.[_cC])||'—');
+  const topCnt=today[0]?.[1]||(hDB?0:n(_ss[0]?.[_cT]||0));
+  const topIdx=_ss.findIndex(r=>cl(r[_cC])===topNm);
+  const topColor=COLORS[(topIdx>=0?topIdx:0)%COLORS.length];
+  const cplList=_ss.map((r,i)=>({nm:cl(r[_cC]),g:getCPL(cl(r[_cC])).g,c:COLORS[i%COLORS.length]})).sort((a,b)=>a.g-b.g);
+  const bCplNm=cplList[0]?.nm||'—',bCplV=cplList[0]?.g||0,bCplC=cplList[0]?.c||COLORS[0];
+  const bQ=_cQ?[..._ss].sort((a,b)=>n(b[_cQ])-n(a[_cQ]))[0]:null;
+  const bQNm=bQ?cl(bQ[_cC]):'—',bQV=bQ?n(bQ[_cQ]):0;
+  const bQColor=COLORS[(_ss.indexOf(bQ)>=0?_ss.indexOf(bQ):2)%COLORS.length];
+  el.innerHTML=`<div style="display:flex;flex-direction:column;gap:5px">${box('Top Leads',fmt(topCnt),topNm,topColor,null)}${box('Menor CPL',fmtR(bCplV),bCplNm,bCplC,null)}${box('Maior Qualif.',bQV.toFixed(1)+'%',bQNm,bQColor,null)}</div>`;
 }
-function khCard(lbl, val, valCls, meta, dotPct, dotColor, dotPrefix, liveEl) {
-  var liveHtml = liveEl  ? '<span style="margin-left:auto">' + liveEl + '</span>' : '';
-  var metaHtml = meta != null ? '<div class="kh-meta">' + meta + '</div>' : '<div style="flex:1;min-height:8px"></div>';
-  var dotHtml  = dotPct != null ? heroDot(dotPct, dotColor, dotPrefix || '') : '';
+
+/* HERO HELPERS — globais para uso em renderAll e renderHeroes */
+function heroDot(pct, col) {
+  /* dot circular SVG — % dentro */
+  var r = 22, sw = 4, circ = 2*Math.PI*r;
+  var p = Math.min(Math.abs(pct), 100);
+  var fill = (p/100)*circ;
+  var gap  = circ - fill;
+  var sign = pct >= 0 ? '+' : '-';
+  return '<div class="kh-dot">'
+    + '<svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="'+r+'" fill="none" stroke="'+col+'22" stroke-width="'+sw+'"/>'
+    + '<circle cx="28" cy="28" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="'+sw+'"'
+    + ' stroke-dasharray="'+fill.toFixed(2)+' '+gap.toFixed(2)+'" stroke-linecap="round"/></svg>'
+    + '<div class="kh-dot-txt" style="color:'+col+';">'
+    + sign+Math.abs(pct).toFixed(0)+'<span style="font-size:8px">%</span>'
+    + '</div>'
+    + '</div>';
+}
+function khCard(lbl, val, valCls, metaLbl, metaVal, dotPct, dotColor, liveEl) {
+  /* lbl: título do card
+     val: valor principal
+     metaLbl: descrição da meta (ex: "META LEADS")
+     metaVal: valor da meta formatado
+     dotPct: % para o dot circular
+     dotColor: cor
+     liveEl: elemento extra no header (ex: dot de ao vivo) */
+  var liveHtml = liveEl ? '<span style="margin-left:auto">' + liveEl + '</span>' : '';
+  var metaHtml = (metaLbl && metaVal != null)
+    ? '<div class="kh-meta-row">'
+      + '<div class="kh-meta-lbl">' + metaLbl + '</div>'
+      + '<div class="kh-meta-val">' + metaVal + '</div>'
+      + '</div>'
+    : '<div style="flex:1"></div>';
+  var footHtml = dotPct != null
+    ? heroDot(dotPct, dotColor)
+      + '<div class="kh-foot-desc">'
+      + (dotPct >= 0 ? 'acima' : 'abaixo') + ' da meta'
+      + '</div>'
+    : '';
   return '<div class="kh">'
     + '<div class="kh-lbl">' + lbl + liveHtml + '</div>'
     + '<div class="kh-val ' + valCls + '">' + val + '</div>'
     + metaHtml
-    + '<div class="kh-foot">' + dotHtml + '</div>'
+    + '<div class="kh-foot">' + footHtml + '</div>'
     + '</div>';
 }
 
@@ -1117,25 +1282,53 @@ function renderHeroes() {
   var invSharePct  = invTotal && VISAO.invMeta > 0 ? Math.min(invTotal / VISAO.invMeta * 100, 100) : null;
   var invShareColor = invSharePct !== null ? (invSharePct >= 100 ? 'var(--pos)' : invSharePct >= 70 ? 'var(--wrn)' : 'var(--neg)') : 'var(--tx3)';
 
+  /* investimento específico do curso se filtrado */
+  var cursoData = null;
+  if (_cursoFiltro !== '__all__' && VISAO.invPorCurso) {
+    var ck = Object.keys(VISAO.invPorCurso).find(function(k){
+      var a = k.toLowerCase().replace(/\s+/g,' ').trim();
+      var b = _cursoFiltro.toLowerCase().replace(/\s+/g,' ').trim();
+      if(a===b) return true;
+      var aw = new Set(a.split(/\s+/).filter(function(w){return w.length>3;}));
+      return b.split(/\s+/).filter(function(w){return w.length>3;}).some(function(w){return aw.has(w);});
+    });
+    if(ck) cursoData = VISAO.invPorCurso[ck];
+  }
+
+  var invDisplay   = cursoData ? cursoData.inv   : invTotal;
+  var invMetaDisp  = cursoData ? cursoData.metaInv  : VISAO.invMeta;
+  var metaLeadsDisp= cursoData ? cursoData.metaLeads: metaLeadsTotal;
+
+  var invFmtD  = invDisplay  ? invDisplay.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}) : '—';
+  var invMetaD = invMetaDisp ? invMetaDisp.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}): null;
+  var invPctD  = invDisplay && invMetaDisp > 0 ? Math.min(invDisplay/invMetaDisp*100,100) : null;
+  var invColD  = invPctD !== null ? (invPctD>=100?'var(--pos)':invPctD>=70?'var(--wrn)':'var(--neg)') : 'var(--tx3)';
+
+  var pctLeadsM = metaLeadsDisp > 0 ? Math.min(tL/metaLeadsDisp*100,100) : 0;
+  var colLeadsM = pctLeadsM>=100?'var(--pos)':pctLeadsM>=70?'var(--wrn)':'var(--neg)';
+
   var el = document.getElementById('kpi-row');
   if (!el) return;
   el.innerHTML =
     khCard('Leads Captados', fmt(tL), 'big',
-      metaLeadsTotal > 0 ? fmt(metaLeadsTotal) : null,
-      metaLeadsTotal > 0 ? pctLeadsMeta : null, pctLeadsColor, '',
+      'Meta Leads', metaLeadsDisp > 0 ? fmt(metaLeadsDisp) : null,
+      metaLeadsDisp > 0 ? pctLeadsM : null, colLeadsM,
       '<span class="kh-live-dot"></span>'
     ) +
-    khCard('Investimento Total', invFmt, 'sm',
-      invMetaFmt || null,
-      invSharePct, invShareColor, ''
+    khCard('Investimento Total', invFmtD, 'sm',
+      'Meta Invest.', invMetaD,
+      invPctD, invColD,
+      null
     ) +
     khCard('CPL Geral', cplFmt2, 'md',
-      'R$ ' + cplRef.toLocaleString('pt-BR', {minimumFractionDigits:2}),
-      cplVarPct, cplColor, cplVarPct !== null && cplVarPct >= 0 ? '+' : ''
+      'CPL Esperado', 'R$ '+cplRef.toLocaleString('pt-BR',{minimumFractionDigits:2}),
+      cplVarPct, cplColor,
+      null
     ) +
-    khCard('Qualificação', aT.toFixed(1) + '%', 'md',
-      qualRef + '%',
-      qualVarPct, qualColor, qualVarPct >= 0 ? '+' : ''
+    khCard('Qualificação', aT.toFixed(1)+'%', 'md',
+      'Qualif. Esperada', qualRef+'%',
+      qualVarPct, qualColor,
+      null
     );
 }
 
@@ -1189,34 +1382,26 @@ function renderAll(){
   const qualVarPct=((aT-qualRef)/qualRef)*100;
   const qualColor=aT>=qualRef?'var(--pos)':aT>=70?'var(--wrn)':'var(--neg)';
 
-  /* ── HERO CARDS ── */
-  const invSharePct  = invTotal && VISAO.invMeta > 0 ? Math.min(invTotal / VISAO.invMeta * 100, 100) : null;
-  const invShareColor= invSharePct !== null ? (invSharePct >= 100 ? 'var(--pos)' : invSharePct >= 70 ? 'var(--wrn)' : 'var(--neg)') : 'var(--tx3)';
-  const invMetaFmt   = VISAO.invMeta > 0 ? VISAO.invMeta.toLocaleString('pt-BR', {style:'currency',currency:'BRL'}) : null;
-
 
   renderHeroes();
 
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
   const cplVb=vBadge(cplVar,true);
 
-  /* Resumo: 3 boxes verticais — Melhor Leads, CPL, Qualificação */
-  const resumoHTML=(()=>{
-    if(!_ss.length)return'<div style="font-size:11px;color:var(--tx3)">Sem dados</div>';
-    const mH=hDB?DBmap.get(hk):null;
-    const today=mH?Array.from(mH.entries()).sort((a,b)=>b[1]-a[1]):[];
-    const topNm=today[0]?.[0]||(cl(_ss[0]?.[_cC])||'—');
-    const topCnt=today[0]?.[1]||(hDB?0:n(_ss[0]?.[_cT]||0));
-    const topIdx=_ss.findIndex(r=>cl(r[_cC])===topNm);
-    const topColor=COLORS[(topIdx>=0?topIdx:0)%COLORS.length];
-    const cplList=_ss.map((r,i)=>({nm:cl(r[_cC]),g:getCPL(cl(r[_cC])).g,c:COLORS[i%COLORS.length]})).sort((a,b)=>a.g-b.g);
-    const bCplNm=cplList[0]?.nm||'—',bCplV=cplList[0]?.g||0,bCplC=cplList[0]?.c||COLORS[0];
-    const bQ=_cQ?[..._ss].sort((a,b)=>n(b[_cQ])-n(a[_cQ]))[0]:null;
-    const bQNm=bQ?cl(bQ[_cC]):'—',bQV=bQ?n(bQ[_cQ]):0;
-    const bQColor=COLORS[(_ss.indexOf(bQ)>=0?_ss.indexOf(bQ):2)%COLORS.length];
-    const box=(ttl,val,sub,col)=>`<div style="display:grid;grid-template-columns:1fr auto;align-items:center;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden"><div style="padding:9px 12px;border-left:3px solid ${col}"><div style="font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px">${ttl}</div><div style="font-family:var(--fn);font-size:18px;font-weight:800;letter-spacing:-.04em;color:${col};line-height:1">${val}</div></div><div style="padding:8px 12px;border-left:1px solid var(--bd);min-width:90px;max-width:120px;text-align:right"><div style="font-size:10px;font-weight:700;color:var(--tx);line-height:1.3;word-break:break-word">${sub}</div></div></div>`;
-    return`<div style="display:flex;flex-direction:column;gap:5px">${box('Top Leads',fmt(topCnt),topNm,topColor)}${box('Menor CPL',fmtR(bCplV),bCplNm,bCplC)}${box('Maior Qualif.',bQV.toFixed(1)+'%',bQNm,bQColor)}</div>`;
-  })();
+  const resumoHTML='';
+      const invC=visC?visC.inv:0;
+      const metaLC=visC?visC.metaLeads:0;
+      const metaIC=visC?visC.metaInv:0;
+      const pctLC=metaLC>0?Math.min(leadsC/metaLC*100,100):null;
+      const pctIC=metaIC>0?Math.min(invC/metaIC*100,100):null;
+      const pctLfmt=pctLC!==null?pctLC.toFixed(0)+'%':null;
+      const pctIfmt=pctIC!==null?pctIC.toFixed(0)+'%':null;
+      return`<div style="display:flex;flex-direction:column;gap:5px">
+        ${box('Leads Captados',fmt(leadsC),metaLC>0?'Meta: '+fmt(metaLC):'Acumulado',colC,pctLfmt?'Ating.: '+pctLfmt:null)}
+        ${box('Investimento',fmtR(invC),metaIC>0?'Meta: '+fmtR(metaIC):'Realizado',colC,pctIfmt?'Ating.: '+pctIfmt:null)}
+        ${box('CPL',fmtR(cplC.g),_cursoFiltro.split(' ').slice(0,2).join(' '),colC,null)}
+      </div>`;
+
   const d1Vb='';
 
   /* qualif real de hoje: ponderada pelos leads de hoje por curso */
@@ -1282,6 +1467,7 @@ function renderAll(){
   buildMeta(tL,hk,hDB);
   buildTaxa();
   buildCPL();
+  buildResumo();
   /* populate esc dd-wrap */
   const escMenu=document.getElementById('esc-dd-menu');
   let _escSel='__all__';
@@ -1343,12 +1529,13 @@ function renderAll(){
   window._resumoData={hk:_hk,d1k:_d1k,calcResumoData,fmtR,abrevNome};
   fillResumo('d1');
   buildCursoSel();
-  /* período inicial: hoje */
-  const _now=new Date();_now.setHours(0,0,0,0);
-  _periodoDE=new Date(_now);_periodoDE.setHours(0,0,0,0);
-  _periodoATE=new Date(_now);_periodoATE.setHours(23,59,59,999);
-  _periodoAtual='hoje';
-  document.querySelectorAll('.periodo-btn').forEach(b=>{b.classList.toggle('act',(b.getAttribute('onclick')||'').includes("'hoje'"));});
+  /* período inicial: geral (sem filtro) */
+  if(!_periodoAtual||_periodoAtual==='mtd'){
+    _periodoDE=null;_periodoATE=null;_periodoAtual='geral';
+  }
+  document.querySelectorAll('.periodo-btn').forEach(b=>{
+    b.classList.toggle('act',(b.getAttribute('onclick')||'').includes("'"+_periodoAtual+"'"));
+  });
 }
 
 /* ── FILTRO DE PERÍODO ── */
@@ -1359,7 +1546,7 @@ function dkInPeriodo(dk){
   const ate=new Date(_periodoATE);ate.setHours(23,59,59,999);
   return t>=de.getTime()&&t<=ate.getTime();
 }
-function getDatesInPeriodo(){return DBdates.filter(dkInPeriodo);}
+function getDatesInPeriodo(){if(!_periodoDE||!_periodoATE)return null;return DBdates.filter(dkInPeriodo);}
 function cntPeriodo(curso){
   const dks=getDatesInPeriodo();
   if(!dks.length)return 0;
@@ -1393,14 +1580,16 @@ function setPeriodo(p){
   /* calcular intervalo */
   const now=new Date();
   now.setHours(0,0,0,0);
-  if(p==='hoje'){
+  if(p==='geral'){
+    _periodoDE=null;_periodoATE=null; /* sem filtro de período */
+  } else if(p==='hoje'){
     _periodoDE=new Date(now);_periodoATE=new Date(now);
+    _periodoDE.setHours(0,0,0,0);_periodoATE.setHours(23,59,59,999);
   } else if(p==='ontem'){
     const y=new Date(now);y.setDate(y.getDate()-1);
     _periodoDE=new Date(y);_periodoATE=new Date(y);
+    _periodoDE.setHours(0,0,0,0);_periodoATE.setHours(23,59,59,999);
   }
-  _periodoDE?.setHours(0,0,0,0);
-  _periodoATE?.setHours(23,59,59,999);
   /* só refrescar se os dados já carregaram */
   if(_ss&&_ss.length>0)refreshAll();
 }
@@ -1421,6 +1610,7 @@ function refreshAll(){
   if(!_ss||!_ss.length)return;
   renderHeroes();
   buildDatePanel();buildTaxa();buildCPL();
+  buildResumo();
 }
 function setCtx(ctx){_ctxAtual=ctx;buildDatePanel();buildTaxa();}
 function buildCursoSel(){
@@ -1431,9 +1621,15 @@ function buildCursoSel(){
   </div>`;
   _ss.forEach((r,i)=>{
     const nm=cl(r[_cC]);const col=COLORS[i%COLORS.length];const act=_cursoFiltro===nm;
+        /* abreviar nome do curso para caber no menu */
+    const abrevNmC=(s)=>{
+      if(s.length<=22)return s;
+      const stop=new Set(['de','da','do','dos','das','em','e','a','o','com']);
+      return s.split(/\s+/).map(w=>stop.has(w.toLowerCase())?null:w.length>4?w.slice(0,3)+'.':w).filter(Boolean).join(' ').slice(0,24);
+    };
     items+=`<div class="mc-item${act?' act':''}" onclick="setCursoFiltro('${nm.replace(/'/g,"\'")}')">
       <span class="mc-item-dot" style="background:${col};"></span>
-      <span class="mc-item-lbl">${nm.length>26?nm.slice(0,24)+'…':nm}</span>
+      <span class="mc-item-lbl">${abrevNmC(nm)}</span>
     </div>`;
   });
   grid.innerHTML=items;
@@ -1464,16 +1660,21 @@ function toggleMenuCursos(){
   btn.classList.toggle('open',open);
   if(open){
     buildCursoSel();
-    /* posicionar dropdown: abaixo do botão, centralizado na tela em mobile */
+    /* position:fixed → usa coordenadas de viewport puras */
     const rect=btn.getBoundingClientRect();
+    const ddW=220;
+    dd.style.top=(rect.bottom+6)+'px';
     if(window.innerWidth<600){
-      dd.style.top=(rect.bottom+window.scrollY+8)+'px';
-      dd.style.left='50%';
-      dd.style.transform='translateX(-50%)';
+      /* mobile: centralizar na tela */
+      dd.style.left=Math.max(8,(window.innerWidth-ddW)/2)+'px';
+      dd.style.right='auto';
+      dd.style.transform='none';
     } else {
-      dd.style.top=(rect.bottom+window.scrollY+8)+'px';
-      dd.style.left='auto';
-      dd.style.right=(window.innerWidth-rect.right)+'px';
+      /* desktop: alinhar à direita do botão, sem sair da tela */
+      const rightEdge=rect.right;
+      const left=Math.min(rightEdge-ddW, window.innerWidth-ddW-8);
+      dd.style.left=Math.max(8,left)+'px';
+      dd.style.right='auto';
       dd.style.transform='none';
     }
     setTimeout(()=>document.addEventListener('click',_closeMC,{once:true}),10);
@@ -1488,8 +1689,21 @@ function _closeMC(e){
 }
 function setCursoFiltro(val){
   _cursoFiltro=val;
-  document.getElementById('menu-cursos-dropdown')?.classList.remove('open');
-  document.getElementById('menu-cursos-btn')?.classList.remove('open');
+  /* fechar dropdown */
+  const dd=document.getElementById('menu-cursos-dropdown');
+  const btn=document.getElementById('menu-cursos-btn');
+  if(dd)dd.classList.remove('open');
+  if(btn)btn.classList.remove('open');
+  /* atualizar título do dashboard */
+  const titleEl=document.getElementById('dash-title-txt');
+  if(titleEl){
+    if(val==='__all__') titleEl.innerHTML='Visão <em>Geral</em>';
+    else {
+      const stop=new Set(['de','da','do','dos','das','em','e','a','o','com','no','na','por','ao']);
+      const words=val.split(/\s+/).filter(w=>w.length>2&&!stop.has(w.toLowerCase()));
+      titleEl.innerHTML=words.slice(0,3).join(' ');
+    }
+  }
   buildCursoSel();
   refreshAll();
 }
@@ -1796,8 +2010,9 @@ function buildTaxa(){
     const ws=nm.split(/\s+/);const nmA=ws.length>3?ws[0]+' '+ws.slice(1).map(w=>_skip.has(w.toLowerCase())?'':w[0].toUpperCase()+'.').filter(Boolean).join(' '):nm;
     return{nm,nmA,v,baseV,tot,qual,color:COLORS[i%COLORS.length]};
   }).sort((a,b)=>b.v-a.v);
+  const sQf=_cursoFiltro==='__all__'?sQ:sQ.filter(x=>x.nm===_cursoFiltro);
 
-  const listHTML=sQ.map(({nm,nmA,v,baseV,tot,qual,color})=>{
+  const listHTML=sQf.map(({nm,nmA,v,baseV,tot,qual,color})=>{
     const col=v>=90?'var(--pos)':'var(--neg)';
     const isOpen=_txOpen.has(nm);
     const dailyRows=isOpen?DBdates.slice(0,20).map(dk=>{
@@ -1853,8 +2068,9 @@ function buildCPL(){
     const vHP=c.g>0?(c.h-c.g)/c.g*100:0,vD1P=c.g>0?(c.d1-c.g)/c.g*100:0;
     return{nm,color:COLORS[i%COLORS.length],tot,g:c.g,displayCPL,h:c.h,d1:c.d1,vHP,vD1P,daily,baseQ};
   }).sort((a,b)=>a.displayCPL-b.displayCPL);
+  const dataF=_cursoFiltro==='__all__'?data:data.filter(d=>d.nm===_cursoFiltro);
 
-  document.getElementById('cpl-list').innerHTML=data.map(d=>{
+  document.getElementById('cpl-list').innerHTML=dataF.map(d=>{
     const isOpen=_cplOpen.has(d.nm);
     return`<div class="cpl-row${isOpen?' open':''}">
       <div class="cpl-acc" style="background:${d.color}"></div>
