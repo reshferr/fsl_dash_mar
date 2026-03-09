@@ -685,25 +685,7 @@ async function load(){
     parseSummary(t1);
     if(t2)parseDB(t2);
     if(t3)parseMeta(t3);
-    if(t4){
-      window._visaoRaw=t4;
-      parseVisao(t4);
-    }
-    /* diagnóstico: mostrar status de todas as abas */
-    const dbg=document.createElement('pre');
-    dbg.id='visao-dbg';
-    dbg.style.cssText='position:fixed;top:80px;left:10px;right:10px;max-height:70vh;overflow:auto;background:#111;color:#0f0;font-size:10px;padding:12px;border-radius:8px;z-index:9999;white-space:pre-wrap;word-break:break-all;border:1px solid #0f0;';
-    const lines4=t4?t4.split('\n').slice(0,20).map((l,i)=>'r'+i+': '+l).join('\n'):'(null — aba não carregou)';
-    dbg.textContent=
-      '=== DIAGNÓSTICO ===\n'+
-      't1 (Summary): '+(t1?t1.length+'chars, rows='+t1.split('\n').length:'NULL')+'\n'+
-      't2 (DB): '+(t2?t2.length+'chars':'NULL')+'\n'+
-      't3 (Meta): '+(t3?t3.length+'chars':'NULL')+'\n'+
-      't4 (Visão): '+(t4?t4.length+'chars, rows='+t4.split('\n').length:'NULL')+'\n\n'+
-      'VISAO.found='+VISAO.found+' invTotal='+VISAO.invTotal+' leads='+VISAO.totalLeads+'\n\n'+
-      '--- t4 primeiras 20 linhas ---\n'+lines4;
-    document.body.appendChild(dbg);
-    dbg.onclick=()=>dbg.remove();
+    if(t4)parseVisao(t4);
     document.getElementById('loader').style.display='none';
     renderAll();
   }catch(e){
@@ -814,7 +796,6 @@ function parseVisao(txt){
   VISAO={found:true,invTotal:0,cplGeral:0,cursosInv:{},totalLeads:0};
 
   /* Debug: primeiras 12 linhas no console */
-  console.log('[VISAO] rows='+lines.length);
   lines.slice(0,12).forEach((r,i)=>console.log('  r'+i+':',JSON.stringify(r)));
 
   let totalLeads=0, totalInv=0;
@@ -831,8 +812,6 @@ function parseVisao(txt){
       if((lines[i]||[]).some(c=>/^leads$/i.test((c||'').trim()))){hIdx=i;break;}
     }
   }
-  console.log('[VISAO] hIdx=',hIdx);
-  if(hIdx<0){console.warn('[VISAO] header não encontrado');return;}
 
   const hdrRow=lines[hIdx]||[];
   const nomeRow=lines[hIdx-1]||[];
@@ -860,19 +839,16 @@ function parseVisao(txt){
       blocos.push({leadsC:i,invC,cplC,dataC:i-1,nome:nm});
     }
   });
-  console.log('[VISAO] blocos:',JSON.stringify(blocos.map(b=>({n:b.nome,l:b.leadsC,i:b.invC}))));
 
   /* 3) Varrer linhas buscando linha TOTAL */
   for(let i=hIdx+1;i<lines.length;i++){
     const row=lines[i];
     const isTotal=row.some(c=>/^\s*total\s*$/i.test((c||'').trim()));
     if(!isTotal)continue;
-    console.log('[VISAO] TOTAL row '+i+':',JSON.stringify(row));
     blocos.forEach(b=>{
       const leads=n(row[b.leadsC]||'0');
       const inv=n(row[b.invC]||'0');
       const cpl=n(row[b.cplC]||'0');
-      console.log('[VISAO]  bloco "'+b.nome+'" leads='+leads+' inv='+inv);
       if(leads>0||inv>0){
         totalLeads+=leads; totalInv+=inv;
         if(!VISAO.cursosInv[b.nome]) VISAO.cursosInv[b.nome]={leads,inv,cpl};
@@ -895,13 +871,11 @@ function parseVisao(txt){
       }
       if(totalInv>0)break;
     }
-    console.log('[VISAO] fallback invTotal=',totalInv);
   }
 
   VISAO.invTotal=totalInv;
   VISAO.totalLeads=totalLeads;
   VISAO.cplGeral=totalLeads>0&&totalInv>0?(totalInv/totalLeads):0;
-  console.log('[VISAO] FINAL invTotal='+totalInv+' leads='+totalLeads+' cpl='+VISAO.cplGeral.toFixed(2));
 }
 
 /* utils */
