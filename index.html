@@ -51,9 +51,9 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 @keyframes sp{to{transform:rotate(360deg)}}
 #loader p{font-size:12px;color:var(--tx3);}
 #err{display:none;text-align:center;padding:50px 20px;font-size:13px;line-height:1.9;}
-.gf{margin-bottom:12px;}
+.gf{margin-bottom:18px;}
 .card{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:20px 24px;box-shadow:var(--sh2);}
-.slbl{font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin-bottom:14px;}
+.slbl{font-family:var(--fn);font-size:15px;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin-bottom:14px;}
 .empty{font-size:12px;color:var(--tx3);padding:6px 0;}
 
 /* BADGE */
@@ -336,6 +336,8 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 [data-theme=beige] .kh.kh-green{border-color:var(--bda);}
 
 
+.nav-item{display:block;width:100%;text-align:left;padding:7px 11px;border:1px solid var(--bd);background:var(--sf);color:var(--tx2);font-size:11px;font-weight:600;cursor:pointer;border-radius:8px;transition:background .12s,color .12s,border-color .12s;}
+.nav-item:hover{background:var(--cdh);color:var(--tx);border-color:var(--bda);}
 /* RESUMO POPUP */
 #resumo-popup{position:fixed;inset:0;z-index:800;display:flex;align-items:center;justify-content:center;padding:24px 16px;pointer-events:none;}
 #resumo-popup.open{pointer-events:all;}
@@ -467,13 +469,14 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
   <!-- spacer para navbar -->
   <div style="height:calc(var(--nh) + 8px);"></div>
   <!-- DOTS DE ATUALIZAÇÃO -->
-  <div id="status-bar" style="margin-bottom:10px;">
+  <div id="status-bar" style="margin-bottom:10px;display:flex;align-items:center;gap:8px;">
     <span style="display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:999px;">
       <span style="width:7px;height:7px;min-width:7px;border-radius:50%;background:var(--pos);display:inline-block;animation:pu 2s infinite;"></span>
       <span style="font-size:11px;color:var(--tx2);">Atualizado</span>
       <span id="tslabel" style="font-size:11px;font-weight:700;color:var(--tx);">—</span>
       <span id="hero-date" style="font-size:11px;color:var(--tx3);">—</span>
     </span>
+    <button onclick="exportPDF()" title="Exportar PDF" style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--bd);background:var(--sf);color:var(--tx3);cursor:pointer;opacity:.55;transition:opacity .2s;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='.55'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
   </div>
   <div style="height:8px;"></div>
   <div id="loader"><div class="spin"></div><p>Carregando dados…</p></div>
@@ -552,7 +555,10 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
   <div id="resumo-backdrop" onclick="closeResumo()"></div>
   <div id="resumo-sheet">
     <div class="rp-hdr">
-      <div class="rp-title">Resumo D-1</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <button id="rp-tab-hoje" onclick="setResumoTab('hoje')" style="font-family:var(--fn);font-size:12px;font-weight:700;padding:5px 14px;border-radius:999px;border:1px solid var(--bda);background:var(--acc);color:#fff;cursor:pointer;transition:all .15s;">Hoje</button>
+        <button id="rp-tab-d1" onclick="setResumoTab('d1')" style="font-family:var(--fn);font-size:12px;font-weight:700;padding:5px 14px;border-radius:999px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;transition:all .15s;">D-1</button>
+      </div>
       <button class="rp-close" onclick="closeResumo()">✕</button>
     </div>
     <div class="rp-body" id="rp-body">
@@ -584,7 +590,27 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
     </div>
   </div>
 </div>
-<div id="btt-group"><button id="btt" onclick="openResumo()">Resumo D-1</button><button id="btt2" onclick="exportPDF()" title="Exportar PDF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button><button id="btt3" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Voltar ao topo"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg></button></div>
+<div id="btt-group">
+  <button id="btt" onclick="openResumo()">Resumo</button>
+  <div style="position:relative;" id="nav-wrap">
+    <button id="btt-nav" onclick="toggleNav()" title="Navegar" style="height:42px;width:42px;border-radius:999px;background:var(--cd);color:var(--tx);border:1px solid var(--bd);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh2);transition:background var(--tr);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <div id="nav-menu" style="display:none;position:absolute;bottom:52px;right:0;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:8px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.3);z-index:900;">
+      <div style="font-size:8px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;padding:4px 8px 8px;">Painéis</div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <button onclick="navTo('kpi-row')" class="nav-item">Visão Geral</button>
+        <button onclick="navTo('kpi-diario')" class="nav-item">Hoje &amp; D-1</button>
+        <button onclick="navTo('lpd-list')" class="nav-item">Leads por Curso</button>
+        <button onclick="navTo('taxa-grid')" class="nav-item">Taxa de Qualificação</button>
+        <button onclick="navTo('share-list')" class="nav-item">Share por Curso</button>
+        <button onclick="navTo('cpl-list')" class="nav-item">CPL por Curso</button>
+        <button onclick="navTo('section-meta')" class="nav-item">Meta de Leads</button>
+        <button onclick="navTo('esc-blocks')" class="nav-item">Escolaridade</button>
+        <button onclick="navTo('tbl-body')" class="nav-item">Tabela Completa</button>
+      </div>
+    </div>
+  </div>
+  <button id="btt3" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Voltar ao topo" style="height:42px;width:42px;border-radius:999px;background:var(--cd);color:var(--tx);border:1px solid var(--bd);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh2);transition:background var(--tr),opacity .3s,width .3s,margin .3s;opacity:0;pointer-events:none;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+</div>
 <div id="toast"></div>
 <script>
 const PUB='https://docs.google.com/spreadsheets/d/e/2PACX-1vT6iHhSHZBcAWYSw8wlRwyX7r6_jUnaULqG4uyt9dDG578kCD_N-j0NanrwJZvoDOyFidHmc_vaMAVj/pub?output=csv';
@@ -1069,12 +1095,11 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   }).join('<div style="width:3px;background:var(--cd);flex-shrink:0;"></div>');
   document.getElementById('sh-toprow').innerHTML=
     `<div style="display:flex;align-items:stretch;gap:10px;margin-bottom:14px;">
-      <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:14px 18px;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;min-width:100px;">
-        <div style="font-size:9px;font-weight:700;color:var(--tagt);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;">Total</div>
-        <div style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.06em;color:var(--tx);line-height:1;">${fmt(shTotGeral)}</div>
-        <div style="font-size:9px;color:var(--tx3);margin-top:3px;">leads</div>
+      <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:12px 16px;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;width:90px;">
+        <div style="font-size:9px;font-weight:700;color:var(--tagt);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;white-space:nowrap;">Total Leads</div>
+        <div style="font-family:var(--fn);font-size:26px;font-weight:800;letter-spacing:-.06em;color:var(--tx);line-height:1;">${fmt(shTotGeral)}</div>
       </div>
-      <div style="flex:1;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:14px 18px;display:flex;align-items:center;">
+      <div style="flex:1;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);display:flex;align-items:center;padding:0 14px;min-width:0;">
         <div style="display:flex;height:28px;border-radius:6px;overflow:hidden;width:100%;">${segments}</div>
       </div>
     </div>`;
@@ -1469,6 +1494,37 @@ window.addEventListener('scroll',()=>{
     btt3.style.transition='opacity .3s,width .3s,margin .3s';
   }
 },{passive:true});
+let _rpTab='hoje';
+function setResumoTab(tab){
+  _rpTab=tab;
+  const tH=document.getElementById('rp-tab-hoje');
+  const tD=document.getElementById('rp-tab-d1');
+  const actS='background:var(--acc);color:#fff;border-color:var(--bda);';
+  const idlS='background:transparent;color:var(--tx2);border-color:var(--bd);';
+  if(tH)tH.style.cssText=tH.style.cssText.replace(/background:[^;]+;color:[^;]+;border-color:[^;]+;/,'')+( tab==='hoje'?actS:idlS);
+  if(tD)tD.style.cssText=tD.style.cssText.replace(/background:[^;]+;color:[^;]+;border-color:[^;]+;/,'')+( tab==='d1'?actS:idlS);
+  updateResumoTab();
+}
+function updateResumoTab(){
+  /* swap content labels between Hoje / D-1 */
+  const isHoje=_rpTab==='hoje';
+  const metaLbl=document.querySelector('#rp-body .rp-kpi.hi .rp-kl');
+  if(metaLbl)metaLbl.textContent=isHoje?'Meta Hoje':'Meta D-1';
+  const leadsLbl=document.querySelectorAll('#rp-body .rp-kpi .rp-kl')[1];
+  if(leadsLbl)leadsLbl.textContent=isHoje?'Leads Hoje':'Leads Captados';
+}
+function toggleNav(){
+  const m=document.getElementById('nav-menu');
+  m.style.display=m.style.display==='none'?'block':'none';
+}
+function navTo(id){
+  document.getElementById('nav-menu').style.display='none';
+  const el=document.getElementById(id);
+  if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#nav-wrap'))document.getElementById('nav-menu').style.display='none';
+},{passive:true,capture:false});
 function openResumo(){
   document.getElementById('resumo-popup').classList.add('open');
   document.getElementById('btt-group').classList.add('behind');
