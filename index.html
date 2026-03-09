@@ -1063,20 +1063,28 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   const _sk2=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
   const abv2=n2=>{const w=n2.split(/\s+/);return w.length<=3?n2:w[0]+' '+w.slice(1).map(x=>_sk2.has(x.toLowerCase())?'':x[0].toUpperCase()+'.').filter(Boolean).join(' ');};
   const filtered=shRows.filter(x=>x.cnt>0);
-  /* barra empilhada: cada segmento proporcional */
   const segments=filtered.map(({cnt,color,nm})=>{
     const pct=(cnt/shTotGeral*100);
     return`<div style="flex:${pct.toFixed(3)};min-width:2px;background:${color};" title="${abv2(nm)}: ${pct.toFixed(1)}%"></div>`;
-  }).join('<div style="width:2px;background:var(--bg);flex-shrink:0;"></div>');
+  }).join('<div style="width:3px;background:var(--cd);flex-shrink:0;"></div>');
   document.getElementById('sh-toprow').innerHTML=
-    `<div style="margin-bottom:16px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-        <span style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;">Distribuição total</span>
-        <span style="font-family:var(--fn);font-size:12px;font-weight:800;color:var(--tx);letter-spacing:-.03em;">${fmt(shTotGeral)} <span style="font-size:10px;font-weight:600;color:var(--tx3);">leads</span></span>
+    `<div style="display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-bottom:14px;">
+      <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:16px 18px;display:flex;flex-direction:column;justify-content:center;">
+        <div style="font-size:9px;font-weight:700;color:var(--tagt);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Total de Leads</div>
+        <div style="font-family:var(--fn);font-size:32px;font-weight:800;letter-spacing:-.06em;color:var(--tx);line-height:1;">${fmt(shTotGeral)}</div>
       </div>
-      <div style="display:flex;height:20px;border-radius:8px;overflow:hidden;gap:0;">${segments}</div>
+      <div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:16px 18px;display:flex;flex-direction:column;justify-content:center;">
+        <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">Distribuição por Curso</div>
+        <div style="display:flex;height:22px;border-radius:6px;overflow:hidden;">${segments}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;">
+          ${filtered.map(({nm,cnt,color})=>`<div style="display:inline-flex;align-items:center;gap:5px;">
+            <span style="width:6px;height:6px;border-radius:50%;background:${color};flex-shrink:0;"></span>
+            <span style="font-size:9px;color:var(--tx2);">${abv2(nm)}</span>
+            <span style="font-size:9px;font-weight:700;color:${color};">${(cnt/shTotGeral*100).toFixed(1)}%</span>
+          </div>`).join('')}
+        </div>
+      </div>
     </div>`;
-  /* boxes por curso */
   document.getElementById('share-list').innerHTML=
     `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;">
     ${filtered.map(({nm,cnt,color})=>{
