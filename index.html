@@ -394,7 +394,12 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 /* RESPONSIVE */
 @media(max-width:1100px){.daily-row{grid-template-columns:repeat(4,1fr);}.daily-row .kd-wide{grid-column:1/-1;min-height:auto;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
 @media(max-width:900px){.hero-row{grid-template-columns:1fr 1fr;}.daily-row{grid-template-columns:1fr 1fr;}.daily-row .kd-wide{grid-column:1/-1;}.cpld-kpis{grid-template-columns:1fr 1fr;}.meta-kpis{grid-template-columns:1fr 1fr;}.meta-pace-boxes{grid-template-columns:1fr 1fr;}}
-@media(max-width:700px){.g-ls{grid-template-columns:1fr;}.esc-blocks{grid-template-columns:repeat(3,1fr);}.meta-pace-boxes{grid-template-columns:1fr 1fr;}#share-list .sh-grid{grid-template-columns:1fr 1fr !important;}}
+@media(max-width:700px){.g-ls{grid-template-columns:1fr;}.esc-blocks{grid-template-columns:repeat(3,1fr);}.meta-pace-boxes{grid-template-columns:1fr 1fr;}
+  /* share: empilha anel + total, boxes 2 colunas preenchendo tudo */
+  #sh-toprow>div{flex-direction:column;align-items:flex-start !important;}
+  #sh-toprow>div>div:first-child{align-self:center;}
+  .sh-grid{grid-template-columns:1fr 1fr !important;}
+}
 
 /* MOBILE: painel taxa — esconde colunas numéricas, mostra só nome+taxa */
 @media(max-width:600px){
@@ -621,6 +626,8 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 const PUB='https://docs.google.com/spreadsheets/d/e/2PACX-1vT6iHhSHZBcAWYSw8wlRwyX7r6_jUnaULqG4uyt9dDG578kCD_N-j0NanrwJZvoDOyFidHmc_vaMAVj/pub?output=csv';
 const DB_GID='256138654';
 const META_GID='1630113902';
+const INV_GID='1780432169';
+const VISAO_GID='2017419602';
 const ESC_COLS=['Pós-graduação Completa','Pós-graduação Incompleta','Ensino Superior Completo','Ensino Superior Incompleto','Ensino Médio Completo','Ensino Médio Incompleto'];
 const ESC_SH=['Pós-grad. C.','Pós-grad. Inc.','Sup. C.','Sup. Inc.','EM C.','EM Inc.'];
 const COLORS=['#7c5cfc','#e05f8e','#34d399','#fbbf24','#60a5fa','#f97316','#a78bfa','#fb7185'];
@@ -629,6 +636,7 @@ let SH=[],SD=[],DBmap=new Map(),DBdates=[],selDate='__total__';
 let _cC,_cT,_cQ,_cS,_ss;
 let _cplOpen=new Set(),_txOpen=new Set(),_txSel=null,_cplSel='__total__',_metaCOpen=new Set(),_metaDiarOpen=false;
 let META={found:false};
+let VISAO={found:false,invTotal:0,cplGeral:0,cursos:{}};
 
 function csvL(line){
   const o=[];let c='',q=false;
@@ -667,15 +675,17 @@ async function load(){
     return j.contents;
   }
   try{
-    const[t1,t2,t3]=await Promise.all([
+    const[t1,t2,t3,t4]=await Promise.all([
       gfetch(PUB),
       gfetch(PUB+'&gid='+DB_GID).catch(()=>null),
-      gfetch(PUB+'&gid='+META_GID).catch(()=>null)
+      gfetch(PUB+'&gid='+META_GID).catch(()=>null),
+      gfetch(PUB+'&gid='+VISAO_GID).catch(()=>null)
     ]);
     if(!t1)throw new Error('Planilha Summary vazia');
     parseSummary(t1);
     if(t2)parseDB(t2);
     if(t3)parseMeta(t3);
+    if(t4)parseVisao(t4);
     document.getElementById('loader').style.display='none';
     renderAll();
   }catch(e){
@@ -780,6 +790,97 @@ function parseMeta(txt){
   if(!META.totalMeta)META.totalMeta=Object.values(META.cursos).reduce((s,c)=>s+c.metaTotal,0);
 }
 
+function parseVisao(txt){
+  if(!txt)return;
+  const lines=txt.trim().split('\n').map(l=>csvL(l));
+  VISAO={found:true,invTotal:0,cplGeral:0,cursosInv:{}};
+  /* Estrutura da aba Visão | Por cursos (imagem):
+     Linha 0 (row 1): vazia
+     Linha 1 (row 2): nome dos cursos em blocos de 4 colunas (A, E, I…)
+                      abrev do curso em col D, H, L…
+     Linha 2 (row 3): headers: Data | Leads | Investimento | CPL (repetido)
+     Linhas 3-12: dados diários por curso
+     Linha 15+ : MTD D-1, Investimento D-1 etc.
+     Linha com TOTAL: leads e investimento acumulado por curso
+  */
+  let totalLeads=0, totalInv=0;
+  const cursosInv={};
+
+  /* Passo 1: detectar colunas de blocos de curso na linha de headers (row 3 = idx 2)
+     procurar colunas com header "Leads" para encontrar offsets dos blocos */
+  let headerRowIdx=-1;
+  for(let i=0;i<Math.min(lines.length,5);i++){
+    if(lines[i].some(c=>/^leads$/i.test((c||'').trim()))){headerRowIdx=i;break;}
+  }
+  if(headerRowIdx<0)headerRowIdx=2;
+
+  /* nomes dos cursos estão na linha anterior ao header */
+  const nomeRow=lines[headerRowIdx-1]||[];
+  const hdrRow=lines[headerRowIdx]||[];
+
+  /* encontrar colunas onde aparece "Leads" → início de cada bloco */
+  const blocos=[]; // {startCol, nomeCol, invCol, leadsCol, cplCol, nome}
+  hdrRow.forEach((h,i)=>{
+    if(/^leads$/i.test((h||'').trim())){
+      /* nome do curso: na linha de cima, mesma coluna ou coluna anterior */
+      let nm=(nomeRow[i]||nomeRow[i-1]||'').trim();
+      nm=nm.replace(/\[Formulário\]\s*/i,'').trim();
+      blocos.push({leadsCol:i,invCol:i+1,cplCol:i+2,nome:nm||('Curso '+(blocos.length+1))});
+    }
+  });
+
+  /* Passo 2: percorrer linhas buscando TOTAL por bloco */
+  for(let i=headerRowIdx+1;i<lines.length;i++){
+    const row=lines[i];
+    /* verificar se alguma célula do início de bloco diz TOTAL */
+    blocos.forEach(b=>{
+      /* a coluna de data (leadsCol-1) ou a coluna leadsCol-2 pode ter "TOTAL" */
+      const label=(row[b.leadsCol-1]||row[b.leadsCol-2]||'').trim().toUpperCase();
+      if(label==='TOTAL'){
+        const leads=n(row[b.leadsCol]||'0');
+        const inv=n(row[b.invCol]||'0');
+        const cpl=n(row[b.cplCol]||'0');
+        if(leads>0||inv>0){
+          totalLeads+=leads;
+          totalInv+=inv;
+          cursosInv[b.nome]={leads,inv,cpl};
+        }
+      }
+    });
+    /* fallback global: linha com "TOTAL" na col 0 */
+    if(/^total$/i.test((row[0]||'').trim())){
+      /* somar todas as colunas de investimento */
+      blocos.forEach(b=>{
+        const inv=n(row[b.invCol]||'0');
+        const leads=n(row[b.leadsCol]||'0');
+        if(inv>0&&!cursosInv[b.nome]){
+          totalLeads+=leads;totalInv+=inv;
+          cursosInv[b.nome]={leads,inv,cpl:n(row[b.cplCol]||'0')};
+        }
+      });
+    }
+  }
+
+  /* Fallback: buscar célula com "INVESTIMENTO" + pegar valor na linha seguinte */
+  if(totalInv===0){
+    for(let i=0;i<lines.length;i++){
+      for(let j=0;j<(lines[i]||[]).length;j++){
+        const v=(lines[i][j]||'').toUpperCase().trim();
+        if(v.includes('INVESTIMENTO')&&(v.includes('TOTAL')||v.includes('D-1'))){
+          const nxt=lines[i+1]||[];
+          const val=n((nxt[j]||'').trim());
+          if(val>0&&totalInv===0)totalInv=val;
+        }
+      }
+    }
+  }
+
+  VISAO.invTotal=totalInv;
+  VISAO.cursosInv=cursosInv;
+  VISAO.cplGeral=totalLeads>0&&totalInv>0?(totalInv/totalLeads):0;
+  VISAO.totalLeads=totalLeads;
+}
+
 /* utils */
 function cl(s){return(s||'').replace(/\[Formulário\]\s*/i,'').trim();}
 function n(v){if(!v&&v!==0)return 0;return parseFloat((v+'').replace(/[^\d.,-]/g,'').replace(',','.'))||0;}
@@ -878,11 +979,19 @@ function renderAll(){
   const dHD=d1C>0?(hC-d1C)/d1C*100:null;
   const cplHoje=58.4,cplD1=61.2,cplVar=cplD1>0?(cplHoje-cplD1)/cplD1*100:0;
 
+  /* investimento e CPL reais da aba Visão */
+  const invTotal=VISAO.found&&VISAO.invTotal>0?VISAO.invTotal:null;
+  const cplReal=invTotal&&tL>0?(invTotal/tL):null;
+  const invFmt=invTotal?fmtR(invTotal):'—';
+
+  /* CPL real = investimento / leads (ambos da aba Visão) */
+  const cplReal=invTotal&&VISAO.totalLeads>0?(invTotal/VISAO.totalLeads):invTotal&&tL>0?(invTotal/tL):null;
+  const cplFmt2=cplReal?fmtR(cplReal):'—';
   document.getElementById('kpi-row').innerHTML=
     khv('Leads Captados',fmt(tL),'<span class="kh-live-dot"></span>','big')+
-    khv('Qualificados',fmt(tQ),null,'big')+
-    khv('Qualificação',aT.toFixed(1)+'%',aT>=90?badge('▲ Alta','pos'):badge('→ Regular','warn'),'md')+
-    khv('CPL Geral',fmtR(60),cplVar<=0?badge('▼ Saudável','pos'):badge('▲ Elevado','neg'),'md');
+    khv('Investimento Total',invFmt,null,'md')+
+    khv('CPL Geral',cplFmt2,cplReal?(cplReal<=70?badge('▼ Saudável','pos'):badge('▲ Elevado','neg')):null,'md')+
+    khv('Qualificação',aT.toFixed(1)+'%',aT>=90?badge('▲ Alta','pos'):badge('→ Regular','warn'),'md');
 
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
   const cplVb=vBadge(cplVar,true);
@@ -922,7 +1031,7 @@ function renderAll(){
   const pctD1=metaD1>0?Math.min((d1C/metaD1)*100,100):0;
   const pctD1Color=pctD1>=100?'var(--pos)':pctD1>=70?'var(--wrn)':'var(--neg)';
   /* CPL meta proxy */
-  const cplMeta=60; /* referência */
+  const cplMeta=cplReal||60; /* usa CPL real se disponível */
   const cplPct=cplMeta>0?Math.min((cplMeta/Math.max(cplHoje,1))*100,100):0;
   const cplPctColor=cplHoje<=cplMeta?'var(--pos)':'var(--neg)';
   const qualMeta=90;
@@ -1094,9 +1203,9 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   const _sk2=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
   const abv2=n2=>{const w=n2.split(/\s+/);return w.length<=3?n2:w[0]+' '+w.slice(1).map(x=>_sk2.has(x.toLowerCase())?'':x[0].toUpperCase()+'.').filter(Boolean).join(' ');};
   const filtered=shRows.filter(x=>x.cnt>0);
-  /* anel SVG */
+  /* anel SVG — maior destaque */
   const shRing=(()=>{
-    const sz=140,cx=70,cy=70,r=54,stroke=13,circ=2*Math.PI*r;
+    const sz=180,cx=90,cy=90,r=70,stroke=16,circ=2*Math.PI*r;
     let off=0;
     const slices=filtered.map(({cnt,color})=>{
       const dash=(cnt/shTotGeral)*circ;
@@ -1106,20 +1215,22 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
     return`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="transform:rotate(-90deg);display:block;flex-shrink:0;">${slices.join('')}</svg>`;
   })();
   document.getElementById('sh-toprow').innerHTML=
-    `<div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
-      <div style="position:relative;flex-shrink:0;">
+    `<div style="display:flex;align-items:stretch;gap:14px;margin-bottom:20px;">
+      <div style="position:relative;flex-shrink:0;display:flex;align-items:center;">
         ${shRing}
       </div>
-      <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:18px 22px;flex:1;min-width:0;">
-        <div style="font-size:9px;font-weight:700;color:var(--tagt);text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px;">Total Leads</div>
-        <div style="font-family:var(--fn);font-size:32px;font-weight:800;letter-spacing:-.06em;color:var(--tx);line-height:1;">${fmt(shTotGeral)}</div>
+      <div style="display:flex;flex-direction:column;gap:10px;flex:1;min-width:0;justify-content:center;">
+        <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:20px 22px;">
+          <div style="font-size:9px;font-weight:700;color:var(--tagt);text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px;">Total Leads</div>
+          <div style="font-family:var(--fn);font-size:36px;font-weight:800;letter-spacing:-.06em;color:var(--tx);line-height:1;">${fmt(shTotGeral)}</div>
+        </div>
       </div>
     </div>`;
   document.getElementById('share-list').innerHTML=
-    `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;">
+    `<div class="sh-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;">
     ${filtered.map(({nm,cnt,color})=>{
       const pct=(cnt/shTotGeral*100).toFixed(1);
-      return`<div style="background:var(--sf);border:1px solid var(--bd);border-left:3px solid ${color};border-radius:var(--rs);padding:10px 12px;display:flex;flex-direction:column;gap:6px;">
+      return`<div style="background:var(--sf);border:1px solid var(--bd);border-left:3px solid ${color};border-radius:var(--rs);padding:12px 14px;display:flex;flex-direction:column;gap:6px;">
         <div style="font-size:10px;font-weight:600;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${nm}">${abv2(nm)}</div>
         <div style="font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;">${fmt(cnt)}</div>
         <div style="display:inline-flex;align-items:center;gap:4px;background:${color}22;border-radius:999px;padding:2px 7px;width:fit-content;">
