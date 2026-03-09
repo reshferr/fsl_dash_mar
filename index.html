@@ -92,7 +92,7 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 
 /* DAILY — 5 cards */
 .daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2.2fr;gap:12px;margin-bottom:0;}
-.kd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:22px 24px;box-shadow:var(--sh2);position:relative;}.kd::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--acc),transparent);opacity:.25;pointer-events:none;}
+.kd{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:22px 24px;box-shadow:var(--sh2);position:relative;}
 .kd-lbl{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
 .kd-date{font-weight:400;text-transform:none;letter-spacing:0;font-size:9px;color:var(--tx3);}
 .kd-body{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:nowrap;}
@@ -875,8 +875,26 @@ function renderAll(){
   } else {qualHojeQ=Math.round(hC*(aT/100));}
   const qualHojePct=hC>0?(qualHojeQ/hC)*100:aT;
 
+  /* meta de leads hoje */
+  const metaHoje=META.found?(META.totalDaily[hk]||0):0;
+  const pctHoje=metaHoje>0?Math.min((hC/metaHoje)*100,100):0;
+  const pctHojeColor=pctHoje>=100?'var(--pos)':pctHoje>=70?'var(--wrn)':'var(--neg)';
+  const leadsHojeCard=`<div class="kd">
+    <div class="kd-lbl">Leads Hoje</div>
+    <div class="kd-body">
+      <div class="kd-num">${hDB?fmt(hC):'—'}</div>
+      ${leadsVb?`<div class="kd-vb">${leadsVb}</div>`:''}
+    </div>
+    ${metaHoje>0?`<div style="margin-top:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <span style="font-size:9px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;">Meta ${fmt(metaHoje)}</span>
+        <span style="font-size:9px;font-weight:700;color:${pctHojeColor};">${pctHoje.toFixed(0)}%</span>
+      </div>
+      <div class="pb-track" style="height:4px;"><div class="pb-fill" style="width:${pctHoje}%;background:${pctHojeColor};height:4px;"></div></div>
+    </div>`:''}
+  </div>`;
   document.getElementById('kpi-diario').innerHTML=
-    kdv('Leads Hoje',hDB?fmt(hC):'—',leadsVb)+
+    leadsHojeCard+
     kdv('Captados D-1',hDB?fmt(d1C):'—',d1Vb)+
     kdv('CPL Hoje',fmtR(cplHoje),cplVb)+
     kdv('Qualif. Hoje',hDB?fmt(qualHojeQ):'—',badge(qualHojePct.toFixed(1)+'%',qualHojePct>=90?'pos':'warn'))+
@@ -1012,10 +1030,12 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
     return{nm,cnt,prev,color:COLORS[i%COLORS.length]};
   }).sort((a,b)=>b.cnt-a.cnt);
 
+  const _skipW=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
+  function _abrev(n){const w=n.split(/\s+/);if(w.length<=3)return n;return w[0]+' '+w.slice(1).map(x=>_skipW.has(x.toLowerCase())?'':x[0].toUpperCase()+'.').filter(Boolean).join(' ');}
   document.getElementById('lpd-list').innerHTML=rows.map(({nm,cnt,prev,color})=>{
     let dH='';
     if(!isTotal&&cnt>0){const d=cnt-prev;dH=d>0?badge('+'+fmt(d),'pos sm'):d<0?badge(fmt(d),'neg sm'):badge('=','neu sm');}
-    return`<div class="lpd-item"><div class="lpd-acc" style="background:${color}"></div><div class="lpd-nome">${nm}</div><div class="lpd-right"><div class="lpd-cnt">${fmt(cnt)}</div>${dH}</div></div>`;
+    return`<div class="lpd-item"><div class="lpd-acc" style="background:${color}"></div><div class="lpd-nome" title="${nm}">${_abrev(nm)}</div><div class="lpd-right"><div class="lpd-cnt">${fmt(cnt)}</div>${dH}</div></div>`;
   }).join('');
 
   /* share card — topo mostra leads do período selecionado + qualificação REAL sincronizada */
