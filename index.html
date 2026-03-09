@@ -80,19 +80,18 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 
 /* HERO — 4 cards principais */
 .hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
-.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:28px 32px;box-shadow:var(--sh);position:relative;overflow:clip;display:flex;flex-direction:column;}
+.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:24px 28px;box-shadow:var(--sh);position:relative;display:flex;flex-direction:column;gap:0;}
 .kh::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--acc) 50%,transparent 100%);background-size:250% 100%;background-position:200% 0;animation:barslide 6s ease-in-out infinite;opacity:.55;}
 [data-theme=light] .kh{border-color:var(--bda);background:var(--sf);}
 [data-theme=beige] .kh{border-color:var(--bda);background:var(--sf);}
 .kh-lbl{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
-.kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
-.kh-val.big{font-size:36px;}
-.kh-val.md{font-size:30px;}
-.kh-val.sm{font-size:22px;line-height:1.2;}
-.kh-sub{font-size:11px;color:var(--tx3);margin-top:6px;}
-.kh-foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.kh-foot-lbl{font-size:10px;color:var(--tx3);font-weight:500;}
-.kh-foot-dot{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 13px;font-size:13px;font-weight:800;flex-shrink:0;}
+.kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;margin-bottom:8px;}
+.kh-val.big{font-size:38px;}
+.kh-val.md{font-size:32px;}
+.kh-val.sm{font-size:24px;line-height:1.2;}
+.kh-meta{font-family:var(--fn);font-size:19px;font-weight:700;color:var(--tx3);letter-spacing:-.03em;line-height:1;margin-bottom:16px;}
+.kh-foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:flex-end;}
+.kh-dot{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 14px;font-size:14px;font-weight:800;flex-shrink:0;}
 
 
 /* ── HEADER BAR ── */
@@ -109,7 +108,7 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 #menu-cursos-btn:hover{border-color:var(--bda);}
 #menu-cursos-btn.open{border-color:var(--acc);background:var(--accg);}
 #menu-cursos-btn .mc-dot{width:7px;height:7px;border-radius:50%;background:var(--acc);flex-shrink:0;}
-#menu-cursos-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:10px;min-width:260px;box-shadow:0 8px 32px rgba(0,0,0,.28);z-index:800;display:none;}
+#menu-cursos-dropdown{display:none;position:fixed;top:auto;left:50%;transform:translateX(-50%);background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:12px;width:min(320px,90vw);box-shadow:0 8px 40px rgba(0,0,0,.38);z-index:900;}
 #menu-cursos-dropdown.open{display:block;}
 .mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .mc-item{padding:10px 12px;border-radius:9px;border:1px solid var(--bd);background:var(--sf);cursor:pointer;transition:all .15s;text-align:left;}
@@ -136,14 +135,7 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 .periodo-apply:hover{background:var(--acc);color:#fff;}
 /* ── DOT DE VARIAÇÃO nos leads por curso ── */
 .lpd-varpct{display:inline-flex;align-items:center;gap:3px;border-radius:999px;padding:2px 6px;font-size:10px;font-weight:700;margin-left:4px;flex-shrink:0;}
-/* ── COMPARAÇÃO DE PERÍODO ── */
-.periodo-comp-row{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;}
-.periodo-comp-lbl{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;}
-.comp-badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:700;}
-.comp-badge.pos{background:var(--pos)22;color:var(--pos);}
-.comp-badge.neg{background:var(--neg)22;color:var(--neg);}
-.comp-badge.neu{background:var(--grd);color:var(--tx3);}
-#periodo-comp-result{display:none;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:8px 14px;margin-top:8px;font-size:11px;}
+
 
 /* DAILY — 5 cards */
 .daily-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 2.2fr;gap:14px;margin-bottom:0;}
@@ -568,22 +560,12 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
       </div>
       <div id="periodo-custom-inputs" style="display:none;">
         <div class="periodo-custom">
-          <span class="periodo-sep-txt" style="font-weight:700;color:var(--tx2);">De</span>
+          <span class="periodo-sep-txt" style="font-weight:600;color:var(--tx2);font-size:11px;">De</span>
           <input type="date" id="periodo-de" />
           <span class="periodo-sep-txt">até</span>
           <input type="date" id="periodo-ate" />
-          <button class="periodo-apply" onclick="applyCustomPeriodo(false)">Aplicar</button>
+          <button class="periodo-apply" onclick="applyCustomPeriodo()">Aplicar</button>
         </div>
-        <div class="periodo-comp-row">
-          <span class="periodo-comp-lbl">Comparar com</span>
-          <div class="periodo-custom" style="border-style:dashed;">
-            <input type="date" id="periodo-comp-de" placeholder="De" />
-            <span class="periodo-sep-txt">até</span>
-            <input type="date" id="periodo-comp-ate" placeholder="Até" />
-            <button class="periodo-apply" onclick="applyCustomPeriodo(true)" style="border-color:var(--tagt);color:var(--tagt);background:transparent;">Comparar</button>
-          </div>
-        </div>
-        <div id="periodo-comp-result"></div>
       </div>
     </div>
   </div>
@@ -1103,16 +1085,11 @@ function renderAll(){
   const qualVarPct=((aT-qualRef)/qualRef)*100;
   const qualColor=aT>=qualRef?'var(--pos)':aT>=70?'var(--wrn)':'var(--neg)';
 
-  /* dot grande colorido */
-  const bigDot=(pct,col,prefix)=>`<span style="display:inline-flex;align-items:center;gap:5px;background:${col}20;border:1px solid ${col}44;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:800;color:${col};">
+  /* dot padronizado */
+  const heroDot=(pct,col,prefix='')=>`<span class="kh-dot" style="background:${col}20;border:1px solid ${col}44;color:${col};">
     <span style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;display:inline-block;"></span>
-    ${prefix||''}${Math.abs(pct).toFixed(1)}%
+    ${prefix}${Math.abs(pct).toFixed(1)}%
   </span>`;
-  const smDot=(pct,col,prefix)=>`<span class="kh-foot-dot" style="background:${col}22;color:${col};">
-    <span style="width:5px;height:5px;border-radius:50%;background:${col};flex-shrink:0;display:inline-block;"></span>
-    ${prefix||''}${Math.abs(pct).toFixed(1)}%
-  </span>`;
-
   /* card leads captados */
   const cardLeads=`<div class="kh">
     <div class="kh-lbl">Leads Captados <span style="display:flex;align-items:center"><span class="kh-live-dot"></span></span></div>
@@ -1137,33 +1114,37 @@ function renderAll(){
 
   /* card investimento */
   const invSharePct=invTotal&&VISAO.invMeta>0?Math.min((invTotal/VISAO.invMeta)*100,100):null;
-  const invShareColor=invSharePct>=100?'var(--pos)':invSharePct>=70?'var(--wrn)':'var(--neg)';
-  const cardInv=`<div class="kh">
-    <div class="kh-lbl">Investimento Total</div>
-    <div class="kh-val sm" style="margin-bottom:4px;">${invFmt}</div>
-    ${invSharePct!==null?bigDot(invSharePct,invShareColor):''}
-    ${invCursoHtml?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);font-size:10px;">${invCursoHtml}</div>`:''}
+  const invShareColor=invSharePct!==null?(invSharePct>=100?'var(--pos)':invSharePct>=70?'var(--wrn)':'var(--neg)'):'var(--tx3)';
+  const invMetaFmt=VISAO.invMeta>0?VISAO.invMeta.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):null;
+
+  /* helper padronizado: label / valor / meta / dot */
+  const khCard=(lbl,val,valCls,meta,dotPct,dotColor,dotPrefix,liveEl)=>`<div class="kh">
+    <div class="kh-lbl">${lbl}${liveEl?`<span style="margin-left:auto">${liveEl}</span>`:''}</div>
+    <div class="kh-val ${valCls}">${val}</div>
+    ${meta!=null?`<div class="kh-meta">${meta}</div>`:'<div style="flex:1"></div>'}
+    <div class="kh-foot">
+      ${dotPct!=null?heroDot(dotPct,dotColor,dotPrefix??''):''}
+    </div>
   </div>`;
 
   document.getElementById('kpi-row').innerHTML=
-    cardLeads+
-    cardInv+
-    `<div class="kh">
-      <div class="kh-lbl">CPL Geral</div>
-      <div class="kh-val md" style="margin-bottom:4px;">${cplFmt2}</div>
-      <div class="kh-foot">
-        <span class="kh-foot-lbl">Esperado R$ ${cplRef.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>
-        ${cplVarPct!==null?smDot(cplVarPct,cplColor,(cplVarPct>=0?'+':'')):''}
-      </div>
-    </div>`+
-    `<div class="kh">
-      <div class="kh-lbl">Qualificação</div>
-      <div class="kh-val md" style="margin-bottom:4px;">${aT.toFixed(1)}%</div>
-      <div class="kh-foot">
-        <span class="kh-foot-lbl">Esperado ${qualRef}%</span>
-        ${smDot(qualVarPct,qualColor,(qualVarPct>=0?'+':''))}
-      </div>
-    </div>`;
+    khCard('Leads Captados', fmt(tL), 'big',
+      metaLeadsTotal>0?fmt(metaLeadsTotal):null,
+      metaLeadsTotal>0?pctLeadsMeta:null, pctLeadsColor, '',
+      '<span class="kh-live-dot"></span>'
+    )+
+    khCard('Investimento Total', invFmt, 'sm',
+      invMetaFmt??null,
+      invSharePct, invShareColor, ''
+    )+
+    khCard('CPL Geral', cplFmt2, 'md',
+      'R$ '+cplRef.toLocaleString('pt-BR',{minimumFractionDigits:2}),
+      cplVarPct, cplColor, cplVarPct!=null&&cplVarPct>=0?'+':''
+    )+
+    khCard('Qualificação', aT.toFixed(1)+'%', 'md',
+      qualRef+'%',
+      qualVarPct, qualColor, qualVarPct>=0?'+':''
+    );
 
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
   const cplVb=vBadge(cplVar,true);
@@ -1311,7 +1292,12 @@ function renderAll(){
   window._resumoData={hk:_hk,d1k:_d1k,calcResumoData,fmtR,abrevNome};
   fillResumo('d1');
   buildCursoSel();
-  setPeriodo('hoje');
+  /* período inicial: hoje */
+  const _now=new Date();_now.setHours(0,0,0,0);
+  _periodoDE=new Date(_now);_periodoDE.setHours(0,0,0,0);
+  _periodoATE=new Date(_now);_periodoATE.setHours(23,59,59,999);
+  _periodoAtual='hoje';
+  document.querySelectorAll('.periodo-btn').forEach(b=>{b.classList.toggle('act',(b.getAttribute('onclick')||'').includes("'hoje'"));});
 }
 
 /* ── FILTRO DE PERÍODO ── */
@@ -1341,61 +1327,49 @@ function cntPeriodoPrev(curso){
   if(curso==='__all__')return dks.reduce((s,dk)=>s+cntDate(dk),0);
   return dks.reduce((s,dk)=>s+cntCurso(dk,curso),0);
 }
-/* ── PERÍODO & CONTEXTO ── */
+/* ── PERÍODO ── */
 function setPeriodo(p){
   _periodoAtual=p;
+  /* highlight botão ativo */
   document.querySelectorAll('.periodo-btn').forEach(b=>{
-    b.classList.toggle('act',b.getAttribute('onclick')?.includes("'"+p+"'"));
+    const match=b.getAttribute('onclick')||'';
+    b.classList.toggle('act',match.includes("'"+p+"'"));
   });
+  /* mostrar/ocultar campos custom */
   const ci=document.getElementById('periodo-custom-inputs');
-  if(ci)ci.style.display=p==='custom'?'block':'none';
-  if(p!=='custom'){
-    const now=new Date();
-    if(p==='hoje'){_periodoDE=new Date();_periodoATE=new Date();}
-    else if(p==='ontem'){_periodoDE=new Date(now-864e5);_periodoATE=new Date(now-864e5);}
-    _periodoDE?.setHours(0,0,0,0);_periodoATE?.setHours(23,59,59,999);
-    document.getElementById('periodo-comp-result').style.display='none';
-    refreshAll();
+  if(ci)ci.style.display=p==='custom'?'flex':'none';
+  if(p==='custom')return; /* aguarda o usuário aplicar */
+  /* calcular intervalo */
+  const now=new Date();
+  now.setHours(0,0,0,0);
+  if(p==='hoje'){
+    _periodoDE=new Date(now);_periodoATE=new Date(now);
+  } else if(p==='ontem'){
+    const y=new Date(now);y.setDate(y.getDate()-1);
+    _periodoDE=new Date(y);_periodoATE=new Date(y);
   }
+  _periodoDE?.setHours(0,0,0,0);
+  _periodoATE?.setHours(23,59,59,999);
+  /* só refrescar se os dados já carregaram */
+  if(_ss&&_ss.length>0)refreshAll();
 }
-function applyCustomPeriodo(isComp){
-  if(isComp){
-    const de=document.getElementById('periodo-comp-de')?.value;
-    const ate=document.getElementById('periodo-comp-ate')?.value;
-    if(!de||!ate)return;
-    const cDE=new Date(de+'T00:00:00'),cATE=new Date(ate+'T23:59:59');
-    /* calcular totais de cada período */
-    const p1dks=getDatesInPeriodo();
-    const p2dks=DBdates.filter(dk=>{const t=pdk(dk);return t>=cDE.getTime()&&t<=cATE.getTime();});
-    const t1=p1dks.reduce((s,dk)=>s+(_cursoFiltro==='__all__'?cntDate(dk):cntCurso(dk,_cursoFiltro)),0);
-    const t2=p2dks.reduce((s,dk)=>s+(_cursoFiltro==='__all__'?cntDate(dk):cntCurso(dk,_cursoFiltro)),0);
-    const diff=t1-t2,pct=t2>0?((diff/t2)*100):0;
-    const col=diff>=0?'pos':diff<0?'neg':'neu';
-    const fmt2=v=>Math.round(v).toLocaleString('pt-BR');
-    const lbl1=_periodoDE?.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' – '+_periodoATE?.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
-    const lbl2=cDE.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' – '+cATE.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
-    const res=document.getElementById('periodo-comp-result');
-    res.style.display='block';
-    res.innerHTML=`<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-      <span style="color:var(--tx2);font-size:10px;font-weight:700;">${lbl1}</span>
-      <span style="font-family:var(--fn);font-size:16px;font-weight:800;color:var(--tx);">${fmt2(t1)}</span>
-      <span style="color:var(--tx3);">vs</span>
-      <span style="color:var(--tx2);font-size:10px;font-weight:700;">${lbl2}</span>
-      <span style="font-family:var(--fn);font-size:16px;font-weight:800;color:var(--tx);">${fmt2(t2)}</span>
-      <span class="comp-badge ${col}">${diff>=0?'+':''}${fmt2(diff)} (${pct>=0?'+':''}${pct.toFixed(1)}%)</span>
-    </div>`;
-    return;
-  }
+function applyCustomPeriodo(){
   const de=document.getElementById('periodo-de')?.value;
   const ate=document.getElementById('periodo-ate')?.value;
   if(!de||!ate)return;
   _periodoDE=new Date(de+'T00:00:00');
   _periodoATE=new Date(ate+'T23:59:59');
   _periodoAtual='custom';
-  document.getElementById('periodo-comp-result').style.display='none';
+  const ci=document.getElementById('periodo-custom-inputs');
+  if(ci)ci.style.display='none';
+  document.querySelectorAll('.periodo-btn').forEach(b=>b.classList.toggle('act',
+    (b.getAttribute('onclick')||'').includes("'custom'")));
   refreshAll();
 }
-function refreshAll(){buildDatePanel();buildTaxa();buildCPL();renderHeroCards();}
+function refreshAll(){
+  if(!_ss||!_ss.length)return;
+  buildDatePanel();buildTaxa();buildCPL();
+}
 function setCtx(ctx){_ctxAtual=ctx;buildDatePanel();buildTaxa();}
 function buildCursoSel(){
   const grid=document.getElementById('mc-grid-inner');if(!grid)return;
@@ -1432,7 +1406,18 @@ function toggleMenuCursos(){
   btn.classList.toggle('open',open);
   if(open){
     buildCursoSel();
-    /* fechar ao clicar fora */
+    /* posicionar dropdown: abaixo do botão, centralizado na tela em mobile */
+    const rect=btn.getBoundingClientRect();
+    if(window.innerWidth<600){
+      dd.style.top=(rect.bottom+window.scrollY+8)+'px';
+      dd.style.left='50%';
+      dd.style.transform='translateX(-50%)';
+    } else {
+      dd.style.top=(rect.bottom+window.scrollY+8)+'px';
+      dd.style.left='auto';
+      dd.style.right=(window.innerWidth-rect.right)+'px';
+      dd.style.transform='none';
+    }
     setTimeout(()=>document.addEventListener('click',_closeMC,{once:true}),10);
   }
 }
@@ -1472,14 +1457,24 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
     document.getElementById('share-list').innerHTML='';document.getElementById('sh-toprow').innerHTML='';return;
   }
 
-  /* leads list — filtra pelo dia selecionado */
-  const prevKey=(!isTotal&&selDate)?prevDK(selDate):null;
-  const rows=_ss.map((r,i)=>{
+  /* leads list — filtra pelo período selecionado */
+  /* Se há período ativo (hoje/ontem/custom), soma os dias do período; senão usa selDate ou total */
+  const hasPeriodo=_periodoDE&&_periodoATE;
+  const dksPeriodo=hasPeriodo?getDatesInPeriodo():null;
+  const prevKey=(!isTotal&&selDate&&!hasPeriodo)?prevDK(selDate):null;
+  const rowsAll=_ss.map((r,i)=>{
     const nm=cl(r[_cC]);
-    const cnt=isTotal?n(r[_cT]):cntCurso(selDate,nm);
-    const prev=(!isTotal&&prevKey)?cntCurso(prevKey,nm):0;
+    let cnt;
+    if(hasPeriodo){
+      cnt=dksPeriodo.reduce((s,dk)=>s+cntCurso(dk,nm),0);
+    } else {
+      cnt=isTotal?n(r[_cT]):cntCurso(selDate,nm);
+    }
+    const prev=(!hasPeriodo&&!isTotal&&prevKey)?cntCurso(prevKey,nm):0;
     return{nm,cnt,prev,color:COLORS[i%COLORS.length]};
   }).sort((a,b)=>b.cnt-a.cnt);
+  /* filtro de curso */
+  const rows=_cursoFiltro==='__all__'?rowsAll:rowsAll.filter(x=>x.nm===_cursoFiltro);
 
   const _skipW=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
   function _abrev(n){const w=n.split(/\s+/);if(w.length<=3)return n;return w[0]+' '+w.slice(1).map(x=>_skipW.has(x.toLowerCase())?'':x[0].toUpperCase()+'.').filter(Boolean).join(' ');}
@@ -1502,7 +1497,7 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   const _tL=_ss.reduce((s,r)=>s+n(r[_cT]),0);
   const _tQ=_ss.reduce((s,r)=>s+Math.round(n(r[_cT])*n(r[_cQ])/100),0);
   /* usar cntDate para total real do dia — evita perda por fuzzy match de nomes */
-  const tLSel=isTotal?_tL:(!isTotal&&selDate&&selDate!=='__total__'?cntDate(selDate):rows.reduce((s,x)=>s+x.cnt,0));
+  const tLSel=rows.reduce((s,x)=>s+x.cnt,0)||_tL;
   /* qualificação: se total usa média geral; se dia específico usa taxa ponderada real por curso */
   let tQSel;
   if(isTotal){
