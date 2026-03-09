@@ -685,7 +685,18 @@ async function load(){
     parseSummary(t1);
     if(t2)parseDB(t2);
     if(t3)parseMeta(t3);
-    if(t4)parseVisao(t4);
+    if(t4){
+      /* diagnóstico temporário — mostra CSV bruto no topo */
+      window._visaoRaw=t4;
+      const dbg=document.createElement('pre');
+      dbg.id='visao-dbg';
+      dbg.style.cssText='position:fixed;top:80px;left:10px;right:10px;max-height:60vh;overflow:auto;background:#111;color:#0f0;font-size:10px;padding:12px;border-radius:8px;z-index:9999;white-space:pre-wrap;word-break:break-all;border:1px solid #0f0;';
+      dbg.textContent='[VISAO RAW - primeiras 15 linhas]\n\n'+t4.split('\n').slice(0,15).map((l,i)=>'row'+i+': '+l).join('\n');
+      document.body.appendChild(dbg);
+      /* fechar ao clicar */
+      dbg.onclick=()=>dbg.remove();
+      parseVisao(t4);
+    }
     document.getElementById('loader').style.display='none';
     renderAll();
   }catch(e){
@@ -791,94 +802,99 @@ function parseMeta(txt){
 }
 
 function parseVisao(txt){
-  if(!txt)return;
+  if(!txt||txt.trim().length<10)return;
   const lines=txt.trim().split('\n').map(l=>csvL(l));
-  VISAO={found:true,invTotal:0,cplGeral:0,cursosInv:{}};
-  /* Estrutura da aba Visão | Por cursos (imagem):
-     Linha 0 (row 1): vazia
-     Linha 1 (row 2): nome dos cursos em blocos de 4 colunas (A, E, I…)
-                      abrev do curso em col D, H, L…
-     Linha 2 (row 3): headers: Data | Leads | Investimento | CPL (repetido)
-     Linhas 3-12: dados diários por curso
-     Linha 15+ : MTD D-1, Investimento D-1 etc.
-     Linha com TOTAL: leads e investimento acumulado por curso
-  */
+  VISAO={found:true,invTotal:0,cplGeral:0,cursosInv:{},totalLeads:0};
+
+  /* Debug: primeiras 12 linhas no console */
+  console.log('[VISAO] rows='+lines.length);
+  lines.slice(0,12).forEach((r,i)=>console.log('  r'+i+':',JSON.stringify(r)));
+
   let totalLeads=0, totalInv=0;
-  const cursosInv={};
 
-  /* Passo 1: detectar colunas de blocos de curso na linha de headers (row 3 = idx 2)
-     procurar colunas com header "Leads" para encontrar offsets dos blocos */
-  let headerRowIdx=-1;
-  for(let i=0;i<Math.min(lines.length,5);i++){
-    if(lines[i].some(c=>/^leads$/i.test((c||'').trim()))){headerRowIdx=i;break;}
+  /* 1) Encontrar linha de headers que contém "Leads" e "Invest" */
+  let hIdx=-1;
+  for(let i=0;i<Math.min(lines.length,8);i++){
+    const joined=(lines[i]||[]).join('|').toLowerCase();
+    if(joined.includes('leads')&&joined.includes('invest')){hIdx=i;break;}
   }
-  if(headerRowIdx<0)headerRowIdx=2;
+  /* fallback: linha que só tem "Leads" */
+  if(hIdx<0){
+    for(let i=0;i<Math.min(lines.length,8);i++){
+      if((lines[i]||[]).some(c=>/^leads$/i.test((c||'').trim()))){hIdx=i;break;}
+    }
+  }
+  console.log('[VISAO] hIdx=',hIdx);
+  if(hIdx<0){console.warn('[VISAO] header não encontrado');return;}
 
-  /* nomes dos cursos estão na linha anterior ao header */
-  const nomeRow=lines[headerRowIdx-1]||[];
-  const hdrRow=lines[headerRowIdx]||[];
+  const hdrRow=lines[hIdx]||[];
+  const nomeRow=lines[hIdx-1]||[];
 
-  /* encontrar colunas onde aparece "Leads" → início de cada bloco */
-  const blocos=[]; // {startCol, nomeCol, invCol, leadsCol, cplCol, nome}
+  /* 2) Detectar blocos: cada "Leads" no header = início de bloco */
+  const blocos=[];
   hdrRow.forEach((h,i)=>{
     if(/^leads$/i.test((h||'').trim())){
-      /* nome do curso: na linha de cima, mesma coluna ou coluna anterior */
-      let nm=(nomeRow[i]||nomeRow[i-1]||'').trim();
-      nm=nm.replace(/\[Formulário\]\s*/i,'').trim();
-      blocos.push({leadsCol:i,invCol:i+1,cplCol:i+2,nome:nm||('Curso '+(blocos.length+1))});
+      /* nome: na linha acima, procurar célula não vazia da col i para esquerda */
+      let nm='';
+      for(let k=i;k>=Math.max(0,i-4);k--){
+        const v=(nomeRow[k]||'').trim();
+        if(v&&!/^(data|leads|invest|cpl|mtd)$/i.test(v)){nm=v;break;}
+      }
+      nm=nm.replace(/\[Formulário\]\s*/i,'').trim()||('Curso '+(blocos.length+1));
+      /* col de investimento: próxima col com "invest" no header */
+      let invC=i+1;
+      for(let k=i+1;k<Math.min(i+5,hdrRow.length);k++){
+        if(/invest/i.test((hdrRow[k]||'').trim())){invC=k;break;}
+      }
+      let cplC=invC+1;
+      for(let k=invC+1;k<Math.min(invC+4,hdrRow.length);k++){
+        if(/cpl/i.test((hdrRow[k]||'').trim())){cplC=k;break;}
+      }
+      blocos.push({leadsC:i,invC,cplC,dataC:i-1,nome:nm});
     }
   });
+  console.log('[VISAO] blocos:',JSON.stringify(blocos.map(b=>({n:b.nome,l:b.leadsC,i:b.invC}))));
 
-  /* Passo 2: percorrer linhas buscando TOTAL por bloco */
-  for(let i=headerRowIdx+1;i<lines.length;i++){
+  /* 3) Varrer linhas buscando linha TOTAL */
+  for(let i=hIdx+1;i<lines.length;i++){
     const row=lines[i];
-    /* verificar se alguma célula do início de bloco diz TOTAL */
+    const isTotal=row.some(c=>/^\s*total\s*$/i.test((c||'').trim()));
+    if(!isTotal)continue;
+    console.log('[VISAO] TOTAL row '+i+':',JSON.stringify(row));
     blocos.forEach(b=>{
-      /* a coluna de data (leadsCol-1) ou a coluna leadsCol-2 pode ter "TOTAL" */
-      const label=(row[b.leadsCol-1]||row[b.leadsCol-2]||'').trim().toUpperCase();
-      if(label==='TOTAL'){
-        const leads=n(row[b.leadsCol]||'0');
-        const inv=n(row[b.invCol]||'0');
-        const cpl=n(row[b.cplCol]||'0');
-        if(leads>0||inv>0){
-          totalLeads+=leads;
-          totalInv+=inv;
-          cursosInv[b.nome]={leads,inv,cpl};
-        }
+      const leads=n(row[b.leadsC]||'0');
+      const inv=n(row[b.invC]||'0');
+      const cpl=n(row[b.cplC]||'0');
+      console.log('[VISAO]  bloco "'+b.nome+'" leads='+leads+' inv='+inv);
+      if(leads>0||inv>0){
+        totalLeads+=leads; totalInv+=inv;
+        if(!VISAO.cursosInv[b.nome]) VISAO.cursosInv[b.nome]={leads,inv,cpl};
       }
     });
-    /* fallback global: linha com "TOTAL" na col 0 */
-    if(/^total$/i.test((row[0]||'').trim())){
-      /* somar todas as colunas de investimento */
-      blocos.forEach(b=>{
-        const inv=n(row[b.invCol]||'0');
-        const leads=n(row[b.leadsCol]||'0');
-        if(inv>0&&!cursosInv[b.nome]){
-          totalLeads+=leads;totalInv+=inv;
-          cursosInv[b.nome]={leads,inv,cpl:n(row[b.cplCol]||'0')};
-        }
-      });
-    }
   }
 
-  /* Fallback: buscar célula com "INVESTIMENTO" + pegar valor na linha seguinte */
+  /* 4) Fallback: varrer todas células com "INVESTIMENTO" e pegar valor vizinho */
   if(totalInv===0){
     for(let i=0;i<lines.length;i++){
-      for(let j=0;j<(lines[i]||[]).length;j++){
-        const v=(lines[i][j]||'').toUpperCase().trim();
-        if(v.includes('INVESTIMENTO')&&(v.includes('TOTAL')||v.includes('D-1'))){
-          const nxt=lines[i+1]||[];
-          const val=n((nxt[j]||'').trim());
-          if(val>0&&totalInv===0)totalInv=val;
+      const row=lines[i];
+      for(let j=0;j<row.length;j++){
+        const v=(row[j]||'').toUpperCase().trim();
+        if(v.includes('INVESTIMENTO')){
+          /* tentar: mesma linha próxima col, ou linha seguinte mesma col */
+          const candidates=[row[j+1],row[j+2],(lines[i+1]||[])[j],(lines[i+1]||[])[j+1]];
+          for(const c of candidates){const val=n((c||'').trim());if(val>100){totalInv=val;break;}}
+          if(totalInv>0)break;
         }
       }
+      if(totalInv>0)break;
     }
+    console.log('[VISAO] fallback invTotal=',totalInv);
   }
 
   VISAO.invTotal=totalInv;
-  VISAO.cursosInv=cursosInv;
-  VISAO.cplGeral=totalLeads>0&&totalInv>0?(totalInv/totalLeads):0;
   VISAO.totalLeads=totalLeads;
+  VISAO.cplGeral=totalLeads>0&&totalInv>0?(totalInv/totalLeads):0;
+  console.log('[VISAO] FINAL invTotal='+totalInv+' leads='+totalLeads+' cpl='+VISAO.cplGeral.toFixed(2));
 }
 
 /* utils */
