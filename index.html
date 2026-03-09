@@ -95,35 +95,43 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 .kh-foot-dot{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 9px;font-size:10px;font-weight:800;flex-shrink:0;}
 
 
-/* ── HEADER BAR (separador + título + seletor de curso) ── */
+/* ── HEADER BAR ── */
 #dash-header{padding:20px 0 0;}
-.dash-sep{height:1px;background:var(--bd);margin-bottom:20px;opacity:.5;}
-.dash-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
-.dash-title{font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;}
-.dash-title span{color:var(--acc);}
-/* seletor de curso */
-.curso-sel{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.curso-pill{font-size:11px;font-weight:700;padding:5px 13px;border-radius:999px;border:1px solid var(--bd);background:var(--sf);color:var(--tx2);cursor:pointer;transition:all .15s;white-space:nowrap;}
-.curso-pill:hover{border-color:var(--bda);color:var(--tx);}
-.curso-pill.act{background:var(--acc);border-color:var(--acc);color:#fff;}
-/* ── SELETOR DE PERÍODO estilo Meta Ads ── */
-#periodo-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
-.periodo-presets{display:flex;align-items:center;gap:4px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:4px;}
-.periodo-btn{font-size:11px;font-weight:600;padding:5px 12px;border-radius:7px;border:none;background:transparent;color:var(--tx2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.dash-sep{height:1px;background:var(--bd);margin:0 0 24px;opacity:.4;}
+.dash-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+.dash-title{font-family:var(--fn);font-size:32px;font-weight:900;letter-spacing:-.05em;color:var(--tx);line-height:1;}
+.dash-title em{color:var(--acc);font-style:normal;}
+/* ── MENU CURSOS (botão + dropdown) ── */
+#menu-cursos-wrap{position:relative;}
+#menu-cursos-btn{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:10px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;font-family:var(--f);}
+#menu-cursos-btn:hover{border-color:var(--bda);}
+#menu-cursos-btn.open{border-color:var(--acc);background:var(--accg);}
+#menu-cursos-btn .mc-dot{width:7px;height:7px;border-radius:50%;background:var(--acc);flex-shrink:0;}
+#menu-cursos-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:10px;min-width:260px;box-shadow:0 8px 32px rgba(0,0,0,.28);z-index:800;display:none;}
+#menu-cursos-dropdown.open{display:block;}
+.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.mc-item{padding:10px 12px;border-radius:9px;border:1px solid var(--bd);background:var(--sf);cursor:pointer;transition:all .15s;text-align:left;}
+.mc-item:hover{border-color:var(--bda);background:var(--cdh);}
+.mc-item.act{border-color:var(--acc);background:var(--accg);}
+.mc-item-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle;}
+.mc-item-lbl{font-size:11px;font-weight:700;color:var(--tx);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mc-item-sub{font-size:9px;color:var(--tx3);margin-top:2px;}
+.mc-geral{grid-column:1/-1;background:var(--accg);border-color:var(--bda);}
+.mc-geral.act{border-color:var(--acc);}
+/* ── SELETOR DE PERÍODO ── */
+#periodo-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.periodo-presets{display:flex;align-items:center;gap:3px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:3px;}
+.periodo-btn{font-size:11px;font-weight:600;padding:6px 14px;border-radius:8px;border:none;background:transparent;color:var(--tx2);cursor:pointer;transition:all .15s;white-space:nowrap;font-family:var(--f);}
 .periodo-btn:hover{background:var(--cdh);color:var(--tx);}
 .periodo-btn.act{background:var(--acc);color:#fff;font-weight:700;}
-.periodo-custom{display:flex;align-items:center;gap:6px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:5px 12px;}
-.periodo-custom input[type=date]{background:transparent;border:none;color:var(--tx);font-size:11px;font-weight:600;font-family:var(--f);cursor:pointer;outline:none;width:110px;}
-.periodo-custom input[type=date]::-webkit-calendar-picker-indicator{filter:var(--date-ico,invert(1));opacity:.4;cursor:pointer;}
+.periodo-custom{display:flex;align-items:center;gap:8px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:6px 14px;}
+.periodo-custom input[type=date]{background:transparent;border:none;color:var(--tx);font-size:11px;font-weight:600;font-family:var(--f);cursor:pointer;outline:none;width:120px;}
+.periodo-custom input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.4;cursor:pointer;}
 [data-theme=light] .periodo-custom input[type=date]::-webkit-calendar-picker-indicator{filter:none;}
+[data-theme=beige] .periodo-custom input[type=date]::-webkit-calendar-picker-indicator{filter:none;opacity:.6;}
 .periodo-sep-txt{font-size:11px;color:var(--tx3);}
-.periodo-apply{font-size:11px;font-weight:700;padding:4px 12px;border-radius:7px;border:1px solid var(--acc);background:var(--accg);color:var(--acc);cursor:pointer;transition:all .15s;}
+.periodo-apply{font-size:11px;font-weight:700;padding:5px 14px;border-radius:8px;border:1px solid var(--acc);background:var(--accg);color:var(--acc);cursor:pointer;transition:all .15s;font-family:var(--f);}
 .periodo-apply:hover{background:var(--acc);color:#fff;}
-/* ── DOTS HOJE / D-1 / GERAL ── */
-.ctx-dots{display:flex;align-items:center;gap:6px;}
-.ctx-dot{font-size:11px;font-weight:700;padding:4px 13px;border-radius:999px;border:1px solid var(--bd);background:var(--sf);color:var(--tx2);cursor:pointer;transition:all .15s;}
-.ctx-dot:hover{border-color:var(--bda);color:var(--tx);}
-.ctx-dot.act{background:var(--acc);border-color:var(--acc);color:#fff;}
 /* ── DOT DE VARIAÇÃO nos leads por curso ── */
 .lpd-varpct{display:inline-flex;align-items:center;gap:3px;border-radius:999px;padding:2px 6px;font-size:10px;font-weight:700;margin-left:4px;flex-shrink:0;}
 
@@ -530,34 +538,29 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
   <div id="dash-header">
     <div class="dash-sep"></div>
     <div class="dash-title-row">
-      <div>
-        <div class="dash-title" id="dash-title-txt">Visão <span>Geral</span></div>
-      </div>
-      <div class="curso-sel" id="curso-sel-wrap">
-        <!-- preenchido por JS após carregar cursos -->
+      <div class="dash-title" id="dash-title-txt">Visão <em>Geral</em></div>
+      <div id="menu-cursos-wrap">
+        <button id="menu-cursos-btn" onclick="toggleMenuCursos()">
+          <span class="mc-dot"></span>
+          <span id="menu-cursos-lbl">Menu</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div id="menu-cursos-dropdown">
+          <div id="mc-grid-inner" class="mc-grid"></div>
+        </div>
       </div>
     </div>
     <div id="periodo-bar">
       <div class="periodo-presets">
-        <button class="periodo-btn" onclick="setPeriodo('hoje')">Hoje</button>
+        <button class="periodo-btn act" onclick="setPeriodo('hoje')">Hoje</button>
         <button class="periodo-btn" onclick="setPeriodo('ontem')">Ontem</button>
-        <button class="periodo-btn act" id="pbtn-mtd" onclick="setPeriodo('mtd')">Mês atual</button>
-        <button class="periodo-btn" onclick="setPeriodo('7d')">Últimos 7 dias</button>
-        <button class="periodo-btn" onclick="setPeriodo('30d')">Últimos 30 dias</button>
-        <button class="periodo-btn" onclick="setPeriodo('custom')" id="pbtn-custom">Personalizado</button>
+        <button class="periodo-btn" onclick="setPeriodo('custom')">Personalizado</button>
       </div>
       <div class="periodo-custom" id="periodo-custom-inputs" style="display:none;">
         <input type="date" id="periodo-de" />
         <span class="periodo-sep-txt">até</span>
         <input type="date" id="periodo-ate" />
         <button class="periodo-apply" onclick="applyCustomPeriodo()">Aplicar</button>
-      </div>
-    </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;">
-      <div class="ctx-dots" id="ctx-dots">
-        <button class="ctx-dot" onclick="setCtx('hoje')">Hoje</button>
-        <button class="ctx-dot act" onclick="setCtx('d1')">D-1</button>
-        <button class="ctx-dot" onclick="setCtx('geral')">Geral</button>
       </div>
     </div>
   </div>
@@ -1077,49 +1080,67 @@ function renderAll(){
   const qualVarPct=((aT-qualRef)/qualRef)*100;
   const qualColor=aT>=qualRef?'var(--pos)':aT>=70?'var(--wrn)':'var(--neg)';
 
-  /* dot colorido com % */
-  const dot=(pct,col,prefix)=>`<span class="kh-foot-dot" style="background:${col}22;color:${col};">
-    <span style="width:6px;height:6px;border-radius:50%;background:${col};flex-shrink:0;display:inline-block;"></span>
+  /* dot grande colorido */
+  const bigDot=(pct,col,prefix)=>`<span style="display:inline-flex;align-items:center;gap:5px;background:${col}20;border:1px solid ${col}44;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:800;color:${col};">
+    <span style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;display:inline-block;"></span>
+    ${prefix||''}${Math.abs(pct).toFixed(1)}%
+  </span>`;
+  const smDot=(pct,col,prefix)=>`<span class="kh-foot-dot" style="background:${col}22;color:${col};">
+    <span style="width:5px;height:5px;border-radius:50%;background:${col};flex-shrink:0;display:inline-block;"></span>
     ${prefix||''}${Math.abs(pct).toFixed(1)}%
   </span>`;
 
-  /* card hero expandido */
-  const khFull=(lbl,val,valSz,subLbl,subVal,dotHtml,extraTop)=>`<div class="kh">
-    <div class="kh-lbl">${lbl}${extraTop?`<span style="display:flex;align-items:center">${extraTop}</span>`:''}</div>
-    <div class="kh-val ${valSz}" style="margin-bottom:4px;">${val}</div>
-    <div class="kh-sub">${subLbl}</div>
-    <div class="kh-foot">
-      <span class="kh-foot-lbl">${subVal}</span>
-      ${dotHtml}
-    </div>
+  /* card leads captados */
+  const cardLeads=`<div class="kh">
+    <div class="kh-lbl">Leads Captados <span style="display:flex;align-items:center"><span class="kh-live-dot"></span></span></div>
+    <div class="kh-val big">${fmt(tL)}</div>
+    ${metaLeadsTotal>0?`
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);">
+      <div style="font-size:10px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Meta total</div>
+      <div style="font-family:var(--fn);font-size:22px;font-weight:800;letter-spacing:-.04em;color:var(--tx2);line-height:1;margin-bottom:10px;">${fmt(metaLeadsTotal)}</div>
+      ${bigDot(pctLeadsMeta,pctLeadsColor)}
+    </div>`:''}
+  </div>`;
+
+  /* investimento por curso — de A29:C39 (VISAO.invPorCurso) */
+  const invCursoRows=VISAO.invPorCurso||[];
+  const invCursoHtml=invCursoRows.length>0
+    ?invCursoRows.map(({curso,inv,share})=>`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid var(--bd)22;">
+        <span style="font-size:10px;color:var(--tx2);font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${curso}</span>
+        <span style="font-size:10px;font-weight:700;color:var(--tx);flex-shrink:0;">${inv.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</span>
+        <span style="font-size:9px;color:var(--tx3);flex-shrink:0;min-width:32px;text-align:right;">${share.toFixed(1)}%</span>
+      </div>`).join('')
+    :'';
+
+  /* card investimento */
+  const invSharePct=invTotal&&VISAO.invMeta>0?Math.min((invTotal/VISAO.invMeta)*100,100):null;
+  const invShareColor=invSharePct>=100?'var(--pos)':invSharePct>=70?'var(--wrn)':'var(--neg)';
+  const cardInv=`<div class="kh">
+    <div class="kh-lbl">Investimento Total</div>
+    <div class="kh-val sm" style="margin-bottom:4px;">${invFmt}</div>
+    ${invSharePct!==null?bigDot(invSharePct,invShareColor):''}
+    ${invCursoHtml?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);font-size:10px;">${invCursoHtml}</div>`:''}
   </div>`;
 
   document.getElementById('kpi-row').innerHTML=
-    khFull(
-      'Leads Captados', fmt(tL), 'big',
-      metaLeadsTotal>0?`Meta: ${fmt(metaLeadsTotal)} leads`:'',
-      metaLeadsTotal>0?`${pctLeadsMeta.toFixed(0)}% atingido`:'Sem meta',
-      metaLeadsTotal>0?dot(pctLeadsMeta,pctLeadsColor):'',
-      '<span class="kh-live-dot"></span>'
-    )+
-    khFull(
-      'Investimento Total', invFmt, 'sm',
-      invTotal?'Investimento realizado':'',
-      invTotal?invFmt:'—',
-      invTotal&&metaLeadsTotal>0?dot(pctLeadsMeta,pctLeadsColor,''):''
-    )+
-    khFull(
-      'CPL Geral', cplFmt2, 'md',
-      `CPL Esperado: R$ ${cplRef.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
-      cplReal?`${cplReal<=cplRef?'▼ Abaixo':'▲ Acima'} do esperado`:'—',
-      cplVarPct!==null?dot(cplVarPct,cplColor,(cplVarPct>=0?'+':'')):''
-    )+
-    khFull(
-      'Qualificação', aT.toFixed(1)+'%', 'md',
-      `Qualif. Esperada: ${qualRef}%`,
-      `${aT>=qualRef?'▲ Acima':'▼ Abaixo'} do esperado`,
-      dot(qualVarPct,qualColor,(qualVarPct>=0?'+':''))
-    );
+    cardLeads+
+    cardInv+
+    `<div class="kh">
+      <div class="kh-lbl">CPL Geral</div>
+      <div class="kh-val md" style="margin-bottom:4px;">${cplFmt2}</div>
+      <div class="kh-foot">
+        <span class="kh-foot-lbl">Esperado R$ ${cplRef.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>
+        ${cplVarPct!==null?smDot(cplVarPct,cplColor,(cplVarPct>=0?'+':'')):''}
+      </div>
+    </div>`+
+    `<div class="kh">
+      <div class="kh-lbl">Qualificação</div>
+      <div class="kh-val md" style="margin-bottom:4px;">${aT.toFixed(1)}%</div>
+      <div class="kh-foot">
+        <span class="kh-foot-lbl">Esperado ${qualRef}%</span>
+        ${smDot(qualVarPct,qualColor,(qualVarPct>=0?'+':''))}
+      </div>
+    </div>`;
 
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
   const cplVb=vBadge(cplVar,true);
@@ -1304,33 +1325,59 @@ function applyCustomPeriodo(){
 function updatePeriodoLabel(de,ate){
   /* noop — presets já têm labels; poderia atualizar um label global aqui */
 }
-function setCtx(ctx){
-  _ctxAtual=ctx;
-  document.querySelectorAll('.ctx-dot').forEach(b=>{
-    b.classList.toggle('act',b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+ctx+"'"));
-  });
-  buildDatePanel();buildTaxa();
-}
+function setCtx(ctx){_ctxAtual=ctx;buildDatePanel();buildTaxa();}
 function buildCursoSel(){
-  const wrap=document.getElementById('curso-sel-wrap');if(!wrap)return;
-  const cursos=[{nm:'Todos',val:'__all__'},..._ss.map((r,i)=>({nm:cl(r[_cC]),val:cl(r[_cC]),col:COLORS[i%COLORS.length]}))];
-  wrap.innerHTML=cursos.map(({nm,val,col})=>{
-    const isAll=val==='__all__';
-    const act=_cursoFiltro===val;
-    const dot=col&&!isAll?`<span style="width:6px;height:6px;border-radius:50%;background:${col};display:inline-block;margin-right:3px;"></span>`:'';
-    return`<button class="curso-pill${act?' act':''}" onclick="setCursoFiltro('${val.replace(/'/g,"\'")}')">${dot}${nm.length>20?nm.slice(0,18)+'…':nm}</button>`;
-  }).join('');
-  /* atualizar título */
+  const grid=document.getElementById('mc-grid-inner');if(!grid)return;
+  const geralAct=_cursoFiltro==='__all__';
+  let items=`<div class="mc-item mc-geral${geralAct?' act':''}" onclick="setCursoFiltro('__all__')">
+    <span class="mc-item-lbl">⬡ Geral (todos os cursos)</span>
+    <span class="mc-item-sub">${fmt(_ss.reduce((s,r)=>s+n(r[_cT]),0))} leads totais</span>
+  </div>`;
+  _ss.forEach((r,i)=>{
+    const nm=cl(r[_cC]);const col=COLORS[i%COLORS.length];const act=_cursoFiltro===nm;
+    const tot=n(r[_cT]);
+    items+=`<div class="mc-item${act?' act':''}" onclick="setCursoFiltro('${nm.replace(/'/g,"\'")}')">
+      <span class="mc-item-dot" style="background:${col};"></span>
+      <span class="mc-item-lbl">${nm.length>22?nm.slice(0,20)+'…':nm}</span>
+      <span class="mc-item-sub">${fmt(tot)} leads</span>
+    </div>`;
+  });
+  grid.innerHTML=items;
+  /* label do botão */
+  const lbl=document.getElementById('menu-cursos-lbl');
+  if(lbl)lbl.textContent=_cursoFiltro==='__all__'?'Menu':(_cursoFiltro.length>16?_cursoFiltro.slice(0,14)+'…':_cursoFiltro);
+  /* título */
   const titleEl=document.getElementById('dash-title-txt');
   if(titleEl){
-    if(_cursoFiltro==='__all__')titleEl.innerHTML='Visão <span>Geral</span>';
-    else titleEl.innerHTML=`<span>${_cursoFiltro}</span>`;
+    if(_cursoFiltro==='__all__')titleEl.innerHTML='Visão <em>Geral</em>';
+    else titleEl.innerHTML=`<em>${_cursoFiltro}</em>`;
+  }
+}
+function toggleMenuCursos(){
+  const dd=document.getElementById('menu-cursos-dropdown');
+  const btn=document.getElementById('menu-cursos-btn');
+  if(!dd)return;
+  const open=dd.classList.toggle('open');
+  btn.classList.toggle('open',open);
+  if(open){
+    buildCursoSel();
+    /* fechar ao clicar fora */
+    setTimeout(()=>document.addEventListener('click',_closeMC,{once:true}),10);
+  }
+}
+function _closeMC(e){
+  const wrap=document.getElementById('menu-cursos-wrap');
+  if(wrap&&!wrap.contains(e.target)){
+    document.getElementById('menu-cursos-dropdown')?.classList.remove('open');
+    document.getElementById('menu-cursos-btn')?.classList.remove('open');
   }
 }
 function setCursoFiltro(val){
   _cursoFiltro=val;
+  document.getElementById('menu-cursos-dropdown')?.classList.remove('open');
+  document.getElementById('menu-cursos-btn')?.classList.remove('open');
   buildCursoSel();
-  buildDatePanel();buildTaxa();buildCPL();buildShare();
+  buildDatePanel();buildTaxa();buildCPL();
 }
 function buildShare(){buildDatePanel();}
 
