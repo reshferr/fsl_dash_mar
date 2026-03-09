@@ -1058,13 +1058,15 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   const qBorder=qualSel>=90?'rgba(52,211,153,.28)':'rgba(251,191,36,.22)';
   const qBg=qualSel>=90?'rgba(52,211,153,.06)':'rgba(251,191,36,.06)';
   const selLbl=isTotal?'Total Geral':dkLbl(selDate);
+  /* share bars — usa contagem do dia selecionado (ou total) */
+  const shareTot=rows.reduce((s,x)=>s+x.cnt,0)||1;
   /* anel de distribuição */
   const shRing=(()=>{
     const sz=110,cx=55,cy=55,r=42,stroke=8;
     const circ=2*Math.PI*r;
     let offset=0;
     const slices=rows.filter(x=>x.cnt>0).map(({cnt,color})=>{
-      const pct=cnt/(shareTot||1);
+      const pct=cnt/shareTot;
       const dash=pct*circ;
       const s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" stroke-linecap="butt"/>`;
       offset+=dash;
@@ -1080,9 +1082,6 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
         <div style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;">${fmt(tLSel)}<span style="font-size:12px;font-weight:600;color:var(--tx2);margin-left:4px;">leads</span></div>
       </div>
     </div>`;
-
-  /* share bars — usa contagem do dia selecionado (ou total) */
-  const shareTot=rows.reduce((s,x)=>s+x.cnt,0)||1;
   document.getElementById('share-list').innerHTML=rows.map(({nm,cnt,color})=>{
     const pct=cnt/shareTot*100;
     return`<div class="sh-item"><span class="sh-dot" style="background:${color}"></span><div class="sh-mid"><div class="sh-nome">${nm}</div><div class="sh-bw"><div class="sh-bar" style="background:${color}" data-w="${pct.toFixed(1)}"></div></div></div><div class="sh-pct" style="color:${color}">${pct.toFixed(1)}<span class="sh-sym">%</span></div></div>`;
