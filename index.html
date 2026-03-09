@@ -88,6 +88,7 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 .kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;}
 .kh-val.big{font-size:36px;}
 .kh-val.md{font-size:36px;}
+.kh-val.sm{font-size:22px;line-height:1.15;}
 .kh-sub{display:none;}
 
 /* DAILY — 5 cards */
@@ -958,12 +959,14 @@ function renderAll(){
 
   /* investimento e CPL reais da aba Visão */
   const invTotal=VISAO.found&&VISAO.invTotal>0?VISAO.invTotal:null;
-  const invFmt=invTotal?fmtR(invTotal):'—';
-  const cplReal=invTotal&&VISAO.totalLeads>0?(invTotal/VISAO.totalLeads):invTotal&&tL>0?(invTotal/tL):null;
-  const cplFmt2=cplReal?fmtR(cplReal):'—';
+  /* Investimento por extenso: "R$ 528.816,96" */
+  const invFmt=invTotal?invTotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';
+  /* CPL Geral = Investimento Total ÷ Total de Leads (planilha principal) */
+  const cplReal=invTotal&&tL>0?(invTotal/tL):null;
+  const cplFmt2=cplReal?cplReal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';
   document.getElementById('kpi-row').innerHTML=
     khv('Leads Captados',fmt(tL),'<span class="kh-live-dot"></span>','big')+
-    khv('Investimento Total',invFmt,null,'md')+
+    khv('Investimento Total',invFmt,null,'sm')+
     khv('CPL Geral',cplFmt2,cplReal?(cplReal<=70?badge('▼ Saudável','pos'):badge('▲ Elevado','neg')):null,'md')+
     khv('Qualificação',aT.toFixed(1)+'%',aT>=90?badge('▲ Alta','pos'):badge('→ Regular','warn'),'md');
 
