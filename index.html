@@ -87,6 +87,7 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 [data-theme=light] .kh{border-color:var(--bda);background:var(--sf);}
 [data-theme=beige] .kh{border-color:var(--bda);background:var(--sf);}
 .kh-lbl{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
+[data-theme=dark] .kh-lbl{color:rgba(255,255,255,.6);}
 .kh-val{font-family:var(--fn);font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;margin-bottom:8px;}
 .kh-val.big{font-size:38px;}
 .kh-val.md{font-size:32px;}
@@ -1036,6 +1037,108 @@ function progBar(pct,col,height){const p=Math.min(pct,100);return`<div class="pb
 function metaRing(pct,col,sz){sz=sz||100;const sw=8,rc=(sz/2-sw/2).toFixed(1);const circ=2*Math.PI*parseFloat(rc);const fill=(Math.min(pct,100)/100)*circ;
   return`<div class="meta-ring" style="width:${sz}px;height:${sz}px"><svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${rc}" fill="none" stroke="var(--grd)" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${rc}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-dasharray="${fill.toFixed(2)} ${(circ-fill).toFixed(2)}" stroke-linecap="round" transform="rotate(-90 ${sz/2} ${sz/2})"/></svg><div class="meta-ring-pct" style="color:${col}">${pct.toFixed(0)}<span style="font-size:11px">%</span><span class="meta-ring-sub">da meta</span></div></div>`;}
 
+/* HERO HELPERS — globais para uso em renderAll e renderHeroes */
+function heroDot(pct, col, prefix) {
+  prefix = prefix || '';
+  return '<span class="kh-dot" style="background:'+col+'20;border:1px solid '+col+'44;color:'+col+';">'
+       + '<span style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0;display:inline-block;"></span>'
+       + prefix + Math.abs(pct).toFixed(1) + '%</span>';
+}
+function khCard(lbl, val, valCls, meta, dotPct, dotColor, dotPrefix, liveEl) {
+  var liveHtml = liveEl  ? '<span style="margin-left:auto">' + liveEl + '</span>' : '';
+  var metaHtml = meta != null ? '<div class="kh-meta">' + meta + '</div>' : '<div style="flex:1;min-height:8px"></div>';
+  var dotHtml  = dotPct != null ? heroDot(dotPct, dotColor, dotPrefix || '') : '';
+  return '<div class="kh">'
+    + '<div class="kh-lbl">' + lbl + liveHtml + '</div>'
+    + '<div class="kh-val ' + valCls + '">' + val + '</div>'
+    + metaHtml
+    + '<div class="kh-foot">' + dotHtml + '</div>'
+    + '</div>';
+}
+
+/* renderHeroes — re-renderizável pelo refreshAll com filtro de período e curso */
+function renderHeroes() {
+  if (!_ss || !_ss.length) return;
+
+  /* Leads filtrados por período + curso */
+  var dksPer = getDatesInPeriodo();
+  var hasPer = dksPer && dksPer.length > 0;
+  var tL, tQ, aT;
+  if (hasPer) {
+    /* somar do DB dia a dia */
+    if (_cursoFiltro === '__all__') {
+      tL = dksPer.reduce(function(s,dk){ return s + cntDate(dk); }, 0);
+      tQ = 0;
+      _ss.forEach(function(r) {
+        var cnt = dksPer.reduce(function(s,dk){ return s + cntCurso(dk, cl(r[_cC])); }, 0);
+        tQ += Math.round(cnt * (n(r[_cQ]) / 100));
+      });
+    } else {
+      tL = dksPer.reduce(function(s,dk){ return s + cntCurso(dk, _cursoFiltro); }, 0);
+      var rC = _ss.find(function(r){ return cl(r[_cC]) === _cursoFiltro; });
+      tQ = Math.round(tL * (rC ? n(rC[_cQ]) / 100 : 0));
+    }
+    aT = tL > 0 ? (tQ / tL) * 100 : 0;
+  } else {
+    /* sem período ativo — usar total da Summary */
+    if (_cursoFiltro === '__all__') {
+      tL = _ss.reduce(function(s,r){ return s + n(r[_cT]); }, 0);
+      tQ = _ss.reduce(function(s,r){ return s + Math.round(n(r[_cT]) * n(r[_cQ]) / 100); }, 0);
+    } else {
+      var rC2 = _ss.find(function(r){ return cl(r[_cC]) === _cursoFiltro; });
+      tL = rC2 ? n(rC2[_cT]) : 0;
+      tQ = rC2 ? Math.round(tL * n(rC2[_cQ]) / 100) : 0;
+    }
+    aT = tL > 0 ? (tQ / tL) * 100 : 0;
+  }
+
+  var invTotal = VISAO.found && VISAO.invTotal > 0 ? VISAO.invTotal : null;
+  var invFmt   = invTotal ? invTotal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : '—';
+  var cplReal  = invTotal && tL > 0 ? invTotal / tL : null;
+  var cplFmt2  = cplReal  ? cplReal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : '—';
+
+  var metaLeadsTotal = META.found ? Object.values(META.cursos).reduce(function(s,c){ return s + c.metaTotal; }, 0) : 0;
+  if (_cursoFiltro !== '__all__') {
+    var mC = matchMetaCurso(_cursoFiltro);
+    metaLeadsTotal = mC ? mC.metaTotal : 0;
+  }
+  var pctLeadsMeta  = metaLeadsTotal > 0 ? Math.min(tL / metaLeadsTotal * 100, 100) : 0;
+  var pctLeadsColor = pctLeadsMeta >= 100 ? 'var(--pos)' : pctLeadsMeta >= 70 ? 'var(--wrn)' : 'var(--neg)';
+
+  var cplRef    = 60;
+  var cplVarPct = cplReal ? (cplReal - cplRef) / cplRef * 100 : null;
+  var cplColor  = cplReal && cplReal <= cplRef ? 'var(--pos)' : 'var(--neg)';
+
+  var qualRef    = 90;
+  var qualVarPct = (aT - qualRef) / qualRef * 100;
+  var qualColor  = aT >= qualRef ? 'var(--pos)' : aT >= 70 ? 'var(--wrn)' : 'var(--neg)';
+
+  var invMetaFmt   = VISAO.invMeta > 0 ? VISAO.invMeta.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : null;
+  var invSharePct  = invTotal && VISAO.invMeta > 0 ? Math.min(invTotal / VISAO.invMeta * 100, 100) : null;
+  var invShareColor = invSharePct !== null ? (invSharePct >= 100 ? 'var(--pos)' : invSharePct >= 70 ? 'var(--wrn)' : 'var(--neg)') : 'var(--tx3)';
+
+  var el = document.getElementById('kpi-row');
+  if (!el) return;
+  el.innerHTML =
+    khCard('Leads Captados', fmt(tL), 'big',
+      metaLeadsTotal > 0 ? fmt(metaLeadsTotal) : null,
+      metaLeadsTotal > 0 ? pctLeadsMeta : null, pctLeadsColor, '',
+      '<span class="kh-live-dot"></span>'
+    ) +
+    khCard('Investimento Total', invFmt, 'sm',
+      invMetaFmt || null,
+      invSharePct, invShareColor, ''
+    ) +
+    khCard('CPL Geral', cplFmt2, 'md',
+      'R$ ' + cplRef.toLocaleString('pt-BR', {minimumFractionDigits:2}),
+      cplVarPct, cplColor, cplVarPct !== null && cplVarPct >= 0 ? '+' : ''
+    ) +
+    khCard('Qualificação', aT.toFixed(1) + '%', 'md',
+      qualRef + '%',
+      qualVarPct, qualColor, qualVarPct >= 0 ? '+' : ''
+    );
+}
+
 /* RENDER ALL */
 function renderAll(){
   const now=new Date();
@@ -1086,40 +1189,13 @@ function renderAll(){
   const qualVarPct=((aT-qualRef)/qualRef)*100;
   const qualColor=aT>=qualRef?'var(--pos)':aT>=70?'var(--wrn)':'var(--neg)';
 
-  /* dot padronizado */
-  const heroDot=(pct,col,prefix='')=>`<span class="kh-dot" style="background:${col}20;border:1px solid ${col}44;color:${col};">
-    <span style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;display:inline-block;"></span>
-    ${prefix}${Math.abs(pct).toFixed(1)}%
-  </span>`;
-  /* card leads captados */
-  /* card hero padronizado */
-  const khCard=(lbl,val,valCls,meta,dotPct,dotColor,dotPrefix,liveEl)=>`<div class="kh">
-    <div class="kh-lbl">${lbl}${liveEl?`<span style="margin-left:auto">${liveEl}</span>`:''}</div>
-    <div class="kh-val ${valCls}">${val}</div>
-    ${meta!=null?`<div class="kh-meta">${meta}</div>`:'<div style="flex:1;min-height:8px"></div>'}
-    <div class="kh-foot">
-      ${dotPct!=null?heroDot(dotPct,dotColor,dotPrefix??''):''}
-    </div>
-  </div>`;
+  /* ── HERO CARDS ── */
+  const invSharePct  = invTotal && VISAO.invMeta > 0 ? Math.min(invTotal / VISAO.invMeta * 100, 100) : null;
+  const invShareColor= invSharePct !== null ? (invSharePct >= 100 ? 'var(--pos)' : invSharePct >= 70 ? 'var(--wrn)' : 'var(--neg)') : 'var(--tx3)';
+  const invMetaFmt   = VISAO.invMeta > 0 ? VISAO.invMeta.toLocaleString('pt-BR', {style:'currency',currency:'BRL'}) : null;
 
-  document.getElementById('kpi-row').innerHTML=
-    khCard('Leads Captados', fmt(tL), 'big',
-      metaLeadsTotal>0?fmt(metaLeadsTotal):null,
-      metaLeadsTotal>0?pctLeadsMeta:null, pctLeadsColor, '',
-      '<span class="kh-live-dot"></span>'
-    )+
-    khCard('Investimento Total', invFmt, 'sm',
-      invMetaFmt??null,
-      invSharePct, invShareColor, ''
-    )+
-    khCard('CPL Geral', cplFmt2, 'md',
-      'R$ '+cplRef.toLocaleString('pt-BR',{minimumFractionDigits:2}),
-      cplVarPct, cplColor, cplVarPct!=null&&cplVarPct>=0?'+':''
-    )+
-    khCard('Qualificação', aT.toFixed(1)+'%', 'md',
-      qualRef+'%',
-      qualVarPct, qualColor, qualVarPct>=0?'+':''
-    );
+
+  renderHeroes();
 
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
   const cplVb=vBadge(cplVar,true);
@@ -1343,6 +1419,7 @@ function applyCustomPeriodo(){
 }
 function refreshAll(){
   if(!_ss||!_ss.length)return;
+  renderHeroes();
   buildDatePanel();buildTaxa();buildCPL();
 }
 function setCtx(ctx){_ctxAtual=ctx;buildDatePanel();buildTaxa();}
@@ -1350,12 +1427,11 @@ function buildCursoSel(){
   const grid=document.getElementById('mc-grid-inner');if(!grid)return;
   const geralAct=_cursoFiltro==='__all__';
   let items=`<div class="mc-item mc-geral${geralAct?' act':''}" onclick="setCursoFiltro('__all__')">
-    <span class="mc-item-lbl">⬡ Geral (todos os cursos)</span>
+    <span class="mc-item-lbl">Geral</span>
   </div>`;
   _ss.forEach((r,i)=>{
     const nm=cl(r[_cC]);const col=COLORS[i%COLORS.length];const act=_cursoFiltro===nm;
-    const tot=n(r[_cT]);
-        items+=`<div class="mc-item${act?' act':''}" onclick="setCursoFiltro('${nm.replace(/'/g,"\'")}')">
+    items+=`<div class="mc-item${act?' act':''}" onclick="setCursoFiltro('${nm.replace(/'/g,"\'")}')">
       <span class="mc-item-dot" style="background:${col};"></span>
       <span class="mc-item-lbl">${nm.length>26?nm.slice(0,24)+'…':nm}</span>
     </div>`;
