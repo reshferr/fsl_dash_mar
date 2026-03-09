@@ -1063,39 +1063,34 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   const _sk2=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
   const abv2=n2=>{const w=n2.split(/\s+/);return w.length<=3?n2:w[0]+' '+w.slice(1).map(x=>_sk2.has(x.toLowerCase())?'':x[0].toUpperCase()+'.').filter(Boolean).join(' ');};
   const filtered=shRows.filter(x=>x.cnt>0);
-  document.getElementById('sh-toprow').innerHTML='';
-  document.getElementById('share-list').innerHTML=`
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      ${filtered.map(({nm,cnt,color})=>{
-        const pct=(cnt/shTotGeral*100);
-        return`<div style="display:flex;align-items:center;gap:10px;">
-          <div style="flex:1;min-width:0;">
-            <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;">
-              <span style="width:6px;height:6px;border-radius:50%;background:${color};flex-shrink:0;"></span>
-              <span style="font-size:10px;font-weight:600;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${nm}">${abv2(nm)}</span>
-            </div>
-            <div style="height:10px;background:var(--grd);border-radius:999px;overflow:hidden;position:relative;">
-              <div style="height:100%;width:0;background:${color};border-radius:999px;transition:width .8s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:5px;box-sizing:border-box;" data-w="${pct.toFixed(2)}">
-              </div>
-              <span style="position:absolute;left:${Math.min(pct,85).toFixed(1)}%;top:50%;transform:translate(-50%,-50%);font-size:8px;font-weight:800;color:#fff;pointer-events:none;white-space:nowrap;display:none;" class="sh-pct-lbl">${pct.toFixed(1)}%</span>
-            </div>
-          </div>
-          <div style="flex-shrink:0;text-align:right;min-width:52px;">
-            <div style="font-family:var(--fn);font-size:14px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1;">${fmt(cnt)}</div>
-            <div style="display:inline-flex;align-items:center;gap:3px;background:${color}22;border-radius:999px;padding:1px 6px;margin-top:3px;">
-              <span style="width:4px;height:4px;border-radius:50%;background:${color};"></span>
-              <span style="font-size:9px;font-weight:700;color:${color};">${pct.toFixed(1)}%</span>
-            </div>
-          </div>
-        </div>`;
-      }).join('')}
+  /* barra empilhada: cada segmento proporcional */
+  const segments=filtered.map(({cnt,color,nm})=>{
+    const pct=(cnt/shTotGeral*100);
+    return`<div style="flex:${pct.toFixed(3)};min-width:2px;background:${color};" title="${abv2(nm)}: ${pct.toFixed(1)}%"></div>`;
+  }).join('<div style="width:2px;background:var(--bg);flex-shrink:0;"></div>');
+  document.getElementById('sh-toprow').innerHTML=
+    `<div style="margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;">Distribuição total</span>
+        <span style="font-family:var(--fn);font-size:12px;font-weight:800;color:var(--tx);letter-spacing:-.03em;">${fmt(shTotGeral)} <span style="font-size:10px;font-weight:600;color:var(--tx3);">leads</span></span>
+      </div>
+      <div style="display:flex;height:20px;border-radius:8px;overflow:hidden;gap:0;">${segments}</div>
     </div>`;
-  raf(()=>{
-    document.querySelectorAll('#share-list [data-w]').forEach(el=>{
-      el.style.width=el.dataset.w+'%';
-      if(parseFloat(el.dataset.w)>12){const lbl=el.parentElement.querySelector('.sh-pct-lbl');if(lbl)lbl.style.display='block';}
-    });
-  });
+  /* boxes por curso */
+  document.getElementById('share-list').innerHTML=
+    `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;">
+    ${filtered.map(({nm,cnt,color})=>{
+      const pct=(cnt/shTotGeral*100).toFixed(1);
+      return`<div style="background:var(--sf);border:1px solid var(--bd);border-left:3px solid ${color};border-radius:var(--rs);padding:10px 12px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-size:10px;font-weight:600;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${nm}">${abv2(nm)}</div>
+        <div style="font-family:var(--fn);font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;">${fmt(cnt)}</div>
+        <div style="display:inline-flex;align-items:center;gap:4px;background:${color}22;border-radius:999px;padding:2px 7px;width:fit-content;">
+          <span style="width:5px;height:5px;border-radius:50%;background:${color};flex-shrink:0;"></span>
+          <span style="font-size:10px;font-weight:700;color:${color};">${pct}%</span>
+        </div>
+      </div>`;
+    }).join('')}
+    </div>`;
 }
 
 function selectDate(dk){selDate=dk;_txSel=dk;closeDD();buildDatePanel();buildTaxa();}
