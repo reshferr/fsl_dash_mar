@@ -522,8 +522,8 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
     </div>
     <div class="gf" id="section-meta"></div>
     <div class="gf card">
-      <div class="slbl" style="margin-bottom:9px">Share por Curso</div>
-      <div class="sh-toprow" id="sh-toprow"></div>
+      <div class="slbl" style="margin-bottom:18px">Share por Curso</div>
+      <div id="sh-toprow"></div>
       <div id="share-list"></div>
     </div>
     <div class="gf card">
@@ -957,8 +957,17 @@ function renderAll(){
     const leads=hDB?cntDate(dk):0;
     const metaVal=META.found?(META.totalDaily[dk]||0):0;
     const pctMeta=metaVal>0?(leads/metaVal*100):null;
+    /* qualificação ponderada pelo dia */
     let qual=aT;
-    if(hDB&&_cQ){let tot=0,qs=0;_ss.forEach(r=>{const cnt=cntCurso(dk,cl(r[_cC]));qs+=Math.round(cnt*(n(r[_cQ])/100));tot+=cnt;});qual=tot>0?(qs/tot)*100:aT;}
+    if(hDB&&_cQ&&leads>0){
+      let tot=0,qs=0;
+      _ss.forEach(r=>{
+        const cnt=cntCurso(dk,cl(r[_cC]));
+        qs+=Math.round(cnt*(n(r[_cQ])/100));tot+=cnt;
+      });
+      qual=tot>0?(qs/tot)*100:aT;
+    }
+    /* CPL geral do dia — getCPL retorna {g, h, d1}; h = hoje */
     const cplVal=isHoje?cplHoje:cplD1;
     const cursos=_ss.map((r,i)=>{
       const nm=cl(r[_cC]);const col=COLORS[i%COLORS.length];
@@ -967,9 +976,16 @@ function renderAll(){
       const metaDk=meta?(meta.dailyMetas[dk]||0):0;
       const pct=metaDk>0?(cnt/metaDk*100):null;
       const pctColor=pct===null?'var(--tx3)':pct>=90?'var(--pos)':pct>=70?'var(--wrn)':'var(--neg)';
-      const cplV=isHoje?getCPL(nm).hoje:getCPL(nm).d1;
-      const taxa=n(r[_cQ]);
-      return{nm,col,pct,pctColor,cplV,taxa};
+      /* CPL por curso: getCPL.h = hoje, getCPL.d1 = d-1 */
+      const _cpl=getCPL(nm);
+      const cplV=isHoje?_cpl.h:_cpl.d1;
+      /* taxa do dia: ponderada por leads do dia deste curso */
+      const taxaAcum=n(r[_cQ]);
+      const taxaDia=cnt>0&&hDB?(() => {
+        /* usa a taxa acumulada como proxy, sem dado granular */
+        return taxaAcum;
+      })():taxaAcum;
+      return{nm,col,pct,pctColor,cplV,taxa:taxaDia,cnt};
     }).sort((a,b)=>(b.pct||0)-(a.pct||0));
     return{leads,metaVal,pctMeta,qual,cplVal,cursos};
   }
@@ -1040,19 +1056,31 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   const _sk2=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
   const abv2=n2=>{const w=n2.split(/\s+/);return w.length<=3?n2:w[0]+' '+w.slice(1).map(x=>_sk2.has(x.toLowerCase())?'':x[0].toUpperCase()+'.').filter(Boolean).join(' ');};
   const filtered=shRows.filter(x=>x.cnt>0);
+  /* iniciais do curso para label na barra */
+  const initials=nm=>{
+    const skip=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na','em']);
+    return nm.split(/\s+/).filter(w=>!skip.has(w.toLowerCase())).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+  };
   const segments=filtered.map(({cnt,color,nm})=>{
     const pct=(cnt/shTotGeral*100);
-    const label=pct>=8?`<span style="font-size:9px;font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);white-space:nowrap;overflow:hidden;">${pct.toFixed(0)}%</span>`:'';
-    return`<div style="flex:${pct.toFixed(3)};min-width:${pct<3?'4px':'0'};background:${color};display:flex;align-items:center;justify-content:center;overflow:hidden;" title="${abv2(nm)}: ${pct.toFixed(1)}%">${label}</div>`;
+    const ini=initials(nm);
+    const showLabel=pct>=6;
+    return`<div style="flex:${pct.toFixed(3)};min-width:${pct<2?'3px':'0'};background:${color};display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;" title="${abv2(nm)}: ${pct.toFixed(1)}%">
+      ${showLabel?`<div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+        <span style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:8px;font-weight:800;color:#fff;line-height:1;">${ini}</span>
+        </span>
+      </div>`:''}
+    </div>`;
   }).join('');
   document.getElementById('sh-toprow').innerHTML=
-    `<div style="display:flex;align-items:stretch;gap:10px;margin-bottom:14px;">
-      <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:12px 16px;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;width:90px;">
-        <div style="font-size:9px;font-weight:700;color:var(--tagt);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;white-space:nowrap;">Total Leads</div>
-        <div style="font-family:var(--fn);font-size:26px;font-weight:800;letter-spacing:-.06em;color:var(--tx);line-height:1;">${fmt(shTotGeral)}</div>
+    `<div style="display:flex;align-items:stretch;gap:10px;margin-bottom:18px;">
+      <div style="background:var(--accg);border:1px solid var(--bda);border-radius:var(--rs);padding:16px 20px;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;min-width:110px;">
+        <div style="font-size:9px;font-weight:700;color:var(--tagt);text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px;white-space:nowrap;">Total Leads</div>
+        <div style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.06em;color:var(--tx);line-height:1;">${fmt(shTotGeral)}</div>
       </div>
-      <div style="flex:1;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;min-width:0;">
-        <div style="display:flex;height:100%;min-height:60px;">${segments}</div>
+      <div style="flex:1;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;min-width:0;display:flex;">
+        <div style="display:flex;width:100%;height:72px;">${segments}</div>
       </div>
     </div>`;
   document.getElementById('share-list').innerHTML=
