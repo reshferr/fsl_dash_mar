@@ -686,17 +686,24 @@ async function load(){
     if(t2)parseDB(t2);
     if(t3)parseMeta(t3);
     if(t4){
-      /* diagnóstico temporário — mostra CSV bruto no topo */
       window._visaoRaw=t4;
-      const dbg=document.createElement('pre');
-      dbg.id='visao-dbg';
-      dbg.style.cssText='position:fixed;top:80px;left:10px;right:10px;max-height:60vh;overflow:auto;background:#111;color:#0f0;font-size:10px;padding:12px;border-radius:8px;z-index:9999;white-space:pre-wrap;word-break:break-all;border:1px solid #0f0;';
-      dbg.textContent='[VISAO RAW - primeiras 15 linhas]\n\n'+t4.split('\n').slice(0,15).map((l,i)=>'row'+i+': '+l).join('\n');
-      document.body.appendChild(dbg);
-      /* fechar ao clicar */
-      dbg.onclick=()=>dbg.remove();
       parseVisao(t4);
     }
+    /* diagnóstico: mostrar status de todas as abas */
+    const dbg=document.createElement('pre');
+    dbg.id='visao-dbg';
+    dbg.style.cssText='position:fixed;top:80px;left:10px;right:10px;max-height:70vh;overflow:auto;background:#111;color:#0f0;font-size:10px;padding:12px;border-radius:8px;z-index:9999;white-space:pre-wrap;word-break:break-all;border:1px solid #0f0;';
+    const lines4=t4?t4.split('\n').slice(0,20).map((l,i)=>'r'+i+': '+l).join('\n'):'(null — aba não carregou)';
+    dbg.textContent=
+      '=== DIAGNÓSTICO ===\n'+
+      't1 (Summary): '+(t1?t1.length+'chars, rows='+t1.split('\n').length:'NULL')+'\n'+
+      't2 (DB): '+(t2?t2.length+'chars':'NULL')+'\n'+
+      't3 (Meta): '+(t3?t3.length+'chars':'NULL')+'\n'+
+      't4 (Visão): '+(t4?t4.length+'chars, rows='+t4.split('\n').length:'NULL')+'\n\n'+
+      'VISAO.found='+VISAO.found+' invTotal='+VISAO.invTotal+' leads='+VISAO.totalLeads+'\n\n'+
+      '--- t4 primeiras 20 linhas ---\n'+lines4;
+    document.body.appendChild(dbg);
+    dbg.onclick=()=>dbg.remove();
     document.getElementById('loader').style.display='none';
     renderAll();
   }catch(e){
@@ -997,10 +1004,7 @@ function renderAll(){
 
   /* investimento e CPL reais da aba Visão */
   const invTotal=VISAO.found&&VISAO.invTotal>0?VISAO.invTotal:null;
-  const cplReal=invTotal&&tL>0?(invTotal/tL):null;
   const invFmt=invTotal?fmtR(invTotal):'—';
-
-  /* CPL real = investimento / leads (ambos da aba Visão) */
   const cplReal=invTotal&&VISAO.totalLeads>0?(invTotal/VISAO.totalLeads):invTotal&&tL>0?(invTotal/tL):null;
   const cplFmt2=cplReal?fmtR(cplReal):'—';
   document.getElementById('kpi-row').innerHTML=
