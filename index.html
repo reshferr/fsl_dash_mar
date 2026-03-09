@@ -1060,33 +1060,27 @@ function buildDatePanel(hDB,hk,d1k,hC,d1C){
   /* share — sempre usa total acumulado de cada curso */
   const shTotGeral=_ss.reduce((s,r)=>s+n(r[_cT]),0)||1;
   const shRows=_ss.map((r,i)=>({nm:cl(r[_cC]),cnt:n(r[_cT]),color:COLORS[i%COLORS.length]})).sort((a,b)=>b.cnt-a.cnt);
-  /* anel */
+  /* anel maior centralizado */
   const shRing=(()=>{
-    const sz=120,cx=60,cy=60,r=48,stroke=10,circ=2*Math.PI*r;
+    const sz=180,cx=90,cy=90,r=72,stroke=14,circ=2*Math.PI*r;
     let off=0;
     const slices=shRows.filter(x=>x.cnt>0).map(({cnt,color})=>{
       const dash=(cnt/shTotGeral)*circ;
       const s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" stroke-linecap="butt"/>`;
       off+=dash; return s;
     });
-    return`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="transform:rotate(-90deg);flex-shrink:0;display:block;">${slices.join('')}</svg>`;
+    return`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="transform:rotate(-90deg);display:block;">${slices.join('')}</svg>`;
   })();
   /* abreviação */
   const _sk2=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
   const abv2=n2=>{const w=n2.split(/\s+/);return w.length<=3?n2:w[0]+' '+w.slice(1).map(x=>_sk2.has(x.toLowerCase())?'':x[0].toUpperCase()+'.').filter(Boolean).join(' ');};
   document.getElementById('sh-toprow').innerHTML=
-    `<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bd);">
-      <div style="position:relative;flex-shrink:0;">
+    `<div style="display:flex;justify-content:center;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--bd);">
+      <div style="position:relative;display:inline-block;">
         ${shRing}
-        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(0deg)">
-          <div style="font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx);letter-spacing:-.03em;line-height:1">${fmt(shTotGeral)}</div>
-          <div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-top:2px">total</div>
-        </div>
-      </div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Total por Curso</div>
-        <div style="display:flex;flex-direction:column;gap:4px;">
-          ${shRows.slice(0,3).map(({nm,cnt,color})=>`<div style="display:flex;align-items:center;gap:6px;"><span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;"></span><span style="font-size:10px;color:var(--tx2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${abv2(nm)}</span><span style="font-family:var(--fn);font-size:11px;font-weight:700;color:var(--tx);">${fmt(cnt)}</span></div>`).join('')}
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div style="font-family:var(--fn);font-size:22px;font-weight:800;color:var(--tx);letter-spacing:-.04em;line-height:1">${fmt(shTotGeral)}</div>
+          <div style="font-size:9px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-top:3px">total</div>
         </div>
       </div>
     </div>`;
