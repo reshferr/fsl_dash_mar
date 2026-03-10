@@ -833,64 +833,40 @@ function csvL(line){
 }
 
 async function load(){
-  const showErr=(title,body,log)=>{
+  const showErr=(title,body)=>{
     document.getElementById('loader').style.display='none';
     const er=document.getElementById('err');er.style.display='block';
-    const logHtml=log?`<details style="margin-top:10px"><summary style="font-size:10px;color:var(--tx3);cursor:pointer;font-family:var(--f)">Detalhes técnicos</summary><pre style="font-size:9px;color:var(--tx3);white-space:pre-wrap;word-break:break-all;background:var(--grd);padding:8px;border-radius:6px;margin-top:6px;max-height:120px;overflow-y:auto">${log}</pre></details>`:'';
     er.innerHTML=`<div style="max-width:400px;margin:0 auto;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:24px 28px;text-align:left">
       <div style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--neg);margin-bottom:8px">${title}</div>
       <div style="font-size:12px;color:var(--tx2);line-height:1.8;margin-bottom:16px">${body}</div>
       <button onclick="location.reload()" style="padding:7px 20px;border-radius:999px;border:1px solid var(--acc);background:var(--accg);color:var(--acc);cursor:pointer;font-size:12px;font-weight:700;font-family:var(--f)">Tentar novamente</button>
-      ${logHtml}
     </div>`;
   };
   if(location.protocol==='file:'){
     showErr('Arquivo aberto localmente',
-      'O dashboard precisa ser servido via HTTP.<br>Abra pelo preview do Claude.');
+      'O dashboard precisa ser servido via HTTP para acessar a planilha.<br><br>'+
+      'Abra pelo preview do Claude.');
     return;
   }
-  const logs=[];
-  const tryFetch=async(url,label)=>{
-    try{
-      const r=await fetch(url,{cache:'no-store'});
-      logs.push(label+': HTTP '+r.status+(r.ok?' OK':' FAIL'));
-      return r.ok?r:null;
-    }catch(e){
-      logs.push(label+': '+e.message);
-      return null;
-    }
-  };
   try{
     const[r1,r2,r3,r4]=await Promise.all([
-      tryFetch(PUB,'summary'),
-      tryFetch(PUB+'&gid='+DB_GID,'db'),
-      tryFetch(PUB+'&gid='+META_GID,'meta'),
-      tryFetch(PUB+'&gid='+VISAO_GID,'visao')
+      fetch(PUB,{cache:'no-store'}),
+      fetch(PUB+'&gid='+DB_GID,{cache:'no-store'}),
+      fetch(PUB+'&gid='+META_GID,{cache:'no-store'}),
+      fetch(PUB+'&gid='+VISAO_GID,{cache:'no-store'})
     ]);
-    if(!r1){
-      throw new Error('Planilha principal inacessivel');
-    }
+    if(!r1.ok)throw new Error('HTTP '+r1.status);
     const t1=await r1.text();
-    if(!t1||t1.trim().length<10)throw new Error('Planilha Summary vazia');
-    logs.push('summary: '+t1.split('\n').length+' linhas, '+t1.length+' chars');
+    if(!t1||t1.trim().length<10)throw new Error('Planilha vazia');
     parseSummary(t1);
-    if(r2){const t=await r2.text();if(t&&t.trim().length>10){parseDB(t);logs.push('db: OK');}}
-    if(r3){const t=await r3.text();if(t&&t.trim().length>10){parseMeta(t);logs.push('meta: OK');}}
-    if(r4){const t=await r4.text();if(t&&t.trim().length>10){parseVisao(t);logs.push('visao: OK');}}
+    if(r2.ok)parseDB(await r2.text());
+    if(r3.ok)parseMeta(await r3.text());
+    if(r4.ok)parseVisao(await r4.text());
     document.getElementById('loader').style.display='none';
-    try{
-      renderAll();
-    }catch(re){
-      logs.push('renderAll ERRO: '+re.message+' | '+re.stack.split('\n')[1]);
-      document.getElementById('loader').style.display='none';
-      showErr('Dados carregados, erro ao renderizar',
-        'Os dados foram recebidos mas houve um erro ao montar o painel.',
-        logs.join('\n')+'\nERRO render: '+re.message);
-    }
+    renderAll();
   }catch(e){
     showErr('Erro ao carregar dados',
-      'Verifique se a planilha está publicada em <b>Arquivo → Publicar na web → CSV</b>.',
-      logs.join('\n')+'\nERRO: '+e.message);
+      'Verifique se a planilha está publicada em <b>Arquivo → Publicar na web</b>.<br><br>Erro: '+e.message);
   }
 }
 
