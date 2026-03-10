@@ -106,6 +106,7 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 .kh-bar-fill{height:100%;border-radius:999px;transition:width .7s cubic-bezier(.4,0,.2,1);position:relative;min-width:6px;}
 .kh-bar-fill::after{content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:inherit;box-shadow:0 0 0 2px var(--cd),0 0 6px rgba(0,0,0,.25);transition:right .7s cubic-bezier(.4,0,.2,1);}
 .kh-bar-pct{font-family:var(--fn);font-size:11px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;min-width:34px;text-align:right;}
+.kh-dot-pill{border-radius:999px;font-family:var(--fn);font-size:11px;font-weight:800;padding:3px 8px;white-space:nowrap;flex-shrink:0;}
 .kh-bar-sub{font-size:9px;color:var(--tx3);font-weight:500;}
 
 
@@ -1195,33 +1196,52 @@ function progressBar(pct, col) {
     + '</div>';
 }
 
-function khCard(lbl, val, valCls, metaLbl, metaVal, pct, pctColor, liveEl){
-  var liveHtml=liveEl?'<span style="margin-left:auto">'+liveEl+'</span>':'';
+/* ── Card com barra de progresso + dot de % ── */
+function khBarDot(lbl, val, valCls, metaLbl, metaVal, pct, col, withLive){
+  var liveHtml=withLive?'<span style="margin-left:auto"><span class="kh-live-dot"></span></span>':'';
   var metaHtml=(metaLbl&&metaVal!=null)
     ?'<div class="kh-meta-row"><div class="kh-meta-lbl">'+metaLbl+'</div><div class="kh-meta-val">'+metaVal+'</div></div>'
     :'<div style="flex:1"></div>';
-
   var footHtml='';
   if(pct!=null){
     var p=Math.max(0,Math.min(pct,100));
-    var col=pctColor||'var(--acc)';
     footHtml=
-      // barra de progresso
       '<div class="kh-bar-row">'+
         '<div class="kh-bar-track">'+
           '<div class="kh-bar-fill" style="width:'+p.toFixed(1)+'%;background:'+col+'"></div>'+
         '</div>'+
-        // dot com %
-        '<span class="kh-bar-pct" style="color:'+col+'">'+p.toFixed(0)+'%</span>'+
+        '<div class="kh-dot-pill" style="background:'+col+'22;color:'+col+'">'+p.toFixed(0)+'%</div>'+
       '</div>';
   }
-
   return '<div class="kh">'+
     '<div class="kh-lbl">'+lbl+liveHtml+'</div>'+
     '<div class="kh-val '+valCls+'">'+val+'</div>'+
     metaHtml+
     '<div class="kh-foot">'+footHtml+'</div>'+
     '</div>';
+}
+
+/* ── Card com só dot de % (sem barra) ── */
+function khDotOnly(lbl, val, valCls, metaLbl, metaVal, pct, col){
+  var metaHtml=(metaLbl&&metaVal!=null)
+    ?'<div class="kh-meta-row"><div class="kh-meta-lbl">'+metaLbl+'</div><div class="kh-meta-val">'+metaVal+'</div></div>'
+    :'<div style="flex:1"></div>';
+  var footHtml='';
+  if(pct!=null){
+    var p=Math.max(0,Math.min(pct,100));
+    footHtml='<div class="kh-dot-pill" style="background:'+col+'22;color:'+col+';font-size:13px;padding:5px 12px">'+p.toFixed(0)+'%</div>';
+  }
+  return '<div class="kh">'+
+    '<div class="kh-lbl">'+lbl+'</div>'+
+    '<div class="kh-val '+valCls+'">'+val+'</div>'+
+    metaHtml+
+    '<div class="kh-foot">'+footHtml+'</div>'+
+    '</div>';
+}
+
+/* ── legado (usado em outros lugares) ── */
+function khCard(lbl, val, valCls, metaLbl, metaVal, pct, col, liveEl){
+  return khBarDot(lbl,val,valCls,metaLbl,metaVal,pct,col,!!liveEl);
 }
 
 
@@ -1231,12 +1251,12 @@ function renderHeroes(){
   var el=document.getElementById('kpi-row');
   if(!el)return;
 
-  // ── Leads e Qualificação ──
-  var dks=getDatesInPeriodo();
-  var hasPer=dks&&dks.length>0;
-  var tL=0,tQ=0,aT=0;
+  // ── Calcular leads e qualificação ──
+  var dks=getDatesInPeriodo(); // null = sem filtro de período
+  var tL=0, tQ=0;
 
-  if(hasPer){
+  if(dks!==null){
+    // Período ativo: contar do DB dia a dia
     if(_cursoFiltro==='__all__'){
       tL=dks.reduce(function(s,dk){return s+cntDate(dk);},0);
       _ss.forEach(function(r){
@@ -1249,6 +1269,7 @@ function renderHeroes(){
       tQ=Math.round(tL*(rCp?n(rCp[_cQ])/100:0));
     }
   } else {
+    // Geral: usar totais da aba Summary
     if(_cursoFiltro==='__all__'){
       tL=_ss.reduce(function(s,r){return s+n(r[_cT]);},0);
       tQ=_ss.reduce(function(s,r){return s+Math.round(n(r[_cT])*n(r[_cQ])/100);},0);
@@ -1258,89 +1279,81 @@ function renderHeroes(){
       tQ=rCg?Math.round(tL*n(rCg[_cQ])/100):0;
     }
   }
-  aT=tL>0?(tQ/tL)*100:0;
+  var aT=tL>0?(tQ/tL)*100:0;
 
-  // ── Investimento ──
-  // Para período filtrado ou curso específico, usamos VISAO
-  // CPL = investimento / leads (ambos do mesmo escopo)
-  var inv=0, invMeta=0;
+  // ── Investimento: sempre "até hoje" da aba Visão ──
+  // (não muda com filtro de período — é acumulado)
+  var inv=0, invMeta=0, metaLeads=0;
+  var stop=new Set(['para','com','de','da','do','em','e','a','o','das','dos','nos','nas']);
+  var scoreNome=function(a,b){
+    var wa=a.toLowerCase().split(/\s+/).filter(function(w){return w.length>3&&!stop.has(w);});
+    var wb=new Set(b.toLowerCase().split(/\s+/).filter(function(w){return w.length>3&&!stop.has(w);}));
+    return wa.filter(function(w){return wb.has(w);}).length;
+  };
+
   if(_cursoFiltro!=='__all__'){
-    // buscar dados do curso no VISAO.invPorCurso
-    var stop=new Set(['para','com','de','da','do','em','e','a','o','das','dos','nos','nas']);
-    var scoreF=function(a,b){
-      var wa=a.toLowerCase().split(/\s+/).filter(function(w){return w.length>3&&!stop.has(w);});
-      var wb=new Set(b.toLowerCase().split(/\s+/).filter(function(w){return w.length>3&&!stop.has(w);}));
-      return wa.filter(function(w){return wb.has(w);}).length;
-    };
-    var bestK=null,bestS=0;
+    // Buscar dados do curso no VISAO.invPorCurso
+    var bestK=null, bestS=0;
     Object.keys(VISAO.invPorCurso).forEach(function(k){
-      var s=scoreF(_cursoFiltro,k);
+      var s=scoreNome(_cursoFiltro,k);
       if(s>bestS){bestS=s;bestK=k;}
     });
     var cd=bestK&&bestS>0?VISAO.invPorCurso[bestK]:null;
-    inv=cd?cd.inv:0;
+    inv    =cd?cd.inv    :0;
     invMeta=cd?cd.metaInv:0;
+    metaLeads=cd?cd.metaLeads:0;
+    // fallback metaLeads: aba Meta
+    if(!metaLeads){var mc=matchMetaCurso(_cursoFiltro);metaLeads=mc?mc.metaTotal:0;}
   } else {
-    inv=VISAO.invTotal||0;
-    invMeta=VISAO.invMeta||0;
+    inv      =VISAO.invTotal   ||0;
+    invMeta  =VISAO.invMeta    ||0;
+    metaLeads=META.found&&META.totalMeta>0?META.totalMeta:(VISAO.invLeadsMeta||0);
   }
 
-  // ── Meta leads ──
-  var metaLeads=0;
-  if(_cursoFiltro!=='__all__'){
-    var mc=matchMetaCurso(_cursoFiltro);
-    metaLeads=mc?mc.metaTotal:0;
-    // fallback: VISAO
-    if(!metaLeads&&VISAO.invPorCurso){
-      var stop2=new Set(['para','com','de','da','do','em','e','a','o']);
-      var ckv=Object.keys(VISAO.invPorCurso).find(function(k){
-        var wa=_cursoFiltro.toLowerCase().split(/\s+/).filter(function(w){return w.length>3&&!stop2.has(w);});
-        var wb=new Set(k.toLowerCase().split(/\s+/).filter(function(w){return w.length>3&&!stop2.has(w);}));
-        return wa.filter(function(w){return wb.has(w);}).length>0;
-      });
-      if(ckv) metaLeads=VISAO.invPorCurso[ckv].metaLeads||0;
-    }
-  } else {
-    metaLeads=META.found?META.totalMeta:0;
-    if(!metaLeads) metaLeads=VISAO.invLeadsMeta||0;
-  }
-
-  // ── CPL = inv / leads ──
+  // ── CPL = investimento até hoje / leads captados até hoje ──
   var cpl=inv>0&&tL>0?inv/tL:null;
-  var cplMeta=50; // CPL esperado R$50
-  var cplPct=cpl!=null?(cplMeta/cpl)*100:null; // maior=melhor (CPL baixo é bom)
-  var cplColor=cpl!=null&&cpl<=cplMeta?'var(--pos)':'var(--neg)';
+  var cplMeta=50;
 
-  // ── % atingimento ──
-  var pctLeads=metaLeads>0?Math.min(tL/metaLeads*100,100):null;
-  var colLeads=pctLeads!=null?(pctLeads>=100?'var(--pos)':pctLeads>=70?'var(--wrn)':'var(--neg)'):'var(--tx3)';
+  // ── Formatação ──
+  var fmtBRL=function(v){return v!=null&&v>0?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';};
 
-  var pctInv=invMeta>0?Math.min(inv/invMeta*100,100):null;
-  var colInv=pctInv!=null?(pctInv>=100?'var(--pos)':pctInv>=70?'var(--wrn)':'var(--neg)'):'var(--tx3)';
+  // % atingimento leads
+  var pctL=metaLeads>0?Math.min(tL/metaLeads*100,100):null;
+  var colL=pctL!=null?(pctL>=100?'var(--pos)':pctL>=70?'var(--wrn)':'var(--neg)'):'var(--acc)';
 
+  // % atingimento investimento
+  var pctI=invMeta>0?Math.min(inv/invMeta*100,100):null;
+  var colI=pctI!=null?(pctI>=100?'var(--pos)':pctI>=70?'var(--wrn)':'var(--neg)'):'var(--acc)';
+
+  // % CPL: quanto menor o CPL, melhor — mostrar como % da meta
+  var pctC=cpl!=null&&cplMeta>0?Math.min((cplMeta/cpl)*100,100):null;
+  var colC=cpl!=null&&cpl<=cplMeta?'var(--pos)':'var(--neg)';
+
+  // % qualificação
   var qualMeta=90;
-  var pctQual=Math.min(aT/qualMeta*100,100);
-  var colQual=aT>=qualMeta?'var(--pos)':aT>=70?'var(--wrn)':'var(--neg)';
-
-  var fmtBRL=function(v){return v!=null?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';};
+  var pctQ=Math.min(aT/qualMeta*100,100);
+  var colQ=aT>=qualMeta?'var(--pos)':aT>=70?'var(--wrn)':'var(--neg)';
 
   el.innerHTML=
-    khCard('Leads Captados', fmt(tL), 'big',
+    // LEADS: barra + dot %
+    khBarDot('Leads Captados', fmt(tL), 'big',
       'Meta', metaLeads>0?fmt(metaLeads):null,
-      pctLeads, colLeads,
-      '<span class="kh-live-dot"></span>')+
-    khCard('Investimento', fmtBRL(inv||null), 'sm',
+      pctL, colL, true)+
+
+    // INVESTIMENTO: inv até hoje + meta abaixo + barra + dot %
+    khBarDot('Investimento', fmtBRL(inv||null), 'sm',
       'Meta', invMeta>0?fmtBRL(invMeta):null,
-      pctInv, colInv,
-      null)+
-    khCard('CPL', fmtBRL(cpl), 'md',
-      'Meta CPL', fmtBRL(cplMeta),
-      cplPct, cplColor,
-      null)+
-    khCard('Qualificação', aT.toFixed(1)+'%', 'md',
+      pctI, colI, false)+
+
+    // CPL: valor + meta CPL + só dot %
+    khDotOnly('CPL', fmtBRL(cpl), 'md',
+      'Meta', cplMeta>0?fmtBRL(cplMeta):null,
+      pctC, colC)+
+
+    // QUALIFICAÇÃO: valor + meta + só dot %
+    khDotOnly('Qualificação', aT.toFixed(1)+'%', 'md',
       'Meta', qualMeta+'%',
-      pctQual, colQual,
-      null);
+      pctQ, colQ);
 }
 
 
@@ -1539,11 +1552,12 @@ function renderAll(){
 /* ── FILTRO DE PERÍODO ── */
 function dkInPeriodo(dk){
   if(!_periodoDE||!_periodoATE)return true;
-  const t=pdk(dk);
-  const de=new Date(_periodoDE);de.setHours(0,0,0,0);
-  const ate=new Date(_periodoATE);ate.setHours(23,59,59,999);
-  return t>=de.getTime()&&t<=ate.getTime();
+  const t  = pdk(dk);
+  const de = pdk(_periodoDE);
+  const ate= pdk(_periodoATE);
+  return t>=de && t<=ate;
 }
+
 function getDatesInPeriodo(){if(!_periodoDE||!_periodoATE)return null;return DBdates.filter(dkInPeriodo);}
 function cntPeriodo(curso){
   const dks=getDatesInPeriodo();
@@ -1573,40 +1587,49 @@ function setPeriodo(p){
   /* mostrar/ocultar campos custom */
   const ci=document.getElementById('periodo-custom-inputs');
   if(ci)ci.style.display=p==='custom'?'block':'none';
-  /* atualizar label do dot */
+  /* atualizar label */
   const labels={'geral':'GERAL','hoje':'HOJE','ontem':'ONTEM','custom':'PERSONALIZADO'};
   const valEl=document.getElementById('periodo-dot-val');
-  if(valEl)valEl.textContent=labels[p]||p;
-  /* marcar dot como ativo se não for geral */
+  if(valEl)valEl.textContent=labels[p]||p.toUpperCase();
   const btn=document.getElementById('periodo-dot-btn');
   if(btn)btn.classList.toggle('act',p!=='geral');
-  /* fechar dropdown se não for custom */
   if(p!=='custom'){
     const dd=document.getElementById('periodo-dropdown');
     if(dd)dd.classList.remove('open');
     if(btn)btn.classList.remove('open');
   }
-  /* sem filtro de período se geral */
-  if(p==='geral'){_periodoDE=null;_periodoATE=null;}
-  else if(p==='hoje'){const d=new Date();_periodoDE=dkOf(d);_periodoATE=dkOf(d);}
-  else if(p==='ontem'){const d=new Date();d.setDate(d.getDate()-1);_periodoDE=dkOf(d);_periodoATE=dkOf(d);}
-  else return; /* custom: aguarda applyCustomPeriodo */
+  /* definir _periodoDE e _periodoATE no formato DD/MM/AAAA */
+  if(p==='geral'){
+    _periodoDE=null; _periodoATE=null;
+  } else if(p==='hoje'){
+    const d=new Date();
+    _periodoDE=dkOf(d); _periodoATE=dkOf(d);
+  } else if(p==='ontem'){
+    const d=new Date(); d.setDate(d.getDate()-1);
+    _periodoDE=dkOf(d); _periodoATE=dkOf(d);
+  } else {
+    return; /* custom: aguarda applyCustomPeriodo */
+  }
   if(_ss&&_ss.length>0)refreshAll();
 }
 
 function applyCustomPeriodo(){
-  const de=document.getElementById('periodo-de')?.value;
-  const ate=document.getElementById('periodo-ate')?.value;
-  if(!de||!ate)return;
-  _periodoDE=new Date(de+'T00:00:00');
-  _periodoATE=new Date(ate+'T23:59:59');
-  _periodoAtual='custom';
-  const ci=document.getElementById('periodo-custom-inputs');
-  if(ci)ci.style.display='none';
-  document.querySelectorAll('.periodo-btn').forEach(b=>b.classList.toggle('act',
-    (b.getAttribute('onclick')||'').includes("'custom'")));
-  refreshAll();
+  const de=document.getElementById('periodo-de');
+  const ate=document.getElementById('periodo-ate');
+  if(!de||!ate||!de.value||!ate.value)return;
+  /* input[type=date] retorna AAAA-MM-DD — converter para DD/MM/AAAA */
+  function isoToDk(s){const[y,m,d]=s.split('-');return d+'/'+m+'/'+y;}
+  _periodoDE =isoToDk(de.value);
+  _periodoATE=isoToDk(ate.value);
+  const valEl=document.getElementById('periodo-dot-val');
+  if(valEl)valEl.textContent=_periodoDE+' – '+_periodoATE;
+  const dd=document.getElementById('periodo-dropdown');
+  const btn=document.getElementById('periodo-dot-btn');
+  if(dd)dd.classList.remove('open');
+  if(btn){btn.classList.remove('open');btn.classList.add('act');}
+  if(_ss&&_ss.length>0)refreshAll();
 }
+
 function refreshAll(){
   if(!_ss||!_ss.length)return;
   renderHeroes();
