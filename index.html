@@ -842,12 +842,6 @@ async function load(){
       <button onclick="location.reload()" style="padding:7px 20px;border-radius:999px;border:1px solid var(--acc);background:var(--accg);color:var(--acc);cursor:pointer;font-size:12px;font-weight:700;font-family:var(--f)">Tentar novamente</button>
     </div>`;
   };
-  if(location.protocol==='file:'){
-    showErr('Arquivo aberto localmente',
-      'O dashboard precisa ser servido via HTTP para acessar a planilha.<br><br>'+
-      'Abra pelo preview do Claude.');
-    return;
-  }
   try{
     const[r1,r2,r3,r4]=await Promise.all([
       fetch(PUB,{cache:'no-store'}),
@@ -865,8 +859,7 @@ async function load(){
     document.getElementById('loader').style.display='none';
     renderAll();
   }catch(e){
-    showErr('Erro ao carregar dados',
-      'Verifique se a planilha está publicada em <b>Arquivo → Publicar na web</b>.<br><br>Erro: '+e.message);
+    showErr('Erro ao carregar dados','Erro: '+e.message);
   }
 }
 
