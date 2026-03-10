@@ -1506,6 +1506,21 @@ function renderAll(){
 }
 
 /* ── FILTRO DE PERÍODO ── */
+function cntDate(dk){const m=DBmap.get(dk);if(!m)return 0;let t=0;m.forEach(v=>t+=v);return t;}
+function cntCurso(dk,nome){
+  const m=DBmap.get(dk);if(!m)return 0;
+  const nn=(nome||'').toLowerCase().replace(/\[formulário\]\s*/i,'').trim();
+  for(const[k,v]of m)if(k.toLowerCase().replace(/\[formulário\]\s*/i,'').trim()===nn)return v;
+  let best=0,bestScore=0;
+  for(const[k,v]of m){
+    const kl=k.toLowerCase().replace(/\[formulário\]\s*/i,'').trim();
+    let pfx=0;while(pfx<nn.length&&pfx<kl.length&&nn[pfx]===kl[pfx])pfx++;
+    const nw=new Set(nn.split(/\s+/));const ov=kl.split(/\s+/).filter(w=>nw.has(w)).length;
+    const score=pfx*2+ov*5;
+    if(pfx>=Math.min(5,Math.min(nn.length,kl.length))&&score>bestScore){bestScore=score;best=v;}
+  }
+  return bestScore>=10?best:0;
+}
 function dkInPeriodo(dk){
   if(!_periodoDE||!_periodoATE)return true;
   const t  = pdk(dk);
