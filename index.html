@@ -721,6 +721,11 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
       <div style="font-size:9px;color:var(--wrn);margin-bottom:11px">★ dados simulados · do menor para o maior CPL · clique para expandir</div>
       <div class="cpl-list" id="cpl-list"></div>
     </div>
+    <div class="gf card" id="inv-panel" style="padding:0;overflow:hidden">
+      <div style="padding:16px 20px 12px;border-bottom:1px solid var(--bd)">
+        <div class="slbl" style="margin-bottom:0">Investimento por Curso</div>
+      </div>
+    </div>
     <div class="gf" id="section-meta"></div>
     <div class="gf card">
       <div class="slbl" style="margin-bottom:18px">Share por Curso</div>
@@ -836,6 +841,22 @@ function csvL(line){
   o.push(c.trim());return o;
 }
 
+/* ── Utilitários globais ── */
+function n(v){
+  if(!v&&v!==0)return 0;
+  let s=(v+'').trim().replace(/R\$\s*/g,'').trim();
+  /* formato BR: 1.234,56 ou 1234,56 */
+  if(/\d\.\d{3}/.test(s))s=s.replace(/\./g,'').replace(',','.');
+  else s=s.replace(',','.');
+  return parseFloat(s.replace(/[^\d.-]/g,''))||0;
+}
+function fmt(v){return Number(v).toLocaleString('pt-BR');}
+function fmtR(v){return v!=null&&v>0?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';}
+function cl(s){return(s||'').replace(/\[Formulário\]\s*/i,'').trim();}
+function dkOf(d){return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear();}
+function pdk(k){const[dd,mm,yy]=k.split('/');return new Date(+yy,+mm-1,+dd).getTime();}
+function dkLbl(dk){const[d,m,y]=dk.split('/');const mo=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];return d+'/'+(mo[+m-1]||m);}
+
 async function load(){
   const showErr=(title,body)=>{
     document.getElementById('loader').style.display='none';
@@ -905,45 +926,51 @@ function parseMeta(txt){
   const rawLines=txt.trim().split('\n');
   if(rawLines.length<2){META={found:false};return;}
   const lines=rawLines.map(l=>csvL(l));
-
   META={found:true,cursos:{},totalMeta:0,totalDaily:{},dates:[]};
 
-  // ── Localizar linha com nomes dos cursos (headers)
-  // Critério: linha que tem 2+ strings com "[Formulário]" OU 2+ nomes longos em colunas D+
-  let hdrIdx=-1, valIdx=-1;
-  for(let i=0;i<lines.length;i++){
-    const row=lines[i];
-    // contar colunas com nomes de curso (col D em diante = idx 3+)
-    const nomeCount=row.slice(3).filter(c=>(c||'').replace(/\[Formulário\]\s*/ig,'').trim().length>3).length;
-    if(nomeCount>=2){
-      hdrIdx=i;
-      // Linha seguinte com valores numéricos = linha de metas totais
-      for(let j=i+1;j<=i+3&&j<lines.length;j++){
-        const vals=lines[j].slice(3).map(c=>n(c)).filter(v=>v>0);
-        if(vals.length>=2){valIdx=j;break;}
-      }
-      if(valIdx>0)break;
-    }
-  }
+  // ── PASSO 1: D33:J34 — posições fixas (linha 33=idx32, linha 34=idx33) ──
+  const hdr33 = lines[32]||null;
+  const val34 = lines[33]||null;
 
-  if(hdrIdx>=0 && valIdx>=0){
-    const hdrRow=lines[hdrIdx];
-    const valRow=lines[valIdx];
-    for(let i=3;i<hdrRow.length;i++){
-      const nome=(hdrRow[i]||'').replace(/\[Formulário\]\s*/ig,'').trim();
-      const meta=n(valRow[i]||'');
-      if(nome.length>2 && meta>0 && !/^total$/i.test(nome)){
-        META.cursos[nome]={metaTotal:meta,dailyMetas:{}};
+  if(hdr33&&val34){
+    hdr33.forEach((c,ci)=>{
+      if(ci<3)return;
+      const nome=(c||'').replace(/\[Formulário\]\s*/ig,'').trim();
+      if(!nome||nome.length<2||/^total$/i.test(nome))return;
+      const meta=n(val34[ci]||'');
+      if(meta>0){
+        META.cursos[nome]={metaTotal:meta,dailyMetas:{},colIdx:ci};
         META.totalMeta+=meta;
       }
-    }
-    // Total geral: buscar célula "Total" no hdrRow e pegar valor correspondente na valRow
-    const totIdx=lines[hdrIdx].findIndex(c=>/^\s*total\s*$/i.test((c||'').replace(/\[Formulário\]\s*/ig,'')));
-    if(totIdx>=0){ const totGeral=n(valRow[totIdx]||''); if(totGeral>META.totalMeta)META.totalMeta=totGeral; }
+    });
+    // Total geral na col "TOTAL"
+    const totIdx=hdr33.findIndex((c,ci)=>ci>=3&&/^total$/i.test((c||'').replace(/\[Formulário\]\s*/ig,'').trim()));
+    if(totIdx>=0){const tv=n(val34[totIdx]||'');if(tv>META.totalMeta)META.totalMeta=tv;}
   }
 
-  // ── Ler dados diários: linhas com col A = data dd/mm/aaaa
-  for(let i=0;i<lines.length;i++){
+  // ── PASSO 1b: fallback — buscar qualquer par (header+valores) nas cols D+ ──
+  if(META.totalMeta===0){
+    for(let i=lines.length-2;i>=0;i--){
+      const hrow=lines[i]; const vrow=lines[i+1]||[];
+      // hrow tem nomes, vrow tem números
+      let found=false;
+      hrow.forEach((c,ci)=>{
+        if(ci<3)return;
+        const nome=(c||'').replace(/\[Formulário\]\s*/ig,'').trim();
+        if(!nome||nome.length<2||/^total$/i.test(nome))return;
+        const meta=n(vrow[ci]||'');
+        if(meta>0){
+          META.cursos[nome]={metaTotal:meta,dailyMetas:{},colIdx:ci};
+          META.totalMeta+=meta;
+          found=true;
+        }
+      });
+      if(found)break;
+    }
+  }
+
+  // ── PASSO 2: A1:I31 — dados diários (linhas idx 1..31) ──
+  for(let i=1;i<=31&&i<lines.length;i++){
     const row=lines[i];
     const label=(row[0]||'').trim();
     const dm=label.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
@@ -953,162 +980,17 @@ function parseMeta(txt){
     if(!META.dates.includes(dk))META.dates.push(dk);
     let daySum=0;
     Object.keys(META.cursos).forEach(nome=>{
-      // encontrar coluna do curso no hdrRow
-      const hdrRow=hdrIdx>=0?lines[hdrIdx]:[];
-      const ci=hdrRow.findIndex((c,idx)=>idx>=3&&(c||'').replace(/\[Formulário\]\s*/ig,'').trim()===nome);
-      const val=ci>=0?n(row[ci]||''):0;
+      const ci=META.cursos[nome].colIdx;
+      const val=(ci>=0&&ci<row.length)?n(row[ci]||''):0;
       META.cursos[nome].dailyMetas[dk]=val;
       daySum+=val;
     });
-    // total do dia: col antes de D ou soma
-    const totDia=n(row[2]||row[1]||'');
-    META.totalDaily[dk]=totDia||daySum;
+    META.totalDaily[dk]=daySum;
   }
 
   META.dates.sort((a,b)=>pdk(a)-pdk(b));
-
-  // fallback: se não achou nada com a estratégia principal, usar varredura por linha TOTAL
-  if(META.totalMeta===0){
-    lines.forEach(row=>{
-      if(row.some(c=>/^\s*total\s*$/i.test(c||''))){
-        row.forEach((c,i)=>{
-          const v=n(c);
-          if(v>META.totalMeta)META.totalMeta=v;
-        });
-      }
-    });
-  }
 }
 
-function parseVisao(txt){
-  if(!txt||txt.trim().length<10)return;
-  const lines=txt.trim().split('\n').map(l=>csvL(l));
-  VISAO={found:true,invTotal:0,invPorCurso:{},metasPorCurso:{},invMeta:0,invLeadsMeta:0};
-
-  const limpa=(v)=>(v||'').replace(/\[Formulário\]\s*/ig,'').trim();
-  const ehValor=(v)=>{ const s=(v||'').trim(); return /^R\$/.test(s)||/^\d[\d.,\s]*$/.test(s.replace(/\s/g,'')); };
-
-  // ── PASSO 1: achar linha "INVESTIMENTO ATÉ HOJE" ──
-  for(let i=0;i<lines.length-1;i++){
-    const cel0=(lines[i][0]||'').toUpperCase().trim();
-    if(!cel0.includes('INVESTIMENTO'))continue;
-
-    // Cursos: colunas B em diante que NÃO são valores monetários
-    const cursos=[];
-    lines[i].forEach((c,ci)=>{
-      if(ci===0)return;
-      const s=limpa(c);
-      if(s.length>3 && !ehValor(c)) cursos.push({ci,nome:s});
-    });
-    if(!cursos.length)continue;
-
-    // Linha seguinte: valores
-    const vrow=lines[i+1]||[];
-    VISAO.invTotal=n(vrow[0]||''); // col A = total
-    cursos.forEach(({ci,nome})=>{
-      const inv=n(vrow[ci]||'');
-      VISAO.invPorCurso[nome]={inv,metaInv:0,metaLeads:0};
-    });
-    break;
-  }
-
-  // ── PASSO 2: achar bloco "Curso / Meta de Investimento / Leads" ──
-  let inBloco=false;
-  for(let i=0;i<lines.length;i++){
-    const c0=limpa(lines[i][0]);
-    if(!c0)continue;
-
-    if(/^curso$/i.test(c0)){inBloco=true;continue;}   // header
-    if(!inBloco)continue;
-
-    if(/^total$/i.test(c0)){
-      VISAO.invMeta=n(lines[i][1]||'');
-      VISAO.invLeadsMeta=n(lines[i][2]||'');
-      break;
-    }
-
-    const metaInv=n(lines[i][1]||'');
-    const metaLeads=n(lines[i][2]||'');
-    if(c0.length>2 && (metaInv>0||metaLeads>0))
-      VISAO.metasPorCurso[c0]={metaInv,metaLeads};
-  }
-  if(!VISAO.invMeta)
-    VISAO.invMeta=Object.values(VISAO.metasPorCurso).reduce((s,v)=>s+v.metaInv,0);
-
-  // ── PASSO 3: associar metas ao invPorCurso por score de palavras ──
-  const score=(a,b)=>{
-    const stop=new Set(['para','com','de','da','do','em','e','a','o','das','dos','nos','nas','em','ao']);
-    const wa=a.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!stop.has(w));
-    const wb=new Set(b.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!stop.has(w)));
-    return wa.filter(w=>wb.has(w)).length;
-  };
-
-  Object.keys(VISAO.invPorCurso).forEach(nome=>{
-    let bestK=null,bestS=0;
-    Object.keys(VISAO.metasPorCurso).forEach(k=>{
-      const s=score(nome,k);
-      if(s>bestS){bestS=s;bestK=k;}
-    });
-    if(bestK&&bestS>0){
-      VISAO.invPorCurso[nome].metaInv=VISAO.metasPorCurso[bestK].metaInv;
-      VISAO.invPorCurso[nome].metaLeads=VISAO.metasPorCurso[bestK].metaLeads;
-    }
-  });
-  // cursos só nas metas (sem realizado ainda)
-  Object.keys(VISAO.metasPorCurso).forEach(k=>{
-    const existe=Object.keys(VISAO.invPorCurso).find(n=>score(n,k)>0);
-    if(!existe) VISAO.invPorCurso[k]={inv:0,...VISAO.metasPorCurso[k]};
-  });
-}
-
-/* utils */
-function cl(s){return(s||'').replace(/\[Formulário\]\s*/i,'').trim();}
-function n(v){
-  if(!v&&v!==0)return 0;
-  let s=(v+'').trim();
-  /* remover símbolo de moeda e espaços */
-  s=s.replace(/R\$\s*/g,'').trim();
-  /* formato BR: 528.816,96 → remover pontos de milhar, trocar vírgula por ponto */
-  if(/\d\.\d{3}/.test(s)||(/,/.test(s)&&/\./.test(s))){
-    s=s.replace(/\./g,'').replace(',','.');
-  } else {
-    s=s.replace(',','.');
-  }
-  return parseFloat(s.replace(/[^\d.-]/g,''))||0;
-}
-function fmt(v){return Math.round(v).toLocaleString('pt-BR');}
-function fmtR(v){return 'R$\u00a0'+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function dkOf(d){return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear();}
-function pdk(k){const[dd,mm,yy]=k.split('/');return new Date(+yy,+mm-1,+dd).getTime();}
-function prevDK(k){const d=new Date(pdk(k));d.setDate(d.getDate()-1);return dkOf(d);}
-function dkLbl(k){
-  const h=dkOf(new Date()),y=dkOf(new Date(Date.now()-864e5));
-  if(k===h)return'Hoje';if(k===y)return'D-1';
-  const[dd,mm]=k.split('/');return dd+'/'+mm;
-}
-function cntDate(dk){const m=DBmap.get(dk);if(!m)return 0;let t=0;m.forEach(v=>t+=v);return t;}
-function cntCurso(dk,nome){
-  const m=DBmap.get(dk);if(!m)return 0;
-  const nn=nome.toLowerCase().trim();
-  /* exact match first */
-  for(const[k,v]of m)if(k.toLowerCase().trim()===nn)return v;
-  /* fuzzy: score each key by longest common prefix / word overlap, pick best unambiguous match */
-  let best=0,bestScore=0;
-  for(const[k,v]of m){
-    const kl=k.toLowerCase().trim();
-    /* prefix score */
-    let pfx=0;while(pfx<nn.length&&pfx<kl.length&&nn[pfx]===kl[pfx])pfx++;
-    /* word overlap score */
-    const nw=new Set(nn.split(/\s+/));const kw=kl.split(/\s+/);
-    const ov=kw.filter(w=>nw.has(w)).length;
-    const score=pfx*2+ov*5;
-    /* must share at least 5 prefix chars AND all words of shorter name must appear */
-    const minLen=Math.min(nn.length,kl.length);
-    if(pfx>=Math.min(5,minLen)&&score>bestScore){bestScore=score;best=v;}
-  }
-  /* reject if score too low (prevents cross-course contamination) */
-  return bestScore>=10?best:0;
-}
 function matchMetaCurso(nm){
   if(!META.found)return null;
   /* nm is already cleaned (no [Formulário]). META keys may still have [Formulário] prefix */
@@ -1132,6 +1014,80 @@ function matchMetaCurso(nm){
   }
   return best;
 }
+function parseVisao(txt){
+  if(!txt||txt.trim().length<10)return;
+  const lines=txt.trim().split('\n').map(l=>csvL(l));
+  VISAO={found:true,invTotal:0,invPorCurso:{},metasPorCurso:{},invMeta:0,invLeadsMeta:0};
+
+  const limpa=(v)=>(v||'').replace(/\[Formulário\]\s*/ig,'').trim();
+  const ehValor=(v)=>{ const s=(v||'').trim(); return /^R\$/.test(s)||/^\d[\d.,\s]*$/.test(s.replace(/\s/g,'')); };
+  const isCursoNome=(v)=>{ const s=limpa(v); return s.length>3 && !ehValor(v) && !/^\d/.test(s); };
+
+  // ── PASSO 1: linha "INVESTIMENTO ATÉ HOJE" ──
+  for(let i=0;i<lines.length-1;i++){
+    const cel0=(lines[i][0]||'').toUpperCase().trim();
+    if(!cel0.includes('INVESTIMENTO'))continue;
+    const cursos=[];
+    lines[i].forEach((c,ci)=>{
+      if(ci===0)return;
+      const s=limpa(c);
+      if(s.length>3 && !ehValor(c)) cursos.push({ci,nome:s});
+    });
+    if(!cursos.length)continue;
+    const vrow=lines[i+1]||[];
+    VISAO.invTotal=n(vrow[0]||'');
+    cursos.forEach(({ci,nome})=>{
+      const inv=n(vrow[ci]||'');
+      VISAO.invPorCurso[nome]={inv,metaInv:0,metaLeads:0};
+    });
+    break;
+  }
+
+  // ── PASSO 2: bloco "Curso / Meta de Investimento / Leads" ──
+  let inBloco=false;
+  for(let i=0;i<lines.length;i++){
+    const c0=limpa(lines[i][0]);
+    if(!c0)continue;
+    if(/^curso$/i.test(c0)){inBloco=true;continue;}
+    if(!inBloco)continue;
+    if(/^total$/i.test(c0)){
+      VISAO.invMeta=n(lines[i][1]||'');
+      VISAO.invLeadsMeta=n(lines[i][2]||'');
+      break;
+    }
+    const metaInv=n(lines[i][1]||'');
+    const metaLeads=n(lines[i][2]||'');
+    if(c0.length>2&&(metaInv>0||metaLeads>0))
+      VISAO.metasPorCurso[c0]={metaInv,metaLeads};
+  }
+  if(!VISAO.invMeta)
+    VISAO.invMeta=Object.values(VISAO.metasPorCurso).reduce((s,v)=>s+v.metaInv,0);
+
+  // ── PASSO 3: associar metas ao invPorCurso ──
+  const scoreNome=(a,b)=>{
+    const stop=new Set(['para','com','de','da','do','em','e','a','o','das','dos','nos','nas']);
+    const wa=a.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!stop.has(w));
+    const wb=new Set(b.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!stop.has(w)));
+    return wa.filter(w=>wb.has(w)).length;
+  };
+  Object.keys(VISAO.invPorCurso).forEach(nome=>{
+    let bestK=null,bestS=0;
+    Object.keys(VISAO.metasPorCurso).forEach(k=>{
+      const s=scoreNome(nome,k);
+      if(s>bestS){bestS=s;bestK=k;}
+    });
+    if(bestK&&bestS>0){
+      VISAO.invPorCurso[nome].metaInv=VISAO.metasPorCurso[bestK].metaInv;
+      VISAO.invPorCurso[nome].metaLeads=VISAO.metasPorCurso[bestK].metaLeads;
+    }
+  });
+  Object.keys(VISAO.metasPorCurso).forEach(k=>{
+    const existe=Object.keys(VISAO.invPorCurso).find(nm=>scoreNome(nm,k)>0);
+    if(!existe) VISAO.invPorCurso[k]={inv:0,...VISAO.metasPorCurso[k]};
+  });
+}
+
+
 function raf(fn){setTimeout(()=>requestAnimationFrame(fn),50);}
 function badge(txt,cls){return`<span class="badge ${cls}">${txt}</span>`;}
 function vBadge(val,inv){const good=inv?(val<=0):(val>=0);const sym=val<=0?'▼':'▲';return badge(sym+Math.abs(val).toFixed(1)+'%',good?'pos':'neg');}
@@ -1630,11 +1586,82 @@ function applyCustomPeriodo(){
   if(_ss&&_ss.length>0)refreshAll();
 }
 
+function buildInvestimento(){
+  const el=document.getElementById('inv-panel');
+  if(!el)return;
+  if(!VISAO||!VISAO.invTotal){el.innerHTML='<div style="padding:16px;color:var(--tx3);font-size:12px">Dados de investimento não disponíveis</div>';return;}
+
+  const fmtB=v=>v>0?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';
+  const bar=(pct,col)=>{
+    const p=Math.max(0,Math.min(pct||0,100));
+    return `<div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+      <div style="flex:1;height:5px;background:var(--grd);border-radius:999px;overflow:visible;position:relative">
+        <div style="height:100%;width:${p.toFixed(1)}%;background:${col};border-radius:999px;position:relative">
+          <div style="position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:${col};box-shadow:0 0 0 2px var(--cd)"></div>
+        </div>
+      </div>
+      <span style="font-family:var(--fn);font-size:10px;font-weight:800;color:${col};min-width:30px;text-align:right">${p.toFixed(0)}%</span>
+    </div>`;
+  };
+  const colFor=p=>p>=100?'var(--pos)':p>=70?'var(--wrn)':'var(--neg)';
+
+  // Filtrar por curso se necessário
+  const cursos = _cursoFiltro==='__all__'
+    ? Object.entries(VISAO.invPorCurso)
+    : Object.entries(VISAO.invPorCurso).filter(([k])=>{
+        const wa=k.toLowerCase().split(/\s+/).filter(w=>w.length>3);
+        const wb=new Set(_cursoFiltro.toLowerCase().split(/\s+/).filter(w=>w.length>3));
+        return wa.filter(w=>wb.has(w)).length>0;
+      });
+
+  const invTot = _cursoFiltro==='__all__' ? VISAO.invTotal : (cursos[0]?.[1]?.inv||0);
+  const invMeta= _cursoFiltro==='__all__' ? VISAO.invMeta  : (cursos[0]?.[1]?.metaInv||0);
+  const pctTot = invMeta>0 ? Math.min(invTot/invMeta*100,100) : null;
+  const colTot = pctTot!=null ? colFor(pctTot) : 'var(--acc)';
+
+  // Total geral no topo
+  let html=`<div style="padding:16px 20px 12px;border-bottom:1px solid var(--bd)">
+    <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Total Investido</div>
+    <div style="font-family:var(--fn);font-size:26px;font-weight:800;letter-spacing:-.04em;color:var(--tx)">${fmtB(invTot)}</div>
+    ${invMeta>0?`<div style="font-size:10px;color:var(--tx3);margin-top:2px">Meta: ${fmtB(invMeta)}</div>`:''}
+    ${pctTot!=null?bar(pctTot,colTot):''}
+  </div>`;
+
+  // Lista por curso
+  if(_cursoFiltro==='__all__' && cursos.length>0){
+    html+=`<div style="padding:8px 0">`;
+    cursos.forEach(([nome,d],i)=>{
+      const col=COLORS[i%COLORS.length];
+      const p=d.metaInv>0?Math.min(d.inv/d.metaInv*100,100):null;
+      const cpl=d.inv>0&&d.leads>0?d.inv/d.leads:null;
+      html+=`<div style="padding:10px 20px;border-bottom:1px solid var(--bd)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+          <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0">
+            <div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0"></div>
+            <div style="font-size:11px;font-weight:600;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nome}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--tx)">${fmtB(d.inv)}</div>
+            ${d.metaInv>0?`<div style="font-size:9px;color:var(--tx3)">Meta: ${fmtB(d.metaInv)}</div>`:''}
+          </div>
+        </div>
+        ${p!=null?bar(p,colFor(p)):''}
+        ${cpl!=null?`<div style="font-size:9px;color:var(--tx3);margin-top:4px">CPL: ${cpl.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`:''}
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  el.innerHTML=html;
+}
+
+
 function refreshAll(){
   if(!_ss||!_ss.length)return;
   renderHeroes();
   buildDatePanel();buildTaxa();buildCPL();
   buildResumo();
+  buildInvestimento();
 }
 function setCtx(ctx){_ctxAtual=ctx;buildDatePanel();buildTaxa();}
 function buildCursoSel(){
