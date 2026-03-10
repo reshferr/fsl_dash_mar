@@ -984,95 +984,79 @@ function parseVisao(txt){
   const lines=txt.trim().split('\n').map(l=>csvL(l));
   VISAO={found:true,invTotal:0,invPorCurso:{},metasPorCurso:{},invMeta:0,invLeadsMeta:0};
 
-  const clean=(v)=>(v||'').replace(/\[Formulário\]\s*/ig,'').trim();
-  const isMonetary=(v)=>(/R\$|^\d[\d.,]+$/).test((v||'').trim());
-  const isCursoNome=(v)=>{ const s=clean(v); return s.length>3 && !isMonetary(v) && !/^\d/.test(s); };
+  const limpa=(v)=>(v||'').replace(/\[Formulário\]\s*/ig,'').trim();
+  const ehValor=(v)=>{ const s=(v||'').trim(); return /^R\$/.test(s)||/^\d[\d.,\s]*$/.test(s.replace(/\s/g,'')); };
 
-  // ── 1. Linha "INVESTIMENTO ATÉ HOJE": col A = label, col B..H = nomes dos cursos
-  //       Linha seguinte: col A = total geral, col B..H = valores por curso
+  // ── PASSO 1: achar linha "INVESTIMENTO ATÉ HOJE" ──
   for(let i=0;i<lines.length-1;i++){
-    const row=lines[i];
-    const colA=(row[0]||'').toUpperCase().replace(/\s+/g,' ').trim();
-    if(!colA.includes('INVESTIMENTO'))continue;
+    const cel0=(lines[i][0]||'').toUpperCase().trim();
+    if(!cel0.includes('INVESTIMENTO'))continue;
 
-    const nomeCols=[];
-    row.forEach((c,ci)=>{
+    // Cursos: colunas B em diante que NÃO são valores monetários
+    const cursos=[];
+    lines[i].forEach((c,ci)=>{
       if(ci===0)return;
-      const s=clean(c);
-      if(s.length>3 && !isMonetary(c)) nomeCols.push({ci,nome:s});
+      const s=limpa(c);
+      if(s.length>3 && !ehValor(c)) cursos.push({ci,nome:s});
     });
-    if(nomeCols.length===0)continue;
+    if(!cursos.length)continue;
 
+    // Linha seguinte: valores
     const vrow=lines[i+1]||[];
-    // col A da vrow = total geral (ex: "R$ 570.315,28")
-    VISAO.invTotal=n(vrow[0]||'');
-
-    nomeCols.forEach(({ci,nome})=>{
+    VISAO.invTotal=n(vrow[0]||''); // col A = total
+    cursos.forEach(({ci,nome})=>{
       const inv=n(vrow[ci]||'');
       VISAO.invPorCurso[nome]={inv,metaInv:0,metaLeads:0};
     });
     break;
   }
 
-  // ── 2. Bloco A29:B39: "Curso / Meta de Investimento / Leads"
-  //       col A = [Formulário] Curso, col B = Meta Inv R$, col C = Leads meta
-  //       última linha = "Total"
-  let inMeta=false;
+  // ── PASSO 2: achar bloco "Curso / Meta de Investimento / Leads" ──
+  let inBloco=false;
   for(let i=0;i<lines.length;i++){
-    const row=lines[i];
-    const colA=clean(row[0]);
-    if(!colA)continue;
+    const c0=limpa(lines[i][0]);
+    if(!c0)continue;
 
-    // detectar header "Curso"
-    if(/^curso$/i.test(colA)){ inMeta=true; continue; }
+    if(/^curso$/i.test(c0)){inBloco=true;continue;}   // header
+    if(!inBloco)continue;
 
-    // linha Total
-    if(/^total$/i.test(colA)){
-      VISAO.invMeta=n(row[1]||'');
-      VISAO.invLeadsMeta=n(row[2]||'');
+    if(/^total$/i.test(c0)){
+      VISAO.invMeta=n(lines[i][1]||'');
+      VISAO.invLeadsMeta=n(lines[i][2]||'');
       break;
     }
 
-    // linha de curso
-    if(inMeta && isCursoNome(colA)){
-      const metaInv=n(row[1]||'');
-      const metaLeads=n(row[2]||'');
-      if(metaInv>0) VISAO.metasPorCurso[colA]={metaInv,metaLeads};
-    }
+    const metaInv=n(lines[i][1]||'');
+    const metaLeads=n(lines[i][2]||'');
+    if(c0.length>2 && (metaInv>0||metaLeads>0))
+      VISAO.metasPorCurso[c0]={metaInv,metaLeads};
   }
   if(!VISAO.invMeta)
-    VISAO.invMeta=Object.values(VISAO.metasPorCurso).reduce((s,v)=>s+(v.metaInv||0),0);
+    VISAO.invMeta=Object.values(VISAO.metasPorCurso).reduce((s,v)=>s+v.metaInv,0);
 
-  // ── 3. Associar metas aos cursos realizados
-  //       Match exato primeiro, depois por palavras-chave únicas do nome
-  const scoreMatch=(a,b)=>{
-    a=a.toLowerCase().replace(/\[formulário\]\s*/ig,'').replace(/\s+/g,' ').trim();
-    b=b.toLowerCase().replace(/\[formulário\]\s*/ig,'').replace(/\s+/g,' ').trim();
-    if(a===b)return 100;
-    // palavras com >4 chars, excluindo stop-words
-    const stop=new Set(['para','com','de','da','do','em','e','a','o','aos','das','dos','nos','nas']);
-    const aw=a.split(/\s+/).filter(w=>w.length>4&&!stop.has(w));
-    const bw=new Set(b.split(/\s+/).filter(w=>w.length>4&&!stop.has(w)));
-    const hits=aw.filter(w=>bw.has(w)).length;
-    return hits;
+  // ── PASSO 3: associar metas ao invPorCurso por score de palavras ──
+  const score=(a,b)=>{
+    const stop=new Set(['para','com','de','da','do','em','e','a','o','das','dos','nos','nas','em','ao']);
+    const wa=a.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!stop.has(w));
+    const wb=new Set(b.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!stop.has(w)));
+    return wa.filter(w=>wb.has(w)).length;
   };
 
   Object.keys(VISAO.invPorCurso).forEach(nome=>{
-    let bestKey=null, bestScore=0;
+    let bestK=null,bestS=0;
     Object.keys(VISAO.metasPorCurso).forEach(k=>{
-      const s=scoreMatch(nome,k);
-      if(s>bestScore){bestScore=s;bestKey=k;}
+      const s=score(nome,k);
+      if(s>bestS){bestS=s;bestK=k;}
     });
-    if(bestKey && bestScore>0){
-      VISAO.invPorCurso[nome].metaInv=VISAO.metasPorCurso[bestKey].metaInv;
-      VISAO.invPorCurso[nome].metaLeads=VISAO.metasPorCurso[bestKey].metaLeads;
+    if(bestK&&bestS>0){
+      VISAO.invPorCurso[nome].metaInv=VISAO.metasPorCurso[bestK].metaInv;
+      VISAO.invPorCurso[nome].metaLeads=VISAO.metasPorCurso[bestK].metaLeads;
     }
   });
-
-  // Cursos só nas metas (sem realizado)
-  Object.keys(VISAO.metasPorCurso).forEach(nome=>{
-    const existe=Object.keys(VISAO.invPorCurso).find(k=>scoreMatch(k,nome)>0);
-    if(!existe) VISAO.invPorCurso[nome]={inv:0,metaInv:VISAO.metasPorCurso[nome].metaInv,metaLeads:VISAO.metasPorCurso[nome].metaLeads};
+  // cursos só nas metas (sem realizado ainda)
+  Object.keys(VISAO.metasPorCurso).forEach(k=>{
+    const existe=Object.keys(VISAO.invPorCurso).find(n=>score(n,k)>0);
+    if(!existe) VISAO.invPorCurso[k]={inv:0,...VISAO.metasPorCurso[k]};
   });
 }
 
@@ -1211,137 +1195,154 @@ function progressBar(pct, col) {
     + '</div>';
 }
 
-function khCard(lbl, val, valCls, metaLbl, metaVal, barPct, barColor, liveEl) {
-  var liveHtml = liveEl ? '<span style="margin-left:auto">' + liveEl + '</span>' : '';
-  var metaHtml = (metaLbl && metaVal != null)
-    ? '<div class="kh-meta-row">'
-      + '<div class="kh-meta-lbl">' + metaLbl + '</div>'
-      + '<div class="kh-meta-val">' + metaVal + '</div>'
-      + '</div>'
-    : '<div style="flex:1"></div>';
-  var barHtml = barPct != null
-    ? progressBar(barPct, barColor)
-      + '<div class="kh-bar-sub">' + (barPct >= 0 ? 'atingido' : 'abaixo') + ' da meta</div>'
-    : '';
-  return '<div class="kh">'
-    + '<div class="kh-lbl">' + lbl + liveHtml + '</div>'
-    + '<div class="kh-val ' + valCls + '">' + val + '</div>'
-    + metaHtml
-    + '<div class="kh-foot">' + barHtml + '</div>'
-    + '</div>';
+function khCard(lbl, val, valCls, metaLbl, metaVal, pct, pctColor, liveEl){
+  var liveHtml=liveEl?'<span style="margin-left:auto">'+liveEl+'</span>':'';
+  var metaHtml=(metaLbl&&metaVal!=null)
+    ?'<div class="kh-meta-row"><div class="kh-meta-lbl">'+metaLbl+'</div><div class="kh-meta-val">'+metaVal+'</div></div>'
+    :'<div style="flex:1"></div>';
+
+  var footHtml='';
+  if(pct!=null){
+    var p=Math.max(0,Math.min(pct,100));
+    var col=pctColor||'var(--acc)';
+    footHtml=
+      // barra de progresso
+      '<div class="kh-bar-row">'+
+        '<div class="kh-bar-track">'+
+          '<div class="kh-bar-fill" style="width:'+p.toFixed(1)+'%;background:'+col+'"></div>'+
+        '</div>'+
+        // dot com %
+        '<span class="kh-bar-pct" style="color:'+col+'">'+p.toFixed(0)+'%</span>'+
+      '</div>';
+  }
+
+  return '<div class="kh">'+
+    '<div class="kh-lbl">'+lbl+liveHtml+'</div>'+
+    '<div class="kh-val '+valCls+'">'+val+'</div>'+
+    metaHtml+
+    '<div class="kh-foot">'+footHtml+'</div>'+
+    '</div>';
 }
 
 
 /* renderHeroes — re-renderizável pelo refreshAll com filtro de período e curso */
-function renderHeroes() {
-  if (!_ss || !_ss.length) return;
+function renderHeroes(){
+  if(!_ss||!_ss.length)return;
+  var el=document.getElementById('kpi-row');
+  if(!el)return;
 
-  /* Leads filtrados por período + curso */
-  var dksPer = getDatesInPeriodo();
-  var hasPer = dksPer && dksPer.length > 0;
-  var tL, tQ, aT;
-  if (hasPer) {
-    /* somar do DB dia a dia */
-    if (_cursoFiltro === '__all__') {
-      tL = dksPer.reduce(function(s,dk){ return s + cntDate(dk); }, 0);
-      tQ = 0;
-      _ss.forEach(function(r) {
-        var cnt = dksPer.reduce(function(s,dk){ return s + cntCurso(dk, cl(r[_cC])); }, 0);
-        tQ += Math.round(cnt * (n(r[_cQ]) / 100));
+  // ── Leads e Qualificação ──
+  var dks=getDatesInPeriodo();
+  var hasPer=dks&&dks.length>0;
+  var tL=0,tQ=0,aT=0;
+
+  if(hasPer){
+    if(_cursoFiltro==='__all__'){
+      tL=dks.reduce(function(s,dk){return s+cntDate(dk);},0);
+      _ss.forEach(function(r){
+        var cnt=dks.reduce(function(s,dk){return s+cntCurso(dk,cl(r[_cC]));},0);
+        tQ+=Math.round(cnt*(n(r[_cQ])/100));
       });
     } else {
-      tL = dksPer.reduce(function(s,dk){ return s + cntCurso(dk, _cursoFiltro); }, 0);
-      var rC = _ss.find(function(r){ return cl(r[_cC]) === _cursoFiltro; });
-      tQ = Math.round(tL * (rC ? n(rC[_cQ]) / 100 : 0));
+      tL=dks.reduce(function(s,dk){return s+cntCurso(dk,_cursoFiltro);},0);
+      var rCp=_ss.find(function(r){return cl(r[_cC])===_cursoFiltro;});
+      tQ=Math.round(tL*(rCp?n(rCp[_cQ])/100:0));
     }
-    aT = tL > 0 ? (tQ / tL) * 100 : 0;
   } else {
-    /* sem período ativo — usar total da Summary */
-    if (_cursoFiltro === '__all__') {
-      tL = _ss.reduce(function(s,r){ return s + n(r[_cT]); }, 0);
-      tQ = _ss.reduce(function(s,r){ return s + Math.round(n(r[_cT]) * n(r[_cQ]) / 100); }, 0);
+    if(_cursoFiltro==='__all__'){
+      tL=_ss.reduce(function(s,r){return s+n(r[_cT]);},0);
+      tQ=_ss.reduce(function(s,r){return s+Math.round(n(r[_cT])*n(r[_cQ])/100);},0);
     } else {
-      var rC2 = _ss.find(function(r){ return cl(r[_cC]) === _cursoFiltro; });
-      tL = rC2 ? n(rC2[_cT]) : 0;
-      tQ = rC2 ? Math.round(tL * n(rC2[_cQ]) / 100) : 0;
+      var rCg=_ss.find(function(r){return cl(r[_cC])===_cursoFiltro;});
+      tL=rCg?n(rCg[_cT]):0;
+      tQ=rCg?Math.round(tL*n(rCg[_cQ])/100):0;
     }
-    aT = tL > 0 ? (tQ / tL) * 100 : 0;
   }
+  aT=tL>0?(tQ/tL)*100:0;
 
-  var invTotal = VISAO.found && VISAO.invTotal > 0 ? VISAO.invTotal : null;
-  var invFmt   = invTotal ? invTotal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : '—';
-  var cplReal  = invTotal && tL > 0 ? invTotal / tL : null;
-  var cplFmt2  = cplReal  ? cplReal.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : '—';
-
-  var metaLeadsTotal = META.found ? Object.values(META.cursos).reduce(function(s,c){ return s + c.metaTotal; }, 0) : 0;
-  if (_cursoFiltro !== '__all__') {
-    var mC = matchMetaCurso(_cursoFiltro);
-    metaLeadsTotal = mC ? mC.metaTotal : 0;
-  }
-  var pctLeadsMeta  = metaLeadsTotal > 0 ? Math.min(tL / metaLeadsTotal * 100, 100) : 0;
-  var pctLeadsColor = pctLeadsMeta >= 100 ? 'var(--pos)' : pctLeadsMeta >= 70 ? 'var(--wrn)' : 'var(--neg)';
-
-  var cplRef    = 60;
-  var cplVarPct = cplReal ? (cplReal - cplRef) / cplRef * 100 : null;
-  var cplColor  = cplReal && cplReal <= cplRef ? 'var(--pos)' : 'var(--neg)';
-
-  var qualRef    = 90;
-  var qualVarPct = (aT - qualRef) / qualRef * 100;
-  var qualColor  = aT >= qualRef ? 'var(--pos)' : aT >= 70 ? 'var(--wrn)' : 'var(--neg)';
-
-  var invMetaFmt   = VISAO.invMeta > 0 ? VISAO.invMeta.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : null;
-  var invSharePct  = invTotal && VISAO.invMeta > 0 ? Math.min(invTotal / VISAO.invMeta * 100, 100) : null;
-  var invShareColor = invSharePct !== null ? (invSharePct >= 100 ? 'var(--pos)' : invSharePct >= 70 ? 'var(--wrn)' : 'var(--neg)') : 'var(--tx3)';
-
-  /* investimento específico do curso se filtrado */
-  var cursoData = null;
-  if (_cursoFiltro !== '__all__' && VISAO.invPorCurso) {
-    var ck = Object.keys(VISAO.invPorCurso).find(function(k){
-      var a = k.toLowerCase().replace(/\s+/g,' ').trim();
-      var b = _cursoFiltro.toLowerCase().replace(/\s+/g,' ').trim();
-      if(a===b) return true;
-      var aw = new Set(a.split(/\s+/).filter(function(w){return w.length>3;}));
-      return b.split(/\s+/).filter(function(w){return w.length>3;}).some(function(w){return aw.has(w);});
+  // ── Investimento ──
+  // Para período filtrado ou curso específico, usamos VISAO
+  // CPL = investimento / leads (ambos do mesmo escopo)
+  var inv=0, invMeta=0;
+  if(_cursoFiltro!=='__all__'){
+    // buscar dados do curso no VISAO.invPorCurso
+    var stop=new Set(['para','com','de','da','do','em','e','a','o','das','dos','nos','nas']);
+    var scoreF=function(a,b){
+      var wa=a.toLowerCase().split(/\s+/).filter(function(w){return w.length>3&&!stop.has(w);});
+      var wb=new Set(b.toLowerCase().split(/\s+/).filter(function(w){return w.length>3&&!stop.has(w);}));
+      return wa.filter(function(w){return wb.has(w);}).length;
+    };
+    var bestK=null,bestS=0;
+    Object.keys(VISAO.invPorCurso).forEach(function(k){
+      var s=scoreF(_cursoFiltro,k);
+      if(s>bestS){bestS=s;bestK=k;}
     });
-    if(ck) cursoData = VISAO.invPorCurso[ck];
+    var cd=bestK&&bestS>0?VISAO.invPorCurso[bestK]:null;
+    inv=cd?cd.inv:0;
+    invMeta=cd?cd.metaInv:0;
+  } else {
+    inv=VISAO.invTotal||0;
+    invMeta=VISAO.invMeta||0;
   }
 
-  var invDisplay   = cursoData ? cursoData.inv   : invTotal;
-  var invMetaDisp  = cursoData ? cursoData.metaInv  : VISAO.invMeta;
-  var metaLeadsDisp= cursoData ? cursoData.metaLeads: metaLeadsTotal;
+  // ── Meta leads ──
+  var metaLeads=0;
+  if(_cursoFiltro!=='__all__'){
+    var mc=matchMetaCurso(_cursoFiltro);
+    metaLeads=mc?mc.metaTotal:0;
+    // fallback: VISAO
+    if(!metaLeads&&VISAO.invPorCurso){
+      var stop2=new Set(['para','com','de','da','do','em','e','a','o']);
+      var ckv=Object.keys(VISAO.invPorCurso).find(function(k){
+        var wa=_cursoFiltro.toLowerCase().split(/\s+/).filter(function(w){return w.length>3&&!stop2.has(w);});
+        var wb=new Set(k.toLowerCase().split(/\s+/).filter(function(w){return w.length>3&&!stop2.has(w);}));
+        return wa.filter(function(w){return wb.has(w);}).length>0;
+      });
+      if(ckv) metaLeads=VISAO.invPorCurso[ckv].metaLeads||0;
+    }
+  } else {
+    metaLeads=META.found?META.totalMeta:0;
+    if(!metaLeads) metaLeads=VISAO.invLeadsMeta||0;
+  }
 
-  var invFmtD  = invDisplay  ? invDisplay.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}) : '—';
-  var invMetaD = invMetaDisp ? invMetaDisp.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}): null;
-  var invPctD  = invDisplay && invMetaDisp > 0 ? Math.min(invDisplay/invMetaDisp*100,100) : null;
-  var invColD  = invPctD !== null ? (invPctD>=100?'var(--pos)':invPctD>=70?'var(--wrn)':'var(--neg)') : 'var(--tx3)';
+  // ── CPL = inv / leads ──
+  var cpl=inv>0&&tL>0?inv/tL:null;
+  var cplMeta=50; // CPL esperado R$50
+  var cplPct=cpl!=null?(cplMeta/cpl)*100:null; // maior=melhor (CPL baixo é bom)
+  var cplColor=cpl!=null&&cpl<=cplMeta?'var(--pos)':'var(--neg)';
 
-  var pctLeadsM = metaLeadsDisp > 0 ? Math.min(tL/metaLeadsDisp*100,100) : 0;
-  var colLeadsM = pctLeadsM>=100?'var(--pos)':pctLeadsM>=70?'var(--wrn)':'var(--neg)';
+  // ── % atingimento ──
+  var pctLeads=metaLeads>0?Math.min(tL/metaLeads*100,100):null;
+  var colLeads=pctLeads!=null?(pctLeads>=100?'var(--pos)':pctLeads>=70?'var(--wrn)':'var(--neg)'):'var(--tx3)';
 
-  var el = document.getElementById('kpi-row');
-  if (!el) return;
-  el.innerHTML =
+  var pctInv=invMeta>0?Math.min(inv/invMeta*100,100):null;
+  var colInv=pctInv!=null?(pctInv>=100?'var(--pos)':pctInv>=70?'var(--wrn)':'var(--neg)'):'var(--tx3)';
+
+  var qualMeta=90;
+  var pctQual=Math.min(aT/qualMeta*100,100);
+  var colQual=aT>=qualMeta?'var(--pos)':aT>=70?'var(--wrn)':'var(--neg)';
+
+  var fmtBRL=function(v){return v!=null?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';};
+
+  el.innerHTML=
     khCard('Leads Captados', fmt(tL), 'big',
-      'Meta Leads', metaLeadsDisp > 0 ? fmt(metaLeadsDisp) : null,
-      metaLeadsDisp > 0 ? pctLeadsM : null, colLeadsM,
-      '<span class="kh-live-dot"></span>'
-    ) +
-    khCard('Investimento Total', invFmtD, 'sm',
-      'Meta Invest.', invMetaD,
-      invPctD, invColD,
-      null
-    ) +
-    khCard('CPL Geral', cplFmt2, 'md',
-      'CPL Esperado', 'R$ '+cplRef.toLocaleString('pt-BR',{minimumFractionDigits:2}),
-      cplVarPct, cplColor,
-      null
-    ) +
+      'Meta', metaLeads>0?fmt(metaLeads):null,
+      pctLeads, colLeads,
+      '<span class="kh-live-dot"></span>')+
+    khCard('Investimento', fmtBRL(inv||null), 'sm',
+      'Meta', invMeta>0?fmtBRL(invMeta):null,
+      pctInv, colInv,
+      null)+
+    khCard('CPL', fmtBRL(cpl), 'md',
+      'Meta CPL', fmtBRL(cplMeta),
+      cplPct, cplColor,
+      null)+
     khCard('Qualificação', aT.toFixed(1)+'%', 'md',
-      'Qualif. Esperada', qualRef+'%',
-      qualVarPct, qualColor,
-      null
-    );
+      'Meta', qualMeta+'%',
+      pctQual, colQual,
+      null);
 }
+
 
 /* RENDER ALL */
 function renderAll(){
