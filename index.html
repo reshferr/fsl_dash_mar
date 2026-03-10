@@ -1456,20 +1456,6 @@ function renderAll(){
   const leadsVb=dHD!==null?vBadge(dHD,false):'';
   const cplVb=vBadge(cplVar,true);
 
-  const resumoHTML='';
-      const invC=visC?visC.inv:0;
-      const metaLC=visC?visC.metaLeads:0;
-      const metaIC=visC?visC.metaInv:0;
-      const pctLC=metaLC>0?Math.min(leadsC/metaLC*100,100):null;
-      const pctIC=metaIC>0?Math.min(invC/metaIC*100,100):null;
-      const pctLfmt=pctLC!==null?pctLC.toFixed(0)+'%':null;
-      const pctIfmt=pctIC!==null?pctIC.toFixed(0)+'%':null;
-      return`<div style="display:flex;flex-direction:column;gap:5px">
-        ${box('Leads Captados',fmt(leadsC),metaLC>0?'Meta: '+fmt(metaLC):'Acumulado',colC,pctLfmt?'Ating.: '+pctLfmt:null)}
-        ${box('Investimento',fmtR(invC),metaIC>0?'Meta: '+fmtR(metaIC):'Realizado',colC,pctIfmt?'Ating.: '+pctIfmt:null)}
-        ${box('CPL',fmtR(cplC.g),_cursoFiltro.split(' ').slice(0,2).join(' '),colC,null)}
-      </div>`;
-
   const d1Vb='';
 
   /* qualif real de hoje: ponderada pelos leads de hoje por curso */
@@ -1528,7 +1514,7 @@ function renderAll(){
     kdFull('Qualif. Hoje',hDB?fmt(qualHojeQ):'—',qualHojePct.toFixed(1)+'%','Meta '+qualMeta+'%',qualPct,qualPctColor)+
     `<div class="kd kd-wide" style="padding:12px 13px">
       <div style="font-family:var(--fn);font-size:12px;font-weight:800;letter-spacing:-.02em;color:var(--tx);margin-bottom:10px">Resumo</div>
-      ${resumoHTML}
+      <div id="resumo-container"></div>
     </div>`;
 
   buildDatePanel(hDB,hk,d1k,hC,d1C);
