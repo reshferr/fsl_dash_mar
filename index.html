@@ -110,47 +110,14 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 @media(max-width:480px){.hero-row{grid-template-columns:1fr 1fr;}.kh-val.big{font-size:30px;}.kh-val.md{font-size:26px;}.kh-val.sm{font-size:20px;}.kh-dot{width:44px;height:44px;}.kh-dot svg{width:44px;height:44px;}}
 
 /* ── HEADER BAR ── */
-#dash-header{padding:10px 0 0;}
-.dash-sep{height:1px;background:var(--bd);margin:0 0 16px;opacity:.4;}
-.dash-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+#dash-header{padding:18px 0 4px;}
+.dash-sep{height:1px;background:var(--bd);margin:0 0 20px;opacity:.4;}
+.dash-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
 .dash-title{font-family:var(--fn);font-size:32px;font-weight:900;letter-spacing:-.05em;color:#fff;line-height:1;}
 .dash-title em{color:inherit;font-style:normal;}
 [data-theme=light] .dash-title{color:var(--tx);}
 [data-theme=beige] .dash-title{color:var(--tx);}
-/* ── MENU CURSOS ── */
-#menu-cursos-wrap{position:relative;}
-#menu-cursos-btn{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;font-family:var(--f);}
-#menu-cursos-btn:hover{border-color:var(--bda);background:var(--cdh);}
-#menu-cursos-btn.act,#menu-cursos-btn.open{border-color:var(--acc);background:var(--accg);color:var(--acc);}
-#menu-cursos-btn .mc-chevron{font-size:8px;opacity:.5;transition:transform .15s;}
-#menu-cursos-btn.open .mc-chevron{transform:rotate(180deg);}
-#menu-cursos-dropdown{display:none;position:fixed;background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:6px;width:200px;max-width:88vw;box-shadow:0 6px 32px rgba(0,0,0,.35);z-index:900;}
-#menu-cursos-dropdown.open{display:block;}
-.mc-list{display:flex;flex-direction:column;gap:1px;max-height:55vh;overflow-y:auto;}
-.mc-item{padding:8px 10px;border-radius:6px;cursor:pointer;transition:background .1s;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:500;color:var(--tx2);}
-.mc-item:hover{background:var(--cdh);color:var(--tx);}
-.mc-item.act{background:var(--accg);color:var(--acc);font-weight:700;}
-.mc-item-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:var(--tx3);}
-.mc-item.act .mc-item-dot{background:var(--acc);}
-.mc-sep{height:1px;background:var(--bd);margin:4px 0;opacity:.5;}
-/* ── SELETOR DE PERÍODO ── */
-#periodo-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
-.periodo-presets{display:flex;align-items:center;gap:3px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:3px;}
-.periodo-btn{font-size:11px;font-weight:600;padding:6px 14px;border-radius:8px;border:none;background:transparent;color:var(--tx2);cursor:pointer;transition:all .15s;white-space:nowrap;font-family:var(--f);}
-.periodo-btn:hover{background:var(--cdh);color:var(--tx);}
-.periodo-btn.act{background:var(--acc);color:#fff;font-weight:700;}
-.periodo-custom{display:flex;align-items:center;gap:8px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:6px 14px;}
-.periodo-custom input[type=date]{background:transparent;border:none;color:var(--tx);font-size:11px;font-weight:600;font-family:var(--f);cursor:pointer;outline:none;width:130px;position:relative;z-index:1;}
-.periodo-custom input[type=date]::-webkit-datetime-edit{cursor:pointer;}
-.periodo-custom input[type=date]::-webkit-datetime-edit-fields-wrapper{cursor:pointer;padding:0;}
-.periodo-custom input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.4;cursor:pointer;}
-[data-theme=light] .periodo-custom input[type=date]::-webkit-calendar-picker-indicator{filter:none;}
-[data-theme=beige] .periodo-custom input[type=date]::-webkit-calendar-picker-indicator{filter:none;opacity:.6;}
-.periodo-sep-txt{font-size:11px;color:var(--tx3);}
-.periodo-apply{font-size:11px;font-weight:700;padding:5px 14px;border-radius:8px;border:1px solid var(--acc);background:var(--accg);color:var(--acc);cursor:pointer;transition:all .15s;font-family:var(--f);}
-.periodo-apply:hover{background:var(--acc);color:#fff;}
-/* ── DOT DE VARIAÇÃO nos leads por curso ── */
-.lpd-varpct{display:inline-flex;align-items:center;gap:3px;border-radius:999px;padding:2px 6px;font-size:10px;font-weight:700;margin-left:4px;flex-shrink:0;}
+
 
 
 /* DAILY — 5 cards */
@@ -504,6 +471,118 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
   .meta-kpis{grid-template-columns:1fr 1fr;}
   .meta-pace-boxes{grid-template-columns:1fr;}
 }
+
+@media(max-width:480px){
+  
+  
+  
+  
+  
+  
+}
+
+
+
+
+
+
+
+/* ════════════════════════════════
+   FILTROS BAR — dois boxes
+   ════════════════════════════════ */
+#filtros-bar{
+  display:flex;gap:8px;align-items:flex-start;
+  margin-bottom:24px;flex-wrap:wrap;
+}
+
+.fdot-wrap{position:relative;}
+
+.fdot{
+  display:inline-flex;flex-direction:column;align-items:flex-start;
+  gap:3px;padding:10px 16px 10px;border-radius:10px;
+  border:1px solid var(--bd);background:var(--sf);
+  cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s;
+  font-family:var(--f);text-align:left;min-width:120px;
+}
+.fdot:hover{border-color:var(--bda);background:var(--cdh);}
+.fdot.open,
+.fdot.act{border-color:var(--acc);background:var(--accg);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 15%,transparent);}
+
+.fdot-label{
+  font-size:8.5px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--tx3);line-height:1;
+}
+.fdot.open .fdot-label,
+.fdot.act .fdot-label{color:var(--acc);}
+
+.fdot-val{
+  font-size:13px;font-weight:700;color:var(--tx);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:160px;line-height:1.3;text-transform:uppercase;
+  letter-spacing:.02em;
+}
+.fdot.open .fdot-val,
+.fdot.act .fdot-val{color:var(--acc);}
+
+/* dropdown */
+.fdot-dropdown{
+  display:none;position:fixed;
+  background:var(--cd);border:1px solid var(--bd);
+  border-radius:14px;padding:8px;min-width:180px;
+  box-shadow:0 8px 36px rgba(0,0,0,.28);z-index:950;
+}
+.fdot-dropdown.open{display:block;}
+
+/* opções de período */
+.fdot-opts{display:flex;flex-direction:column;gap:2px;}
+.fdot-opt{
+  width:100%;text-align:left;padding:9px 12px;border-radius:8px;
+  border:none;background:transparent;
+  font-size:12px;font-weight:500;color:var(--tx2);
+  cursor:pointer;font-family:var(--f);transition:background .1s;
+}
+.fdot-opt:hover{background:var(--cdh);color:var(--tx);}
+.fdot-opt.act{background:var(--accg);color:var(--acc);font-weight:700;}
+
+/* custom date */
+.fdot-custom{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+  padding:10px 8px 4px;border-top:1px solid var(--bd);margin-top:6px;
+}
+.fdot-custom-lbl{font-size:10px;font-weight:600;color:var(--tx3);font-family:var(--f);}
+.fdot-custom input[type=date]{
+  background:var(--sf);border:1px solid var(--bd);border-radius:8px;
+  outline:none;font-family:var(--f);font-size:11px;color:var(--tx);
+  cursor:pointer;padding:5px 8px;flex:1;min-width:110px;
+}
+.fdot-apply{
+  font-size:11px;font-weight:700;padding:5px 14px;border-radius:8px;
+  border:1px solid var(--acc);background:var(--accg);
+  color:var(--acc);cursor:pointer;font-family:var(--f);
+  transition:all .15s;width:100%;
+}
+.fdot-apply:hover{background:var(--acc);color:#fff;}
+
+/* lista de cursos */
+.mc-list{display:flex;flex-direction:column;gap:1px;max-height:52vh;overflow-y:auto;}
+.mc-item{
+  padding:9px 12px;border-radius:8px;cursor:pointer;
+  display:flex;align-items:center;gap:9px;
+  font-size:12px;font-weight:500;color:var(--tx2);
+  transition:background .1s;font-family:var(--f);
+}
+.mc-item:hover{background:var(--cdh);color:var(--tx);}
+.mc-item.act{background:var(--accg);color:var(--acc);font-weight:700;}
+.mc-item-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--tx3);}
+.mc-item.act .mc-item-dot{background:var(--acc);}
+.mc-sep{height:1px;background:var(--bd);margin:4px 2px;opacity:.5;}
+
+/* mobile */
+@media(max-width:560px){
+  .fdot{min-width:calc(50vw - 28px);padding:8px 14px;}
+  .fdot-val{max-width:100px;font-size:12px;}
+  .fdot-dropdown{min-width:calc(100vw - 32px);}
+}
 </style>
 </head>
 <body data-theme="dark">
@@ -557,33 +636,46 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
     <div class="dash-sep"></div>
     <div class="dash-title-row">
       <div class="dash-title" id="dash-title-txt">Visão <em>Geral</em></div>
-      <div id="menu-cursos-wrap">
-        <button id="menu-cursos-btn" onclick="toggleMenuCursos()">
-          <span id="menu-cursos-lbl">Geral</span>
-          <span class="mc-chevron">▼</span>
+    </div>
+    <div id="filtros-bar">
+
+      <!-- BOX 1: Período -->
+      <div class="fdot-wrap" id="periodo-wrap">
+        <button class="fdot" id="periodo-dot-btn" onclick="togglePeriodoDot()">
+          <span class="fdot-label">Período</span>
+          <span class="fdot-val" id="periodo-dot-val">GERAL</span>
         </button>
-        <div id="menu-cursos-dropdown">
+        <div class="fdot-dropdown" id="periodo-dropdown">
+          <div class="fdot-opts" id="periodo-opts">
+            <button class="fdot-opt act" data-p="geral"  onclick="setPeriodo('geral')">Geral</button>
+            <button class="fdot-opt"     data-p="hoje"   onclick="setPeriodo('hoje')">Hoje</button>
+            <button class="fdot-opt"     data-p="ontem"  onclick="setPeriodo('ontem')">Ontem</button>
+            <button class="fdot-opt"     data-p="custom" onclick="setPeriodo('custom')">Personalizado</button>
+          </div>
+          <div id="periodo-custom-inputs" style="display:none;">
+            <div class="fdot-custom">
+              <label class="fdot-custom-lbl">De</label>
+              <input type="date" id="periodo-de" />
+              <label class="fdot-custom-lbl">até</label>
+              <input type="date" id="periodo-ate" />
+              <button class="fdot-apply" onclick="applyCustomPeriodo()">Aplicar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOX 2: Curso -->
+      <div class="fdot-wrap" id="menu-cursos-wrap">
+        <button class="fdot" id="menu-cursos-btn" onclick="toggleMenuCursos()">
+          <span class="fdot-label">Curso</span>
+          <span class="fdot-val" id="menu-cursos-lbl">TODOS</span>
+        </button>
+        <div class="fdot-dropdown" id="menu-cursos-dropdown">
           <div id="mc-list-inner" class="mc-list"></div>
         </div>
       </div>
-    </div>
-    <div id="periodo-bar">
-      <div class="periodo-presets">
-        <button class="periodo-btn" onclick="setPeriodo('geral')">Geral</button><button class="periodo-btn act" onclick="setPeriodo('hoje')">Hoje</button>
-        <button class="periodo-btn" onclick="setPeriodo('ontem')">Ontem</button>
-        <button class="periodo-btn" onclick="setPeriodo('custom')">Personalizado</button>
-      </div>
-      <div id="periodo-custom-inputs" style="display:none;">
-        <div class="periodo-custom">
-          <span class="periodo-sep-txt" style="font-weight:600;color:var(--tx2);font-size:11px;">De</span>
-          <input type="date" id="periodo-de" />
-          <span class="periodo-sep-txt">até</span>
-          <input type="date" id="periodo-ate" />
-          <button class="periodo-apply" onclick="applyCustomPeriodo()">Aplicar</button>
-        </div>
-      </div>
-    </div>
-  </div>
+
+    </div></div>
   <div id="loader"><div class="spin"></div><p>Carregando dados…</p></div>
   <div id="err"></div>
   <div class="panel" id="panel-perf">
@@ -741,43 +833,56 @@ function csvL(line){
 }
 
 async function load(){
-  const showErr=(title,body)=>{
+  const showErr=(title,body,log)=>{
     document.getElementById('loader').style.display='none';
     const er=document.getElementById('err');er.style.display='block';
+    const logHtml=log?`<details style="margin-top:10px"><summary style="font-size:10px;color:var(--tx3);cursor:pointer;font-family:var(--f)">Detalhes técnicos</summary><pre style="font-size:9px;color:var(--tx3);white-space:pre-wrap;word-break:break-all;background:var(--grd);padding:8px;border-radius:6px;margin-top:6px;max-height:120px;overflow-y:auto">${log}</pre></details>`:'';
     er.innerHTML=`<div style="max-width:400px;margin:0 auto;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:24px 28px;text-align:left">
       <div style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--neg);margin-bottom:8px">${title}</div>
       <div style="font-size:12px;color:var(--tx2);line-height:1.8;margin-bottom:16px">${body}</div>
       <button onclick="location.reload()" style="padding:7px 20px;border-radius:999px;border:1px solid var(--acc);background:var(--accg);color:var(--acc);cursor:pointer;font-size:12px;font-weight:700;font-family:var(--f)">Tentar novamente</button>
+      ${logHtml}
     </div>`;
   };
   if(location.protocol==='file:'){
     showErr('Arquivo aberto localmente',
-      'O dashboard precisa ser servido via HTTP para acessar a planilha.<br><br>'+
-      '<b>Opções:</b><br>'+
-      '· Abra pelo preview do Claude<br>'+
-      '· Use VSCode + Live Server<br>'+
-      '· Terminal: <code style="background:var(--grd);padding:2px 6px;border-radius:4px">python3 -m http.server 8080</code>');
+      'O dashboard precisa ser servido via HTTP.<br>Abra pelo preview do Claude.');
     return;
   }
+  const logs=[];
+  const tryFetch=async(url,label)=>{
+    try{
+      const r=await fetch(url,{cache:'no-store'});
+      logs.push(label+': HTTP '+r.status+(r.ok?' OK':' FAIL'));
+      return r.ok?r:null;
+    }catch(e){
+      logs.push(label+': '+e.message);
+      return null;
+    }
+  };
   try{
     const[r1,r2,r3,r4]=await Promise.all([
-      fetch(PUB,{cache:'no-store'}),
-      fetch(PUB+'&gid='+DB_GID,{cache:'no-store'}),
-      fetch(PUB+'&gid='+META_GID,{cache:'no-store'}),
-      fetch(PUB+'&gid='+VISAO_GID,{cache:'no-store'})
+      tryFetch(PUB,'summary'),
+      tryFetch(PUB+'&gid='+DB_GID,'db'),
+      tryFetch(PUB+'&gid='+META_GID,'meta'),
+      tryFetch(PUB+'&gid='+VISAO_GID,'visao')
     ]);
-    if(!r1.ok)throw new Error('HTTP '+r1.status);
+    if(!r1){
+      throw new Error('Planilha principal inacessivel');
+    }
     const t1=await r1.text();
     if(!t1||t1.trim().length<10)throw new Error('Planilha Summary vazia');
+    logs.push('summary: '+t1.split('\n').length+' linhas, '+t1.length+' chars');
     parseSummary(t1);
-    if(r2.ok)parseDB(await r2.text());
-    if(r3.ok)parseMeta(await r3.text());
-    if(r4.ok)parseVisao(await r4.text());
+    if(r2){const t=await r2.text();if(t&&t.trim().length>10){parseDB(t);logs.push('db: OK');}}
+    if(r3){const t=await r3.text();if(t&&t.trim().length>10){parseMeta(t);logs.push('meta: OK');}}
+    if(r4){const t=await r4.text();if(t&&t.trim().length>10){parseVisao(t);logs.push('visao: OK');}}
     document.getElementById('loader').style.display='none';
     renderAll();
   }catch(e){
     showErr('Erro ao carregar dados',
-      'Verifique se a planilha está publicada em <b>Arquivo → Publicar na web</b>.<br><br>Erro: '+e.message);
+      'Verifique se a planilha está publicada em <b>Arquivo → Publicar na web → CSV</b>.',
+      logs.join('\n')+'\nERRO: '+e.message);
   }
 }
 
@@ -1307,7 +1412,7 @@ function renderHeroes() {
       null
     ) +
     khCard('CPL Geral', cplFmt2, 'md',
-      'CPL Esperado', 'R$ '+cplRef.toLocaleString('pt-BR',{minimumFractionDigits:2}),
+      'CPL Esperado', 'R$ '+cplRef.toLocaleString('pt-BR',{minimumFractionDigits:2}),
       cplVarPct, cplColor,
       null
     ) +
@@ -1516,10 +1621,12 @@ function renderAll(){
   fillResumo('d1');
   _periodoDE=null;_periodoATE=null;_periodoAtual='geral';
   buildCursoSel();
-  /* marcar botão Geral como ativo */
-  document.querySelectorAll('.periodo-btn').forEach(b=>{
-    b.classList.toggle('act',(b.getAttribute('onclick')||'').includes("'geral'"));
+  /* marcar opção Geral como ativa */
+  document.querySelectorAll('.fdot-opt').forEach(b=>{
+    b.classList.toggle('act',(b.getAttribute('data-p')||'')==='geral');
   });
+  const _pvEl=document.getElementById('periodo-dot-val');
+  if(_pvEl)_pvEl.textContent='GERAL';
 }
 
 /* ── FILTRO DE PERÍODO ── */
@@ -1552,31 +1659,34 @@ function cntPeriodoPrev(curso){
 /* ── PERÍODO ── */
 function setPeriodo(p){
   _periodoAtual=p;
-  /* highlight botão ativo */
-  document.querySelectorAll('.periodo-btn').forEach(b=>{
-    const match=b.getAttribute('onclick')||'';
-    b.classList.toggle('act',match.includes("'"+p+"'"));
+  /* marcar opção ativa */
+  document.querySelectorAll('.fdot-opt').forEach(b=>{
+    b.classList.toggle('act',(b.getAttribute('data-p')||'')==p);
   });
   /* mostrar/ocultar campos custom */
   const ci=document.getElementById('periodo-custom-inputs');
-  if(ci)ci.style.display=p==='custom'?'flex':'none';
-  if(p==='custom')return; /* aguarda o usuário aplicar */
-  /* calcular intervalo */
-  const now=new Date();
-  now.setHours(0,0,0,0);
-  if(p==='geral'){
-    _periodoDE=null;_periodoATE=null; /* sem filtro de período */
-  } else if(p==='hoje'){
-    _periodoDE=new Date(now);_periodoATE=new Date(now);
-    _periodoDE.setHours(0,0,0,0);_periodoATE.setHours(23,59,59,999);
-  } else if(p==='ontem'){
-    const y=new Date(now);y.setDate(y.getDate()-1);
-    _periodoDE=new Date(y);_periodoATE=new Date(y);
-    _periodoDE.setHours(0,0,0,0);_periodoATE.setHours(23,59,59,999);
+  if(ci)ci.style.display=p==='custom'?'block':'none';
+  /* atualizar label do dot */
+  const labels={'geral':'GERAL','hoje':'HOJE','ontem':'ONTEM','custom':'PERSONALIZADO'};
+  const valEl=document.getElementById('periodo-dot-val');
+  if(valEl)valEl.textContent=labels[p]||p;
+  /* marcar dot como ativo se não for geral */
+  const btn=document.getElementById('periodo-dot-btn');
+  if(btn)btn.classList.toggle('act',p!=='geral');
+  /* fechar dropdown se não for custom */
+  if(p!=='custom'){
+    const dd=document.getElementById('periodo-dropdown');
+    if(dd)dd.classList.remove('open');
+    if(btn)btn.classList.remove('open');
   }
-  /* só refrescar se os dados já carregaram */
+  /* sem filtro de período se geral */
+  if(p==='geral'){_periodoDE=null;_periodoATE=null;}
+  else if(p==='hoje'){const d=new Date();_periodoDE=dkOf(d);_periodoATE=dkOf(d);}
+  else if(p==='ontem'){const d=new Date();d.setDate(d.getDate()-1);_periodoDE=dkOf(d);_periodoATE=dkOf(d);}
+  else return; /* custom: aguarda applyCustomPeriodo */
   if(_ss&&_ss.length>0)refreshAll();
 }
+
 function applyCustomPeriodo(){
   const de=document.getElementById('periodo-de')?.value;
   const ate=document.getElementById('periodo-ate')?.value;
@@ -1598,71 +1708,107 @@ function refreshAll(){
 }
 function setCtx(ctx){_ctxAtual=ctx;buildDatePanel();buildTaxa();}
 function buildCursoSel(){
-  /* lista dentro do dropdown */
   const list=document.getElementById('mc-list-inner');if(!list)return;
   const geralAct=_cursoFiltro==='__all__';
-  /* abreviar nomes longos */
   const abrev=(s)=>{
     if(s.length<=26)return s;
     const stop=new Set(['de','da','do','dos','das','em','e','a','o','com','para']);
-    const words=s.split(/\s+/);
-    let out=words[0];
+    const words=s.split(/\s+/);let out=words[0];
     for(let i=1;i<words.length;i++){
-      const w=words[i];
-      if(stop.has(w.toLowerCase()))continue;
+      const w=words[i];if(stop.has(w.toLowerCase()))continue;
       const part=w.length>5?w.slice(0,4)+'.':w;
-      if((out+' '+part).length>26)break;
-      out+=' '+part;
-    }
-    return out;
+      if((out+' '+part).length>26)break;out+=' '+part;
+    }return out;
   };
-  let html=`<div class="mc-item${geralAct?' act':''}" onclick="setCursoFiltro('__all__')">
+  let inner=`<div class="mc-item${geralAct?' act':''}" onclick="setCursoFiltro('__all__')">
     <span class="mc-item-dot"></span>Todos os cursos
   </div><div class="mc-sep"></div>`;
   _ss.forEach((r,i)=>{
     const nm=cl(r[_cC]);const col=COLORS[i%COLORS.length];const act=nm===_cursoFiltro;
-    html+=`<div class="mc-item${act?' act':''}" onclick="setCursoFiltro('${nm.replace(/'/g,"\'")}')">
+    inner+=`<div class="mc-item${act?' act':''}" onclick="setCursoFiltro('${nm.replace(/'/g,"\'")}')">
       <span class="mc-item-dot" style="background:${col};"></span>${abrev(nm)}
     </div>`;
   });
-  list.innerHTML=html;
-  /* botão — mostrar "Geral" ou nome abreviado do curso */
+  list.innerHTML=inner;
+  /* atualizar label e estado do dot */
   const lbl=document.getElementById('menu-cursos-lbl');
   const btn=document.getElementById('menu-cursos-btn');
-  if(lbl){lbl.textContent=geralAct?'Geral':abrev(_cursoFiltro);}
-  if(btn){btn.classList.toggle('act',!geralAct);}
+  if(lbl)lbl.textContent=geralAct?'TODOS':abrev(_cursoFiltro).toUpperCase();
+  if(btn)btn.classList.toggle('act',!geralAct);
   /* título do dashboard */
   const ttl=document.getElementById('dash-title-txt');
-  if(ttl){ttl.innerHTML=geralAct?'Visão <em>Geral</em>':_cursoFiltro;}
+  if(ttl)ttl.innerHTML=geralAct?'Visão <em>Geral</em>':_cursoFiltro;
+}
+
+
+function _closeAllDots(except){
+  ['periodo-dropdown','menu-cursos-dropdown'].forEach(id=>{
+    if(id===except)return;
+    const el=document.getElementById(id);
+    if(el)el.classList.remove('open');
+  });
+  ['periodo-dot-btn','menu-cursos-btn'].forEach(id=>{
+    if(id===(except==='periodo-dropdown'?'periodo-dot-btn':'menu-cursos-btn'))return;
+    const el=document.getElementById(id);
+    if(el)el.classList.remove('open');
+  });
+}
+document.addEventListener('click',function(e){
+  const inPeriodo=e.target.closest('#periodo-wrap');
+  const inCurso=e.target.closest('#menu-cursos-wrap');
+  if(!inPeriodo){
+    const dd=document.getElementById('periodo-dropdown');
+    const btn=document.getElementById('periodo-dot-btn');
+    if(dd)dd.classList.remove('open');
+    if(btn)btn.classList.remove('open');
+  }
+  if(!inCurso){
+    const dd=document.getElementById('menu-cursos-dropdown');
+    const btn=document.getElementById('menu-cursos-btn');
+    if(dd)dd.classList.remove('open');
+    if(btn)btn.classList.remove('open');
+  }
+});
+function togglePeriodoDot(){
+  const dd=document.getElementById('periodo-dropdown');
+  const btn=document.getElementById('periodo-dot-btn');
+  if(!dd)return;
+  const open=!dd.classList.contains('open');
+  _closeAllDots(open?'periodo-dropdown':null);
+  dd.classList.toggle('open',open);
+  btn.classList.toggle('open',open);
+  if(open){
+    const rect=btn.getBoundingClientRect();
+    const ddW=Math.max(220,btn.offsetWidth);
+    dd.style.top=(rect.bottom+6)+'px';
+    let left=rect.left;
+    if(left+ddW>window.innerWidth-8)left=window.innerWidth-ddW-8;
+    if(left<8)left=8;
+    dd.style.left=left+'px';
+    dd.style.width=ddW+'px';
+  }
 }
 function toggleMenuCursos(){
   const dd=document.getElementById('menu-cursos-dropdown');
   const btn=document.getElementById('menu-cursos-btn');
   if(!dd)return;
-  const open=dd.classList.toggle('open');
+  const open=!dd.classList.contains('open');
+  _closeAllDots(open?'menu-cursos-dropdown':null);
+  dd.classList.toggle('open',open);
   btn.classList.toggle('open',open);
   if(open){
     buildCursoSel();
-    /* position:fixed → usa coordenadas de viewport puras */
     const rect=btn.getBoundingClientRect();
-    const ddW=220;
+    const ddW=Math.max(200,btn.offsetWidth);
     dd.style.top=(rect.bottom+6)+'px';
-    if(window.innerWidth<600){
-      /* mobile: centralizar na tela */
-      dd.style.left=Math.max(8,(window.innerWidth-ddW)/2)+'px';
-      dd.style.right='auto';
-      dd.style.transform='none';
-    } else {
-      /* desktop: alinhar à direita do botão, sem sair da tela */
-      const rightEdge=rect.right;
-      const left=Math.min(rightEdge-ddW, window.innerWidth-ddW-8);
-      dd.style.left=Math.max(8,left)+'px';
-      dd.style.right='auto';
-      dd.style.transform='none';
-    }
-    setTimeout(()=>document.addEventListener('click',_closeMC,{once:true}),10);
+    let left=rect.left;
+    if(left+ddW>window.innerWidth-8)left=window.innerWidth-ddW-8;
+    if(left<8)left=8;
+    dd.style.left=left+'px';
+    dd.style.width=ddW+'px';
   }
 }
+
 function _closeMC(e){
   const wrap=document.getElementById('menu-cursos-wrap');
   if(wrap&&!wrap.contains(e.target)){
@@ -2221,7 +2367,7 @@ function fillResumo(tab){
         <div class="rp-curso-dot-row"><div class="rp-curso-dot" style="background:${pctColor}"></div><div class="rp-curso-pct" style="color:${pctColor}">${pct!==null?pct.toFixed(1)+'%':'—'}</div></div>
       </div>
       <div class="rp-curso-metrics">
-        <div class="rp-curso-metric"><div class="rp-curso-mv" style="font-size:12px">${rd.fmtR(cplV).replace('R ','R ')}</div></div>
+        <div class="rp-curso-metric"><div class="rp-curso-mv" style="font-size:12px">${rd.fmtR(cplV).replace('R ','R ')}</div></div>
         <div class="rp-curso-metric"><div class="rp-curso-mv">${Math.round(taxa)}%</div></div>
       </div>
     </div>`).join('');
