@@ -83,8 +83,8 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 
 /* HERO — 4 cards principais */
 .hero-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
-.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:22px 24px 20px;box-shadow:var(--sh);position:relative;display:flex;flex-direction:column;}
-.kh::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--acc) 50%,transparent 100%);background-size:250% 100%;background-position:200% 0;animation:barslide 6s ease-in-out infinite;opacity:.55;}
+.kh{background:var(--cd);border:1px solid var(--bd);border-radius:var(--r);padding:22px 24px 20px;box-shadow:var(--sh);position:relative;display:flex;flex-direction:column;overflow:hidden;}
+.kh::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0;background:linear-gradient(90deg,transparent 0%,var(--acc) 50%,transparent 100%);background-size:250% 100%;background-position:200% 0;animation:barslide 6s ease-in-out infinite;opacity:.55;overflow:hidden;}
 [data-theme=light] .kh{border-color:var(--bda);background:var(--sf);}
 [data-theme=beige] .kh{border-color:var(--bda);background:var(--sf);}
 .kh-lbl{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.14em;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
@@ -99,11 +99,14 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
 .kh-meta-val{font-family:var(--fn);font-size:20px;font-weight:700;color:var(--tx2);letter-spacing:-.03em;line-height:1;}
 /* dot circular com % dentro */
 .kh-foot{margin-top:auto;display:flex;align-items:center;justify-content:flex-start;gap:8px;}
-.kh-dot{position:relative;width:56px;height:56px;flex-shrink:0;}
-.kh-dot svg{width:56px;height:56px;transform:rotate(-90deg);}
-.kh-dot-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--fn);font-size:11px;font-weight:800;line-height:1;color:var(--tx);}
-.kh-dot-sub{font-size:7px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
-.kh-foot-desc{font-size:10px;color:var(--tx3);font-weight:500;line-height:1.4;}
+/* barra de progresso com dot terminal */
+.kh-foot{margin-top:auto;display:flex;flex-direction:column;gap:5px;}
+.kh-bar-row{display:flex;align-items:center;gap:8px;}
+.kh-bar-track{flex:1;height:6px;background:var(--grd);border-radius:999px;overflow:visible;position:relative;}
+.kh-bar-fill{height:100%;border-radius:999px;transition:width .7s cubic-bezier(.4,0,.2,1);position:relative;min-width:6px;}
+.kh-bar-fill::after{content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:inherit;box-shadow:0 0 0 2px var(--cd),0 0 6px rgba(0,0,0,.25);transition:right .7s cubic-bezier(.4,0,.2,1);}
+.kh-bar-pct{font-family:var(--fn);font-size:11px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;min-width:34px;text-align:right;}
+.kh-bar-sub{font-size:9px;color:var(--tx3);font-weight:500;}
 
 
 @media(max-width:900px){.hero-row{grid-template-columns:repeat(2,1fr);}}
@@ -900,225 +903,174 @@ function parseDB(txt){
 function parseMeta(txt){
   const lines=txt.trim().split('\n').filter(l=>l.trim());
   if(lines.length<2){META={found:false};return;}
-  const hdrs=csvL(lines[0]);
-
-  /* Col K = index 10 is the confirmed total column.
-     Find it by header name first, then fallback to index 10 */
-  let totalColIdx=hdrs.findIndex((h,i)=>i>0&&/\btotal\b|\bgeral\b/i.test(h));
-  if(totalColIdx<0&&hdrs.length>10)totalColIdx=10;
-
-  /* Course cols: skip A(0), skip any "dia/semana/%" cols, skip totalColIdx */
-  const skipLabels=/^dia\b|semana|\bdia\s+da|^\s*[\(%]|\bdata\b/i;
-  const courseCols=[];
-  hdrs.forEach((h,i)=>{
-    if(i===0||i===totalColIdx)return;
-    const ht=h.trim();
-    if(!ht||skipLabels.test(ht))return;
-    courseCols.push({idx:i,name:ht});
-  });
 
   META={found:true,cursos:{},totalMeta:0,totalDaily:{},dates:[]};
-  courseCols.forEach(({name})=>{META.cursos[name]={metaTotal:0,dailyMetas:{}};});
 
-  const dataRows=lines.slice(1);
-  let foundTotalRow=false;
-  dataRows.forEach((l)=>{
-    const v=csvL(l);
-    const label=(v[0]||'').trim();
-    /* Total row: any cell says "TOTAL" (case-insensitive) */
-    const isTotalRow=v.some(c=>/^\s*total\s*$/i.test(c||''));
-    if(isTotalRow&&!foundTotalRow){
-      foundTotalRow=true;
-      const kIdx=totalColIdx>=0?totalColIdx:v.length-1;
-      /* grand total from col K */
-      const fromK=n(v[kIdx]);
-      const fromCols=courseCols.reduce((s,{idx})=>s+n(v[idx]),0);
-      META.totalMeta=fromK||fromCols;
-      /* per-course totals from their columns */
-      courseCols.forEach(({idx,name})=>{const cv=n(v[idx]);if(cv>0)META.cursos[name].metaTotal=cv;});
-      return;
+  // ── Estratégia 1: D33:J34 — linha 32 (0-based) = headers dos cursos, linha 33 = metas totais
+  const hdrRow33 = lines[32] ? csvL(lines[32]) : null;
+  const valRow34 = lines[33] ? csvL(lines[33]) : null;
+
+  if(hdrRow33 && valRow34){
+    // colunas D..J = índices 3..9
+    for(let i=3; i<=9; i++){
+      const nm = (hdrRow33[i]||'').replace(/\[Formulário\]\s*/ig,'').trim();
+      const vl = n(valRow34[i]||'');
+      if(nm && nm.length>1 && vl>0){
+        META.cursos[nm]={metaTotal:vl, dailyMetas:{}};
+        META.totalMeta += vl;
+      }
     }
-    /* Date row: col A has a date */
-    const dm=label.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
-    if(!dm)return;
-    const yr=dm[3].length===2?'20'+dm[3]:dm[3];
-    const dk=dm[1].padStart(2,'0')+'/'+dm[2].padStart(2,'0')+'/'+yr;
-    META.dates.push(dk);
-    let daySum=0;
-    courseCols.forEach(({idx,name})=>{const val=n(v[idx]);META.cursos[name].dailyMetas[dk]=val;daySum+=val;});
-    const kIdx=totalColIdx>=0?totalColIdx:v.length-1;
-    META.totalDaily[dk]=n(v[kIdx])||daySum;
-  });
+    // total geral: col K (idx 10) da linha 34
+    const kTotal = n((valRow34[10]||valRow34[11]||''));
+    if(kTotal > META.totalMeta) META.totalMeta = kTotal;
+  }
+
+  // ── Estratégia 2 (fallback): varrer todas as linhas como antes ──
+  if(META.totalMeta === 0){
+    const hdrs = csvL(lines[0]);
+    let totalColIdx = hdrs.findIndex((h,i)=>i>0&&/\btotal\b|\bgeral\b/i.test(h));
+    if(totalColIdx<0 && hdrs.length>10) totalColIdx=10;
+    const skipLabels=/^dia\b|semana|\bdia\s+da|^\s*[\(%]|\bdata\b/i;
+    const courseCols=[];
+    hdrs.forEach((h,i)=>{
+      if(i===0||i===totalColIdx)return;
+      const ht=h.trim();
+      if(!ht||skipLabels.test(ht))return;
+      courseCols.push({idx:i,name:ht});
+    });
+    courseCols.forEach(({name})=>{ if(!META.cursos[name]) META.cursos[name]={metaTotal:0,dailyMetas:{}}; });
+    let foundTotalRow=false;
+    lines.slice(1).forEach(l=>{
+      const v=csvL(l);
+      const isTotalRow=v.some(c=>/^\s*total\s*$/i.test(c||''));
+      if(isTotalRow&&!foundTotalRow){
+        foundTotalRow=true;
+        const kIdx=totalColIdx>=0?totalColIdx:v.length-1;
+        const fromK=n(v[kIdx]);
+        const fromCols=courseCols.reduce((s,{idx})=>s+n(v[idx]),0);
+        META.totalMeta=fromK||fromCols;
+        courseCols.forEach(({idx,name})=>{const cv=n(v[idx]);if(cv>0)META.cursos[name].metaTotal=cv;});
+        return;
+      }
+      const dm=((v[0]||'').trim()).match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+      if(!dm)return;
+      const yr=dm[3].length===2?'20'+dm[3]:dm[3];
+      const dk=dm[1].padStart(2,'0')+'/'+dm[2].padStart(2,'0')+'/'+yr;
+      META.dates.push(dk);
+      let daySum=0;
+      courseCols.forEach(({idx,name})=>{const val=n(v[idx]);if(META.cursos[name])META.cursos[name].dailyMetas[dk]=val;daySum+=val;});
+      const kIdx=totalColIdx>=0?totalColIdx:v.length-1;
+      META.totalDaily[dk]=n(v[kIdx])||daySum;
+    });
+  }
 
   META.dates=Array.from(new Set(META.dates)).sort((a,b)=>pdk(a)-pdk(b));
-  /* fallback: synthesize per-course totals from daily sums if missing from total row */
-  courseCols.forEach(({name})=>{
-    if(!META.cursos[name].metaTotal)
-      META.cursos[name].metaTotal=Object.values(META.cursos[name].dailyMetas).reduce((s,v)=>s+v,0);
+  Object.values(META.cursos).forEach(c=>{
+    if(!c.metaTotal) c.metaTotal=Object.values(c.dailyMetas).reduce((s,v)=>s+v,0);
   });
-  if(!META.totalMeta)META.totalMeta=Object.values(META.cursos).reduce((s,c)=>s+c.metaTotal,0);
+  if(!META.totalMeta) META.totalMeta=Object.values(META.cursos).reduce((s,c)=>s+c.metaTotal,0);
 }
 
 function parseVisao(txt){
   if(!txt||txt.trim().length<10)return;
-  const rawLines=txt.trim().split('\n');
-  const lines=rawLines.map(l=>csvL(l));
-  VISAO={found:true,invTotal:0,cplGeral:0,cursosInv:{},totalLeads:0};
+  const lines=txt.trim().split('\n').map(l=>csvL(l));
+  VISAO={found:true,invTotal:0,cplGeral:0,invPorCurso:{},metasPorCurso:{},invMeta:0,cursosInv:{},totalLeads:0};
 
-  /* Percorrer TODAS as células procurando padrão INVESTIMENTO + TOTAL
-     O valor correto (R$ 528.816,96) está na linha seguinte, mesma coluna (B24 na planilha) */
-  for(let i=0;i<lines.length-1;i++){
-    for(let j=0;j<lines[i].length;j++){
-      const cell=(lines[i][j]||'').replace(/[\r\n\t]/g,' ').replace(/\s+/g,' ').trim().toUpperCase();
-      if(cell.includes('INVESTIMENTO')&&cell.includes('TOTAL')){
-        /* tentar linha seguinte, mesma coluna */
-        const nextRow=lines[i+1]||[];
-        for(let k=Math.max(0,j-1);k<=Math.min(j+2,nextRow.length-1);k++){
-          const val=n(nextRow[k]||'');
-          if(val>1000){
-            VISAO.invTotal=val;
-            break;
-          }
-        }
-        /* também tentar mesma linha, colunas vizinhas */
-        if(!VISAO.invTotal){
-          for(let k=j+1;k<=Math.min(j+3,lines[i].length-1);k++){
-            const val=n(lines[i][k]||'');
-            if(val>1000){VISAO.invTotal=val;break;}
-          }
-        }
-      }
+  const kwRe=/^(investimento|leads|cpl|total|previsto|invest\.|data|período|semana|dia\b|mtd|prev\.)/i;
+  const isCurso=(v)=>{const s=(v||'').replace(/\[Formulário\]\s*/ig,'').trim();return s.length>=3&&!kwRe.test(s)&&!/^\d/.test(s);};
+  const nm=(v)=>(v||'').replace(/\[Formulário\]\s*/ig,'').trim();
+
+  // ── A29:B39: varrer TODAS as linhas buscando linhas de meta
+  //    Critério: col A = nome de curso (texto, não keyword), col B = valor numérico > 0
+  //    Linha "TOTAL" na col A = meta de investimento total
+  let foundMetaBlock=false;
+  lines.forEach((row,i)=>{
+    const colA=nm(row[0]);
+    if(!colA||colA.length<2)return;
+    if(/^total/i.test(colA)){
+      const v=n(row[1]||'');
+      if(v>0){VISAO.invMeta=v;foundMetaBlock=true;}
+      return;
     }
-  }
+    if(!isCurso(colA))return;
+    const metaInv=n(row[1]||'');
+    const metaLeads=n(row[2]||'');
+    // Só registrar se parecer bloco de metas (valor razoável ou se já encontrou outras linhas)
+    if(metaInv>1000||metaLeads>0){
+      VISAO.metasPorCurso[colA]={metaInv,metaLeads};
+      foundMetaBlock=true;
+    }
+  });
+  if(!VISAO.invMeta)
+    VISAO.invMeta=Object.values(VISAO.metasPorCurso).reduce((s,v)=>s+(v.metaInv||0),0);
 
-  /* Leads totais: somar coluna Leads de cada linha TOTAL dos blocos de curso
-     Header row contém "Data","Leads","Investimento" repetidos */
-  let hIdx=-1;
-  for(let i=0;i<Math.min(lines.length,6);i++){
+  // ── B22:H24: buscar linha de nomes de cursos seguida de linha de valores monetários
+  //    Varrer todas as linhas — não assumir posição fixa
+  for(let i=0;i<lines.length-1;i++){
     const row=lines[i];
-    /* precisa ter pelo menos 2 colunas "Leads" para ser o header dos blocos */
-    const leadsCount=row.filter(h=>/^leads$/i.test((h||'').trim())).length;
-    if(leadsCount>=1&&row.some(h=>/^investimento$/i.test((h||'').trim()))){hIdx=i;break;}
-  }
-
-  if(hIdx>=0){
-    const hdr=lines[hIdx];
-    const nomeRow=lines[Math.max(0,hIdx-1)];
-    const blocos=[];
-    hdr.forEach((h,i)=>{
-      if(/^leads$/i.test((h||'').trim())){
-        let nm='';
-        for(let k=i;k>=Math.max(0,i-6);k--){
-          const v=(nomeRow[k]||'').replace(/\[Formulário\]\s*/ig,'').trim();
-          if(v&&!/^(data|leads|investimento|cpl|mtd|prev|invest\.\s*prev\.)$/i.test(v)){nm=v;break;}
-        }
-        let invC=i+1;
-        for(let k=i+1;k<Math.min(i+4,hdr.length);k++){
-          if(/^investimento$/i.test((hdr[k]||'').trim())){invC=k;break;}
-        }
-        blocos.push({leadsC:i,invC,nome:nm||('Curso '+(blocos.length+1))});
-      }
+    // Coletar colunas com nomes de curso (skip col 0)
+    const nomeCols=[];
+    row.forEach((c,ci)=>{
+      if(ci===0)return;
+      if(isCurso(c)) nomeCols.push({ci,nome:nm(c)});
     });
-
-    let totalLeads=0;
-    const seen=new Set();
-    for(let i=hIdx+1;i<lines.length;i++){
-      const row=lines[i];
-      if(!row.some(c=>/^\s*total\s*$/i.test(c||'')))continue;
-      blocos.forEach(b=>{
-        if(seen.has(b.nome))return;
-        const leads=n(row[b.leadsC]||'');
-        const inv=n(row[b.invC]||'');
-        if(leads>0){
-          totalLeads+=leads;
-          VISAO.cursosInv[b.nome]={leads,inv,cpl:leads>0?inv/leads:0};
-          seen.add(b.nome);
+    if(nomeCols.length<2)continue;
+    // Procurar linha de valores nas próximas 4 linhas
+    for(let j=i+1;j<=Math.min(i+4,lines.length-1);j++){
+      const vrow=lines[j];
+      const vals=vrow.slice(1).map(c=>n(c)).filter(v=>v>100);
+      if(vals.length<2)continue;
+      // Match colunas
+      let somaCursos=0;
+      nomeCols.forEach(({ci,nome})=>{
+        const inv=n(vrow[ci]||'');
+        if(inv>0){
+          if(!VISAO.cursosInv[nome]) VISAO.cursosInv[nome]={leads:0,inv:0};
+          VISAO.cursosInv[nome].inv+=inv;
+          somaCursos+=inv;
         }
       });
+      if(somaCursos>0){
+        // Total: pode estar em col além dos cursos
+        const totalIdx=nomeCols[nomeCols.length-1].ci+1;
+        const totVal=n(vrow[totalIdx]||'');
+        VISAO.invTotal=totVal||somaCursos;
+        break;
+      }
     }
-    VISAO.totalLeads=totalLeads;
+    if(VISAO.invTotal>0)break;
   }
 
-  VISAO.cplGeral=VISAO.totalLeads>0&&VISAO.invTotal>0?(VISAO.invTotal/VISAO.totalLeads):0;
-
-  /* ── B22:H24 — investimento por curso (linhas 21-23 no índice 0-based) ──
-     Estrutura esperada:
-       linha 21 (row22): labels dos cursos
-       linha 22 (row23): "Investimento" ou similar  
-       linha 23 (row24): valores de investimento por curso
-     Busca a linha com "INVESTIMENTO TOTAL" e pega os valores logo antes/depois */
-  VISAO.invPorCurso = {}; // { nomeCurso: { inv, metaInv, metaLeads } }
-
-  /* Estratégia: buscar linhas 21-23 diretamente e também por label */
-  /* Primeiro: tentar B22:H24 diretamente = lines[21..23] */
-  const tryRows22_24 = [21,22,23].map(i=>lines[i]||[]);
-  /* Encontrar linha de nomes de cursos no bloco 22-24 */
-  let cursoLabelRow = null, invValueRow = null;
-  for(const row of tryRows22_24){
-    const joined = row.join('|').toLowerCase();
-    if(joined.includes('geront')||joined.includes('gestão')||joined.includes('corp')||joined.includes('pós')||joined.includes('enfer')){
-      cursoLabelRow = row;
-    }
-    if(row.some(c=>n(c)>1000)){
-      invValueRow = row;
-    }
-  }
-  /* fallback: varrer todo o arquivo procurando linha com múltiplos valores monetários */
-  if(!invValueRow){
-    for(let i=15;i<Math.min(30,lines.length);i++){
-      const vals = lines[i].map(c=>n(c)).filter(v=>v>1000);
-      if(vals.length>=3){ invValueRow=lines[i]; break; }
-    }
-  }
-  if(!cursoLabelRow){
-    for(let i=18;i<Math.min(25,lines.length);i++){
-      const joined = lines[i].join('|');
-      if((joined.match(/\[Formulário\]/g)||[]).length>=2){ cursoLabelRow=lines[i]; break; }
+  // Fallback invTotal: buscar "INVESTIMENTO TOTAL" como rótulo
+  if(!VISAO.invTotal){
+    for(let i=0;i<lines.length-1;i++){
+      for(let j=0;j<lines[i].length;j++){
+        const cell=(lines[i][j]||'').replace(/[\r\n\t]/g,' ').trim().toUpperCase();
+        if(cell.includes('INVESTIMENTO')&&cell.includes('TOTAL')){
+          const next=lines[i+1]||[];
+          for(let k=0;k<next.length;k++){const v=n(next[k]);if(v>1000){VISAO.invTotal=v;break;}}
+          if(!VISAO.invTotal){for(let k=j+1;k<lines[i].length;k++){const v=n(lines[i][k]);if(v>1000){VISAO.invTotal=v;break;}}}
+        }
+      }
     }
   }
 
-  /* ── A29:C39 — metas por curso: col A=curso, B=meta leads, C=meta inv ──
-     lines[28..38] */
-  VISAO.metasPorCurso = {}; // { nomeCurso: { metaLeads, metaInv } }
-  for(let i=27;i<Math.min(40,lines.length);i++){
-    const row=lines[i]||[];
-    const nm=(row[0]||'').replace(/\[Formulário\]\s*/i,'').trim();
-    if(!nm||/^(curso|total|nome|meta|leads|invest)/i.test(nm))continue;
-    const metaLeads=n(row[1]||'');
-    const metaInv=n(row[2]||'');
-    if(nm.length>2)VISAO.metasPorCurso[nm]={metaLeads,metaInv};
-  }
-
-  /* Associar investimento real por curso usando VISAO.cursosInv já populado */
-  /* e metas de VISAO.metasPorCurso */
-  Object.keys(VISAO.cursosInv).forEach(nm=>{
-    /* tentar match com metasPorCurso */
-    const mk = Object.keys(VISAO.metasPorCurso).find(k=>{
-      const a=nm.toLowerCase().replace(/\s+/g,' ').trim();
-      const b=k.toLowerCase().replace(/\s+/g,' ').trim();
-      if(a===b)return true;
-      /* word overlap */
-      const aw=new Set(a.split(/\s+/).filter(w=>w.length>3));
-      return b.split(/\s+/).filter(w=>w.length>3).some(w=>aw.has(w));
-    });
-    VISAO.invPorCurso[nm]={
-      inv: VISAO.cursosInv[nm].inv,
-      leads: VISAO.cursosInv[nm].leads,
-      cpl: VISAO.cursosInv[nm].cpl,
-      metaLeads: mk?VISAO.metasPorCurso[mk].metaLeads:0,
-      metaInv:   mk?VISAO.metasPorCurso[mk].metaInv:0,
-    };
+  // ── Associar realizado + metas ──
+  const matchNome=(a,b)=>{
+    a=a.toLowerCase().replace(/\s+/g,' ').trim();
+    b=b.toLowerCase().replace(/\s+/g,' ').trim();
+    if(a===b)return true;
+    const aw=new Set(a.split(/\s+/).filter(w=>w.length>3));
+    return b.split(/\s+/).filter(w=>w.length>3).some(w=>aw.has(w));
+  };
+  const allNomes=new Set([...Object.keys(VISAO.cursosInv),...Object.keys(VISAO.metasPorCurso)]);
+  allNomes.forEach(nomK=>{
+    const ci=VISAO.cursosInv[nomK]||{leads:0,inv:0};
+    const mk=Object.keys(VISAO.metasPorCurso).find(k=>matchNome(nomK,k));
+    const meta=mk?VISAO.metasPorCurso[mk]:{metaInv:0,metaLeads:0};
+    VISAO.invPorCurso[nomK]={inv:ci.inv,leads:ci.leads,cpl:ci.leads>0?ci.inv/ci.leads:0,metaInv:meta.metaInv,metaLeads:meta.metaLeads};
   });
-
-  /* B39 = linha índice 38, col 1 — meta de investimento total do mês */
-  const row38=lines[38]||[];
-  VISAO.invMeta=n(row38[1]||row38[2]||'');
-  if(!VISAO.invMeta){
-    /* fallback: soma das metas individuais */
-    VISAO.invMeta=Object.values(VISAO.metasPorCurso).reduce((s,v)=>s+(v.metaInv||0),0);
-  }
-
-  console.log('[VISAO] invTotal='+VISAO.invTotal+' invMeta='+VISAO.invMeta+' cursos='+JSON.stringify(Object.keys(VISAO.invPorCurso)));
+  VISAO.cplGeral=VISAO.totalLeads>0&&VISAO.invTotal>0?VISAO.invTotal/VISAO.totalLeads:0;
 }
 
 /* utils */
@@ -1244,30 +1196,19 @@ function buildResumo(){
 }
 
 /* HERO HELPERS — globais para uso em renderAll e renderHeroes */
-function heroDot(pct, col) {
-  /* dot circular SVG — % dentro */
-  var r = 22, sw = 4, circ = 2*Math.PI*r;
-  var p = Math.min(Math.abs(pct), 100);
-  var fill = (p/100)*circ;
-  var gap  = circ - fill;
-  var sign = pct >= 0 ? '+' : '-';
-  return '<div class="kh-dot">'
-    + '<svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="'+r+'" fill="none" stroke="'+col+'22" stroke-width="'+sw+'"/>'
-    + '<circle cx="28" cy="28" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="'+sw+'"'
-    + ' stroke-dasharray="'+fill.toFixed(2)+' '+gap.toFixed(2)+'" stroke-linecap="round"/></svg>'
-    + '<div class="kh-dot-txt" style="color:'+col+';">'
-    + sign+Math.abs(pct).toFixed(0)+'<span style="font-size:8px">%</span>'
+function progressBar(pct, col) {
+  /* barra horizontal com dot no final */
+  var p = pct == null ? 0 : Math.max(0, Math.min(Math.abs(pct), 100));
+  var sign = pct != null && pct < 0 ? '−' : '';
+  return '<div class="kh-bar-row">'
+    + '<div class="kh-bar-track">'
+    + '<div class="kh-bar-fill" style="width:'+p+'%;background:'+col+'"></div>'
     + '</div>'
+    + '<span class="kh-bar-pct" style="color:'+col+'">'+sign+p.toFixed(0)+'%</span>'
     + '</div>';
 }
-function khCard(lbl, val, valCls, metaLbl, metaVal, dotPct, dotColor, liveEl) {
-  /* lbl: título do card
-     val: valor principal
-     metaLbl: descrição da meta (ex: "META LEADS")
-     metaVal: valor da meta formatado
-     dotPct: % para o dot circular
-     dotColor: cor
-     liveEl: elemento extra no header (ex: dot de ao vivo) */
+
+function khCard(lbl, val, valCls, metaLbl, metaVal, barPct, barColor, liveEl) {
   var liveHtml = liveEl ? '<span style="margin-left:auto">' + liveEl + '</span>' : '';
   var metaHtml = (metaLbl && metaVal != null)
     ? '<div class="kh-meta-row">'
@@ -1275,19 +1216,18 @@ function khCard(lbl, val, valCls, metaLbl, metaVal, dotPct, dotColor, liveEl) {
       + '<div class="kh-meta-val">' + metaVal + '</div>'
       + '</div>'
     : '<div style="flex:1"></div>';
-  var footHtml = dotPct != null
-    ? heroDot(dotPct, dotColor)
-      + '<div class="kh-foot-desc">'
-      + (dotPct >= 0 ? 'acima' : 'abaixo') + ' da meta'
-      + '</div>'
+  var barHtml = barPct != null
+    ? progressBar(barPct, barColor)
+      + '<div class="kh-bar-sub">' + (barPct >= 0 ? 'atingido' : 'abaixo') + ' da meta</div>'
     : '';
   return '<div class="kh">'
     + '<div class="kh-lbl">' + lbl + liveHtml + '</div>'
     + '<div class="kh-val ' + valCls + '">' + val + '</div>'
     + metaHtml
-    + '<div class="kh-foot">' + footHtml + '</div>'
+    + '<div class="kh-foot">' + barHtml + '</div>'
     + '</div>';
 }
+
 
 /* renderHeroes — re-renderizável pelo refreshAll com filtro de período e curso */
 function renderHeroes() {
