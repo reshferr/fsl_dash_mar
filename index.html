@@ -878,7 +878,15 @@ async function load(){
     if(r3){const t=await r3.text();if(t&&t.trim().length>10){parseMeta(t);logs.push('meta: OK');}}
     if(r4){const t=await r4.text();if(t&&t.trim().length>10){parseVisao(t);logs.push('visao: OK');}}
     document.getElementById('loader').style.display='none';
-    renderAll();
+    try{
+      renderAll();
+    }catch(re){
+      logs.push('renderAll ERRO: '+re.message+' | '+re.stack.split('\n')[1]);
+      document.getElementById('loader').style.display='none';
+      showErr('Dados carregados, erro ao renderizar',
+        'Os dados foram recebidos mas houve um erro ao montar o painel.',
+        logs.join('\n')+'\nERRO render: '+re.message);
+    }
   }catch(e){
     showErr('Erro ao carregar dados',
       'Verifique se a planilha está publicada em <b>Arquivo → Publicar na web → CSV</b>.',
