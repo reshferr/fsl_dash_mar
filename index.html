@@ -1043,7 +1043,8 @@ function parseVisao(txt){
     break;
   }
 
-  // ── PASSO 2: bloco "Curso / Meta de Investimento / Leads" ──
+  // ── PASSO 2: bloco "Curso / Meta de Investimento / Leads / CPL" ──
+  // Col A=Curso, B=Meta Inv, C=MetaLeads, D=CPL (pode existir)
   let inBloco=false;
   for(let i=0;i<lines.length;i++){
     const c0=limpa(lines[i][0]);
@@ -1057,8 +1058,9 @@ function parseVisao(txt){
     }
     const metaInv=n(lines[i][1]||'');
     const metaLeads=n(lines[i][2]||'');
+    const cplCurso=n(lines[i][3]||'');
     if(c0.length>2&&(metaInv>0||metaLeads>0))
-      VISAO.metasPorCurso[c0]={metaInv,metaLeads};
+      VISAO.metasPorCurso[c0]={metaInv,metaLeads,cpl:cplCurso};
   }
   if(!VISAO.invMeta)
     VISAO.invMeta=Object.values(VISAO.metasPorCurso).reduce((s,v)=>s+v.metaInv,0);
@@ -1079,6 +1081,7 @@ function parseVisao(txt){
     if(bestK&&bestS>0){
       VISAO.invPorCurso[nome].metaInv=VISAO.metasPorCurso[bestK].metaInv;
       VISAO.invPorCurso[nome].metaLeads=VISAO.metasPorCurso[bestK].metaLeads;
+      VISAO.invPorCurso[nome].cpl=VISAO.metasPorCurso[bestK].cpl||0;
     }
   });
   Object.keys(VISAO.metasPorCurso).forEach(k=>{
@@ -1156,17 +1159,17 @@ function progressBar(pct, col) {
 function khBarDot(lbl, val, valCls, metaLbl, metaVal, pct, col, withLive){
   var liveHtml=withLive?'<span style="margin-left:auto"><span class="kh-live-dot"></span></span>':'';
   var metaHtml=(metaLbl&&metaVal!=null)
-    ?'<div class="kh-meta-row"><div class="kh-meta-lbl">'+metaLbl+'</div><div class="kh-meta-val">'+metaVal+'</div></div>'
+    ?'<div class="kh-meta-row"><div class="kh-meta-lbl">'+metaLbl+'</div><div class="kh-meta-val" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">'+metaVal+'</div></div>'
     :'<div style="flex:1"></div>';
   var footHtml='';
   if(pct!=null){
     var p=Math.max(0,Math.min(pct,100));
     footHtml=
-      '<div class="kh-bar-row">'+
-        '<div class="kh-bar-track">'+
-          '<div class="kh-bar-fill" style="width:'+p.toFixed(1)+'%;background:'+col+'"></div>'+
+      '<div class="kh-bar-row" style="display:flex;align-items:center;gap:8px;margin-top:6px">'+
+        '<div style="flex:1;height:5px;background:var(--grd);border-radius:999px;overflow:hidden">'+
+          '<div style="height:100%;width:'+p.toFixed(1)+'%;background:'+col+';border-radius:999px;transition:width .5s ease"></div>'+
         '</div>'+
-        '<div class="kh-dot-pill" style="background:'+col+'22;color:'+col+'">'+p.toFixed(0)+'%</div>'+
+        '<span style="font-family:var(--fn);font-size:11px;font-weight:800;color:'+col+';min-width:32px;text-align:right;flex-shrink:0">'+p.toFixed(0)+'%</span>'+
       '</div>';
   }
   return '<div class="kh">'+
@@ -1185,7 +1188,13 @@ function khDotOnly(lbl, val, valCls, metaLbl, metaVal, pct, col){
   var footHtml='';
   if(pct!=null){
     var p=Math.max(0,Math.min(pct,100));
-    footHtml='<div class="kh-dot-pill" style="background:'+col+'22;color:'+col+';font-size:13px;padding:5px 12px">'+p.toFixed(0)+'%</div>';
+    footHtml=
+      '<div class="kh-bar-row" style="display:flex;align-items:center;gap:8px;margin-top:6px">'+
+        '<div style="flex:1;height:5px;background:var(--grd);border-radius:999px;overflow:hidden">'+
+          '<div style="height:100%;width:'+p.toFixed(1)+'%;background:'+col+';border-radius:999px;transition:width .5s ease"></div>'+
+        '</div>'+
+        '<span style="font-family:var(--fn);font-size:11px;font-weight:800;color:'+col+';min-width:32px;text-align:right;flex-shrink:0">'+p.toFixed(0)+'%</span>'+
+      '</div>';
   }
   return '<div class="kh">'+
     '<div class="kh-lbl">'+lbl+'</div>'+
@@ -1266,8 +1275,21 @@ function renderHeroes(){
     metaLeads=META.found&&META.totalMeta>0?META.totalMeta:(VISAO.invLeadsMeta||0);
   }
 
-  // ── CPL = investimento até hoje / leads captados até hoje ──
-  var cpl=inv>0&&tL>0?inv/tL:null;
+  // ── CPL: usar valor da planilha se disponível, senão calcular ──
+  var cplPlanilha=0;
+  if(_cursoFiltro!=='__all__'){
+    var bestK2=null,bestS2=0;
+    Object.keys(VISAO.invPorCurso).forEach(function(k){
+      var s=scoreNome(_cursoFiltro,k);if(s>bestS2){bestS2=s;bestK2=k;}
+    });
+    cplPlanilha=bestK2&&bestS2>0?(VISAO.invPorCurso[bestK2].cpl||0):0;
+  } else {
+    // CPL geral: média ponderada dos cursos ou inv/leads
+    var totalCPL=0,countCPL=0;
+    Object.values(VISAO.invPorCurso).forEach(function(d){if(d.cpl>0){totalCPL+=d.cpl;countCPL++;}});
+    cplPlanilha=countCPL>0?totalCPL/countCPL:0;
+  }
+  var cpl=cplPlanilha>0?cplPlanilha:(inv>0&&tL>0?inv/tL:null);
   var cplMeta=50;
 
   // ── Formatação ──
@@ -1661,7 +1683,8 @@ function buildInvestimento(){
           </div>
         </div>
         ${p!=null?bar(p,colFor(p)):''}
-        ${cpl!=null?`<div style="font-size:9px;color:var(--tx3);margin-top:4px">CPL: ${cpl.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`:''}
+        ${d.cpl>0?`<div style="font-size:9px;color:var(--tx3);margin-top:4px">CPL: ${d.cpl.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`:
+          (d.leads>0&&d.inv>0?`<div style="font-size:9px;color:var(--tx3);margin-top:4px">CPL: ${(d.inv/d.leads).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`:'')}
       </div>`;
     });
     html+=`</div>`;
@@ -1675,6 +1698,7 @@ function refreshAll(){
   if(!_ss||!_ss.length)return;
   renderHeroes();
   buildDatePanel();buildTaxa();buildCPL();
+  buildMeta();
   buildResumo();
   buildInvestimento();
 }
@@ -1932,7 +1956,14 @@ function buildMeta(tL,hk,hDB){
     sec.innerHTML=`<div class="card"><div class="slbl">Meta de Leads</div><div style="font-size:11px;color:var(--tx3)">Aba de meta não encontrada (GID: ${META_GID}). Verifique se a aba está publicada.</div></div>`;return;
   }
   const metaTotal=META.totalMeta;
-  const realAcum=hDB?DBdates.reduce((s,dk)=>s+cntDate(dk),0):tL;
+  // Filtro de período para buildMeta
+  const _dksMeta = getDatesInPeriodo();
+  const _metaDates2 = _dksMeta || (hDB ? DBdates : []);
+  // Filtro de curso
+  const _metaCurso = _cursoFiltro!=='__all__' ? _cursoFiltro : null;
+  const realAcum=hDB
+    ? _metaDates2.reduce((s,dk)=>s+(_metaCurso?cntCurso(dk,_metaCurso):cntDate(dk)),0)
+    : tL;
   const pctGeral=metaTotal>0?(realAcum/metaTotal)*100:0;
   const progColor=pctGeral>=100?'var(--pos)':pctGeral>=70?'var(--wrn)':'var(--neg)';
   const metaDates=META.dates;
@@ -1943,8 +1974,10 @@ function buildMeta(tL,hk,hDB){
   const d1Date=new Date(pdk(d1k));
 
   /* Meta do dia (hoje) = soma das metas diárias de todos os cursos para hoje */
-  const metaHoje=Object.values(META.cursos).reduce((s,c)=>s+(c.dailyMetas[hk]||0),0)||META.totalDaily[hk]||0;
-  const leadsHoje=hDB?cntDate(hk):0;
+  const metaHoje=_metaCurso
+    ?(()=>{const mc=matchMetaCurso(_metaCurso);return mc?mc.dailyMetas[hk]||0:0;})()
+    :Object.values(META.cursos).reduce((s,c)=>s+(c.dailyMetas[hk]||0),0)||META.totalDaily[hk]||0;
+  const leadsHoje=hDB?(_metaCurso?cntCurso(hk,_metaCurso):cntDate(hk)):0;
   const restanteHoje=Math.max(metaHoje-leadsHoje,0);
   const pctHoje=metaHoje>0?(leadsHoje/metaHoje)*100:0;
   const hojeColor=pctHoje>=100?'var(--pos)':pctHoje>=70?'var(--wrn)':'var(--neg)';
@@ -2096,7 +2129,11 @@ function buildTaxa(){
   const isTotal=txSel==='__total__';
   const _skip=new Set(['de','da','do','dos','das','em','e','a','o','para','com','no','na']);
   const sQ=[..._ss].map((r,i)=>{
-    const nm=cl(r[_cC]),baseV=n(r[_cQ]),v=isTotal?baseV:dayQual(nm,txSel,baseV),tot=n(r[_cT]),qual=Math.round(tot*(baseV/100));
+    const nm=cl(r[_cC]),baseV=n(r[_cQ]),v=isTotal?baseV:dayQual(nm,txSel,baseV);
+    // leads: respeita filtro de período
+    const _dksTx=getDatesInPeriodo();
+    const tot=_dksTx?_dksTx.reduce((s,dk)=>s+cntCurso(dk,nm),0):n(r[_cT]);
+    const qual=Math.round(tot*(baseV/100));
     const ws=nm.split(/\s+/);const nmA=ws.length>3?ws[0]+' '+ws.slice(1).map(w=>_skip.has(w.toLowerCase())?'':w[0].toUpperCase()+'.').filter(Boolean).join(' '):nm;
     return{nm,nmA,v,baseV,tot,qual,color:COLORS[i%COLORS.length]};
   }).sort((a,b)=>b.v-a.v);
