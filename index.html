@@ -1383,7 +1383,7 @@ function renderHeroes(){
   var colC=cpl!=null&&cpl<=cplMeta?'var(--pos)':'var(--neg)';
 
   // ── CPL: sempre inv/leads (com fallback para planilha) ──
-  cpl = inv>0&&tL>0 ? inv/tL : (cplPlanilha>0?cplPlanilha:null);
+  if(!cpl&&inv>0&&tL>0) cpl=inv/tL;
   var cplMeta=50;
   var pctC=cpl!=null&&cplMeta>0?Math.min((cplMeta/cpl)*100,100):null;
   var colC=cpl!=null&&cpl<=cplMeta?'var(--pos)':'var(--neg)';
