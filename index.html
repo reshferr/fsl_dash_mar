@@ -1024,21 +1024,33 @@ function parseVisao(txt){
   const isCursoNome=(v)=>{ const s=limpa(v); return s.length>3 && !ehValor(v) && !/^\d/.test(s); };
 
   // ── PASSO 1: linha "INVESTIMENTO ATÉ HOJE" ──
+  // Linha i:   col A = label, col B.. = nomes dos cursos
+  // Linha i+1: col A = total geral R$, col B.. = inv por curso R$
   for(let i=0;i<lines.length-1;i++){
-    const cel0=(lines[i][0]||'').toUpperCase().trim();
+    const cel0=(lines[i][0]||'').toUpperCase().replace(/\s+/g,' ').trim();
     if(!cel0.includes('INVESTIMENTO'))continue;
+    // Coleta nomes de curso da linha do label (cols B em diante)
     const cursos=[];
     lines[i].forEach((c,ci)=>{
       if(ci===0)return;
       const s=limpa(c);
-      if(s.length>3 && !ehValor(c)) cursos.push({ci,nome:s});
+      // aceita qualquer texto não vazio e não monetário
+      if(s.length>1)cursos.push({ci,nome:s});
     });
-    if(!cursos.length)continue;
-    const vrow=lines[i+1]||[];
+    // linha de valores: próxima linha com valor monetário na col A
+    let vrow=null;
+    for(let j=i+1;j<=i+3&&j<lines.length;j++){
+      const v0=(lines[j][0]||'').trim();
+      if(v0.length>0){vrow=lines[j];break;}
+    }
+    if(!vrow)continue;
     VISAO.invTotal=n(vrow[0]||'');
     cursos.forEach(({ci,nome})=>{
       const inv=n(vrow[ci]||'');
-      VISAO.invPorCurso[nome]={inv,metaInv:0,metaLeads:0};
+      if(!VISAO.invPorCurso[nome])
+        VISAO.invPorCurso[nome]={inv,metaInv:0,metaLeads:0,cpl:0};
+      else
+        VISAO.invPorCurso[nome].inv=inv;
     });
     break;
   }
@@ -1204,6 +1216,25 @@ function khDotOnly(lbl, val, valCls, metaLbl, metaVal, pct, col){
     '</div>';
 }
 
+/* ── Card de qualificação: barra + label descritivo ── */
+function khQual(lbl, val, metaStr, acimaLbl, pctBar, col){
+  var p=Math.max(0,Math.min(pctBar,100));
+  var footHtml=
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">'+
+      '<span style="font-size:9px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em">'+metaStr+'</span>'+
+      '<span style="font-family:var(--fn);font-size:11px;font-weight:800;color:'+col+'">'+acimaLbl+'</span>'+
+    '</div>'+
+    '<div style="height:5px;background:var(--grd);border-radius:999px;overflow:hidden">'+
+      '<div style="height:100%;width:'+p.toFixed(1)+'%;background:'+col+';border-radius:999px;transition:width .5s ease"></div>'+
+    '</div>';
+  return '<div class="kh">'+
+    '<div class="kh-lbl">'+lbl+'</div>'+
+    '<div class="kh-val md">'+val+'</div>'+
+    '<div style="flex:1"></div>'+
+    '<div class="kh-foot">'+footHtml+'</div>'+
+    '</div>';
+}
+
 /* ── legado (usado em outros lugares) ── */
 function khCard(lbl, val, valCls, metaLbl, metaVal, pct, col, liveEl){
   return khBarDot(lbl,val,valCls,metaLbl,metaVal,pct,col,!!liveEl);
@@ -1307,31 +1338,42 @@ function renderHeroes(){
   var pctC=cpl!=null&&cplMeta>0?Math.min((cplMeta/cpl)*100,100):null;
   var colC=cpl!=null&&cpl<=cplMeta?'var(--pos)':'var(--neg)';
 
-  // % qualificação
+  // ── CPL: sempre inv/leads (com fallback para planilha) ──
+  cpl = inv>0&&tL>0 ? inv/tL : (cplPlanilha>0?cplPlanilha:null);
+  var cplMeta=50;
+  var pctC=cpl!=null&&cplMeta>0?Math.min((cplMeta/cpl)*100,100):null;
+  var colC=cpl!=null&&cpl<=cplMeta?'var(--pos)':'var(--neg)';
+
+  // % qualificação — mostra quanto está acima/abaixo da meta
   var qualMeta=90;
-  var pctQ=Math.min(aT/qualMeta*100,100);
+  // pctQ = % do atingimento em relação à meta (pode passar de 100%)
+  var pctQraw=qualMeta>0?(aT/qualMeta)*100:0;
+  var pctQbar=Math.min(pctQraw,100); // barra limitada a 100%
   var colQ=aT>=qualMeta?'var(--pos)':aT>=70?'var(--wrn)':'var(--neg)';
+  // label: se acima da meta, mostra "+X% acima"
+  var qualLbl;
+  if(aT>=qualMeta){
+    var acimaP=((aT-qualMeta)/qualMeta*100).toFixed(0);
+    qualLbl='+'+acimaP+'% acima';
+  } else {
+    qualLbl=pctQraw.toFixed(0)+'% da meta';
+  }
 
   el.innerHTML=
-    // LEADS: barra + dot %
     khBarDot('Leads Captados', fmt(tL), 'big',
       'Meta', metaLeads>0?fmt(metaLeads):null,
       pctL, colL, true)+
 
-    // INVESTIMENTO: inv até hoje + meta abaixo + barra + dot %
     khBarDot('Investimento', fmtBRL(inv||null), 'sm',
       'Meta', invMeta>0?fmtBRL(invMeta):null,
       pctI, colI, false)+
 
-    // CPL: valor + meta CPL + só dot %
-    khDotOnly('CPL', fmtBRL(cpl), 'md',
-      'Meta', cplMeta>0?fmtBRL(cplMeta):null,
-      pctC, colC)+
+    khBarDot('CPL', fmtBRL(cpl), 'md',
+      'Meta', fmtBRL(cplMeta),
+      pctC, colC, false)+
 
-    // QUALIFICAÇÃO: valor + meta + só dot %
-    khDotOnly('Qualificação', aT.toFixed(1)+'%', 'md',
-      'Meta', qualMeta+'%',
-      pctQ, colQ);
+    khQual('Qualificação', aT.toFixed(1)+'%',
+      'Meta '+qualMeta+'%', qualLbl, pctQbar, colQ);
 }
 
 
@@ -1640,6 +1682,7 @@ function buildInvestimento(){
       <span style="font-family:var(--fn);font-size:10px;font-weight:800;color:${col};min-width:30px;text-align:right">${p.toFixed(0)}%</span>
     </div>`;
   };
+  const hDB=DBdates.length>0;
   const colFor=p=>p>=100?'var(--pos)':p>=70?'var(--wrn)':'var(--neg)';
 
   // Filtrar por curso se necessário
@@ -1683,8 +1726,12 @@ function buildInvestimento(){
           </div>
         </div>
         ${p!=null?bar(p,colFor(p)):''}
-        ${d.cpl>0?`<div style="font-size:9px;color:var(--tx3);margin-top:4px">CPL: ${d.cpl.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`:
-          (d.leads>0&&d.inv>0?`<div style="font-size:9px;color:var(--tx3);margin-top:4px">CPL: ${(d.inv/d.leads).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`:'')}
+        ${(()=>{
+          // CPL: preferir inv/leads reais do DB; fallback para d.cpl da planilha
+          const leadsDB=hDB?DBdates.reduce((s,dk)=>s+cntCurso(dk,nome),0):0;
+          const cplV=leadsDB>0&&d.inv>0?d.inv/leadsDB:(d.cpl>0?d.cpl:0);
+          return cplV>0?`<div style="font-size:9px;color:var(--tx3);margin-top:4px">CPL: ${cplV.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`:'';
+        })()}
       </div>`;
     });
     html+=`</div>`;
