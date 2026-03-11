@@ -1017,50 +1017,59 @@ function matchMetaCurso(nm){
 function parseVisao(txt){
   if(!txt||txt.trim().length<10)return;
   const lines=txt.trim().split('\n').map(l=>csvL(l));
-  VISAO={found:true,invTotal:0,invPorCurso:{},metasPorCurso:{},invMeta:0,invLeadsMeta:0,leadsTotal:0,cplGeral:0};
+  VISAO={found:true,invTotal:0,invPorCurso:{},metasPorCurso:{},invMeta:0,invLeadsMeta:0,leadsTotal:0,cplGeral:0,cplIdeal:50};
 
   const limpa=(v)=>(v||'').replace(/\[Formulário\]\s*/ig,'').trim();
-  const scoreNome=(a,b)=>{
-    const stop=new Set(['para','com','de','da','do','em','e','a','o','das','dos','nos','nas','saude','saúde','ciência','ciencia']);
+  const score=(a,b)=>{
+    const stop=new Set(['para','com','de','da','do','em','e','a','o','das','dos','nos','nas','saude','saúde']);
     const wa=a.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!stop.has(w));
     const wb=new Set(b.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!stop.has(w)));
     return wa.filter(w=>wb.has(w)).length;
   };
 
   // ══════════════════════════════════════════════════════════════
-  // BLOCO 1 — B22:H24 — INVESTIMENTO REALIZADO
-  // Linha 22 (idx 21): col A = "INVESTIMENTO REALIZADO", col B..H = nomes cursos
-  // Linha 23 (idx 22): col A = total geral R$, col B..H = inv por curso R$
+  // BLOCO 1 — Col A:B — INVESTIMENTO REALIZADO por curso
+  // Estrutura (imagem):
+  //   Linha x:   col A vazio,  col B = "INVESTIMENTO REALIZADO"
+  //   Linha x+1: col A = nome curso, col B = R$ valor  (repetido por curso)
+  //   Linha y:   col A = "TOTAL", col B = R$ total
   // ══════════════════════════════════════════════════════════════
-  // Buscar pela label (mais robusto que posição fixa)
-  for(let i=0;i<Math.min(lines.length-1,30);i++){
-    const cel0=(lines[i][0]||'').toUpperCase().replace(/\s+/g,' ').trim();
-    if(!cel0.includes('INVESTIMENTO'))continue;
-    // nomes dos cursos: cols B.. (idx 1..) da linha do label
-    const cursosHdr=[];
-    lines[i].forEach((c,ci)=>{
-      if(ci===0)return;
-      const s=limpa(c);
-      if(s.length>1) cursosHdr.push({ci, nome:s});
-    });
-    if(!cursosHdr.length)continue;
-    // linha de valores: linha imediatamente seguinte
-    const vrow=lines[i+1]||[];
-    VISAO.invTotal=n(vrow[0]||'');
-    cursosHdr.forEach(({ci,nome})=>{
-      VISAO.invPorCurso[nome]={inv:n(vrow[ci]||''),leads:0,cpl:0,metaInv:0,metaLeads:0};
-    });
-    break;
+  let invBlocoAtivo=false;
+  for(let i=0;i<lines.length;i++){
+    const a=limpa(lines[i][0]||'');
+    const b=(lines[i][1]||'').toUpperCase().trim();
+    // detectar header "INVESTIMENTO REALIZADO" em col B
+    if(!invBlocoAtivo && b.includes('INVESTIMENTO')){invBlocoAtivo=true;continue;}
+    if(!invBlocoAtivo)continue;
+    if(/^total$/i.test(a)){
+      VISAO.invTotal=n(lines[i][1]||'');
+      invBlocoAtivo=false;
+      break;
+    }
+    if(!a)continue;
+    const inv=n(lines[i][1]||'');
+    VISAO.invPorCurso[a]={inv,leads:0,cpl:0,metaInv:0,metaLeads:0};
   }
 
   // ══════════════════════════════════════════════════════════════
-  // BLOCO 2 — A29:C39 — Metas: Curso | Meta Investimento | Leads
+  // BLOCO 1b — CPL Ideal (col A="CPL Ideal", col B=valor)
   // ══════════════════════════════════════════════════════════════
   for(let i=0;i<lines.length;i++){
-    const c0=limpa(lines[i][0]);
-    if(!/^curso$/i.test(c0))continue;
+    if(/cpl\s*ideal/i.test(lines[i][0]||'')){
+      const v=n(lines[i][1]||'');
+      if(v>0) VISAO.cplIdeal=v;
+      break;
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  // BLOCO 2 — Metas: "Curso | Meta de Investimento | Leads"
+  // col A = "Curso" (header), depois linhas de curso, depois "Total"
+  // ══════════════════════════════════════════════════════════════
+  for(let i=0;i<lines.length;i++){
+    if(!/^curso$/i.test(limpa(lines[i][0]||'')))continue;
     for(let j=i+1;j<lines.length;j++){
-      const nm=limpa(lines[j][0]);
+      const nm=limpa(lines[j][0]||'');
       if(!nm)continue;
       if(/^total$/i.test(nm)){
         VISAO.invMeta=n(lines[j][1]||'');
@@ -1076,100 +1085,85 @@ function parseVisao(txt){
   if(!VISAO.invMeta) VISAO.invMeta=Object.values(VISAO.metasPorCurso).reduce((s,v)=>s+v.metaInv,0);
 
   // ══════════════════════════════════════════════════════════════
-  // BLOCO 3 — M3:AO29 — Diarizado por curso
-  // Linha 3 (idx 2): nome do curso + abreviação (ex: "IA")
-  // Linha 4 (idx 3): sub-header: Data | Leads | Investimento | CPL (repetido)
-  // Linha ~29 (idx 28): TOTAL | N leads | R$ inv | CPL médio
-  //
-  // No CSV, coluna M = índice 12 (0-based)
-  // Cada bloco de curso tem 4 colunas (Data, Leads, Inv, CPL) + 1 vazia = 5 cols
-  // Mas pode variar — detectamos pelo sub-header "Data"
+  // BLOCO 3 — Tabelas diarizadas por curso (a partir col I/J)
+  // Linha 1: nome do curso (col par) + abreviação (col ímpar seguinte)
+  // Linha 2: "Data" | "Leads" | "Investimento" | "CPL"  (sub-header)
+  // Linha N: "TOTAL" | N leads | R$ inv | CPL médio
+  // Detectar pela linha de sub-header com múltiplos "Data"
   // ══════════════════════════════════════════════════════════════
-
-  // Encontrar a linha de sub-header (tem múltiplas células "Data")
   let subHdrRow=-1;
   for(let i=0;i<lines.length;i++){
-    const dataCols=lines[i].filter(c=>(c||'').trim().toLowerCase()==='data');
-    if(dataCols.length>=2){subHdrRow=i;break;}
+    const cnt=lines[i].filter(c=>(c||'').trim().toLowerCase()==='data').length;
+    if(cnt>=2){subHdrRow=i;break;}
   }
 
   if(subHdrRow>=0){
-    const hdrLine=lines[subHdrRow];
-    // Coletar todos os índices de coluna onde aparece "Data"
+    const hdr=lines[subHdrRow];
+    // Índices de todas as colunas "Data"
     const dataIdxs=[];
-    hdrLine.forEach((c,ci)=>{if((c||'').trim().toLowerCase()==='data')dataIdxs.push(ci);});
+    hdr.forEach((c,ci)=>{if((c||'').trim().toLowerCase()==='data')dataIdxs.push(ci);});
 
     dataIdxs.forEach(dataCol=>{
-      // Nome do curso: linha acima (subHdrRow-1 ou subHdrRow-2), mesma coluna ou vizinha
+      const colLeads=dataCol+1, colInv=dataCol+2, colCPL=dataCol+3;
+
+      // Nome do curso: na linha subHdrRow-1, mesma col ou col-1
       let nomeCurso='';
-      for(let back=1;back<=2&&!nomeCurso;back++){
-        const prev=lines[subHdrRow-back]||[];
-        for(let dc=Math.max(0,dataCol-1);dc<=dataCol+2&&!nomeCurso;dc++){
-          const s=limpa(prev[dc]||'');
-          if(s.length>2&&!/^data$/i.test(s)) nomeCurso=s;
-        }
+      const nomeRow=lines[subHdrRow-1]||[];
+      for(let dc=Math.max(0,dataCol-1);dc<=dataCol+2&&!nomeCurso;dc++){
+        const s=limpa(nomeRow[dc]||'');
+        if(s.length>2) nomeCurso=s;
       }
       if(!nomeCurso)return;
 
-      const colLeads=dataCol+1, colInv=dataCol+2, colCPL=dataCol+3;
-
-      // Buscar linha TOTAL nas linhas seguintes ao sub-header
+      // Procurar "TOTAL" nas linhas seguintes
       for(let j=subHdrRow+1;j<lines.length&&j<=subHdrRow+35;j++){
-        const lbl=(lines[j][dataCol]||'').trim().toUpperCase();
-        if(lbl==='TOTAL'){
-          const tLeads=n(lines[j][colLeads]||'');
-          const tInv  =n(lines[j][colInv]  ||'');
-          const tCPL  =n(lines[j][colCPL]  ||'');
-          // Associar ao curso do BLOCO 1 por score de nome
-          let bestK=null,bestS=0;
-          Object.keys(VISAO.invPorCurso).forEach(k=>{
-            const s=scoreNome(nomeCurso,k);if(s>bestS){bestS=s;bestK=k;}
-          });
-          if(bestK&&bestS>0){
-            VISAO.invPorCurso[bestK].leads=tLeads;
-            // Inv do BLOCO 1 tem prioridade (INVESTIMENTO REALIZADO é o oficial)
-            // mas se não veio do BLOCO 1, usar do diarizado
-            if(VISAO.invPorCurso[bestK].inv===0) VISAO.invPorCurso[bestK].inv=tInv;
-            VISAO.invPorCurso[bestK].cpl=tCPL>0?tCPL:(tLeads>0&&VISAO.invPorCurso[bestK].inv>0?VISAO.invPorCurso[bestK].inv/tLeads:0);
-          } else {
-            // Curso ainda não registrado
-            VISAO.invPorCurso[nomeCurso]={inv:tInv,leads:tLeads,cpl:tCPL,metaInv:0,metaLeads:0};
-          }
-          break;
+        if((lines[j][dataCol]||'').trim().toUpperCase()!=='TOTAL')continue;
+        const tLeads=n(lines[j][colLeads]||'');
+        const tInv  =n(lines[j][colInv]  ||'');
+        const tCPL  =n(lines[j][colCPL]  ||'');
+
+        // Match com curso do BLOCO 1
+        let bestK=null,bestS=0;
+        Object.keys(VISAO.invPorCurso).forEach(k=>{
+          const s=score(nomeCurso,k);if(s>bestS){bestS=s;bestK=k;}
+        });
+        if(bestK&&bestS>0){
+          VISAO.invPorCurso[bestK].leads=tLeads;
+          if(VISAO.invPorCurso[bestK].inv===0&&tInv>0) VISAO.invPorCurso[bestK].inv=tInv;
+          VISAO.invPorCurso[bestK].cpl=tCPL>0?tCPL:(tLeads>0&&VISAO.invPorCurso[bestK].inv>0?VISAO.invPorCurso[bestK].inv/tLeads:0);
+        } else {
+          VISAO.invPorCurso[nomeCurso]={inv:tInv,leads:tLeads,cpl:tCPL,metaInv:0,metaLeads:0};
         }
+        break;
       }
     });
   }
 
   // ══════════════════════════════════════════════════════════════
-  // BLOCO 4 — Associar metas (BLOCO 2) → dados reais (BLOCO 1+3)
+  // BLOCO 4 — Associar metas → realizados
   // ══════════════════════════════════════════════════════════════
   Object.keys(VISAO.invPorCurso).forEach(nome=>{
     let bestK=null,bestS=0;
     Object.keys(VISAO.metasPorCurso).forEach(k=>{
-      const s=scoreNome(nome,k);if(s>bestS){bestS=s;bestK=k;}
+      const s=score(nome,k);if(s>bestS){bestS=s;bestK=k;}
     });
     if(bestK&&bestS>0){
       VISAO.invPorCurso[nome].metaInv  =VISAO.metasPorCurso[bestK].metaInv;
       VISAO.invPorCurso[nome].metaLeads=VISAO.metasPorCurso[bestK].metaLeads;
     }
   });
-  // Cursos só nas metas (sem realizado ainda)
   Object.keys(VISAO.metasPorCurso).forEach(k=>{
-    const existe=Object.keys(VISAO.invPorCurso).find(nm=>scoreNome(nm,k)>0);
+    const existe=Object.keys(VISAO.invPorCurso).find(nm=>score(nm,k)>0);
     if(!existe) VISAO.invPorCurso[k]={inv:0,leads:0,cpl:0,...VISAO.metasPorCurso[k]};
   });
 
-  // Totais gerais
+  // Totais
   VISAO.leadsTotal=Object.values(VISAO.invPorCurso).reduce((s,d)=>s+d.leads,0);
   VISAO.cplGeral  =VISAO.leadsTotal>0&&VISAO.invTotal>0?VISAO.invTotal/VISAO.leadsTotal:0;
-  // Debug
-  console.log('[VISAO] invTotal=',VISAO.invTotal,'leadsTotal=',VISAO.leadsTotal,'cplGeral=',VISAO.cplGeral);
-  console.log('[VISAO] invMeta=',VISAO.invMeta,'invLeadsMeta=',VISAO.invLeadsMeta);
-  console.log('[VISAO] cursos=',JSON.stringify(VISAO.invPorCurso,null,2));
+
+  console.log('[VISAO] invTotal=',VISAO.invTotal,'leads=',VISAO.leadsTotal,'cpl=',VISAO.cplGeral.toFixed(1),'invMeta=',VISAO.invMeta);
+  console.log('[VISAO] cursos=',Object.entries(VISAO.invPorCurso).map(([k,v])=>`${k.slice(0,20)}: inv=${v.inv} leads=${v.leads} cpl=${v.cpl.toFixed(1)}`).join('\n'));
 }
-
-
 function raf(fn){setTimeout(()=>requestAnimationFrame(fn),50);}
 function badge(txt,cls){return`<span class="badge ${cls}">${txt}</span>`;}
 function vBadge(val,inv){const good=inv?(val<=0):(val>=0);const sym=val<=0?'▼':'▲';return badge(sym+Math.abs(val).toFixed(1)+'%',good?'pos':'neg');}
@@ -1384,7 +1378,7 @@ function renderHeroes(){
     if(VISAO.cplGeral>0) cpl=VISAO.cplGeral;
     else if(tL>0&&inv>0) cpl=inv/tL;
   }
-  var cplMeta=50;
+  var cplMeta=VISAO.cplIdeal||50;
 
   // ── Formatação ──
   var fmtBRL=function(v){return v!=null&&v>0?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';};
@@ -1403,7 +1397,7 @@ function renderHeroes(){
 
   // ── CPL: sempre inv/leads (com fallback para planilha) ──
   if(!cpl&&inv>0&&tL>0) cpl=inv/tL;
-  var cplMeta=50;
+  var cplMeta=VISAO.cplIdeal||50;
   var pctC=cpl!=null&&cplMeta>0?Math.min((cplMeta/cpl)*100,100):null;
   var colC=cpl!=null&&cpl<=cplMeta?'var(--pos)':'var(--neg)';
 
