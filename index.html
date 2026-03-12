@@ -1252,23 +1252,26 @@ function calcCtx(){
   const vp=getVisaoPeriodo(vKey);
   const inv=vp.inv, leadsVis=vp.leads;
 
-  // Investimento hoje: do daily do curso/total
-  let invHoje=0;
+  // ── Investimento hoje: do daily do VISAO (independe de DBdates) ──
+  let invHoje=0, leadsVisaoHoje=0;
   if(isCurso&&vKey){
     const vd=VISAO.invPorCurso[vKey];
-    invHoje=(vd&&vd.daily&&vd.daily[hk])?vd.daily[hk].inv:0;
+    const dayH=vd&&vd.daily?vd.daily[hk]:null;
+    invHoje=dayH?dayH.inv:0;
+    leadsVisaoHoje=dayH?dayH.leads:0;
   } else {
     Object.values(VISAO.invPorCurso).forEach(d=>{
-      if(d.daily&&d.daily[hk]) invHoje+=d.daily[hk].inv;
+      const dayH=d.daily?d.daily[hk]:null;
+      if(dayH){invHoje+=dayH.inv||0; leadsVisaoHoje+=dayH.leads||0;}
     });
   }
+  // leadsHoje: usar DB se disponível (mais preciso), senão VISAO
+  if(leadsHoje===0&&leadsVisaoHoje>0) leadsHoje=leadsVisaoHoje;
 
   // ── 3. CPL ──
-  // CPL do período = inv / leads do período (preferência) ou do VISAO
   const cpl=vp.cpl>0?vp.cpl:(leads>0&&inv>0?inv/leads:0);
-
-  // CPL hoje = invHoje / leadsHoje
-  const cplHoje=leadsHoje>0&&invHoje>0?invHoje/leadsHoje:0;
+  // CPL hoje: preferir inv/leadsDB se disponível
+  const cplHoje=invHoje>0&&leadsHoje>0?invHoje/leadsHoje:0;
 
   // ── 4. METAS ──
   // Meta de leads: total ou por curso
@@ -1308,10 +1311,13 @@ function calcCtx(){
     const leadsAcum=dks
       ? dks.reduce((s,dk)=>s+cntCurso(dk,nm),0)
       : n(r[_cT]);
-    // inv acumulado do período
+    // inv acumulado do período — usar range direto no daily (independe de DBdates)
     let invAcum=0;
-    if(dks){
-      dks.forEach(dk=>{if(vDly[dk])invAcum+=vDly[dk].inv;});
+    if(_periodoDE&&_periodoATE){
+      const de=pdk(_periodoDE),ate=pdk(_periodoATE);
+      Object.entries(vDly).forEach(([dk,day])=>{
+        const t=pdk(dk);if(t>=de&&t<=ate)invAcum+=day.inv||0;
+      });
     } else {
       invAcum=vd?vd.inv:0;
     }
@@ -1343,26 +1349,30 @@ function calcCtx(){
 }
 
 function getVisaoPeriodo(cursoKey){
-  const dks=getDatesInPeriodo(); // null = geral (sem filtro de data)
   const cursos=cursoKey
     ? (VISAO.invPorCurso[cursoKey]?[VISAO.invPorCurso[cursoKey]]:[])
     : Object.values(VISAO.invPorCurso);
 
-  if(!dks){
-    // Geral: usar totais acumulados
+  // Sem filtro de período → totais acumulados da planilha
+  if(!_periodoDE||!_periodoATE){
     const inv=cursos.reduce((s,d)=>s+d.inv,0);
     const leads=cursos.reduce((s,d)=>s+d.leads,0);
     const cpl=leads>0&&inv>0?inv/leads:0;
     return{inv,leads,cpl};
   }
 
-  // Período filtrado: somar dias do daily
+  // Com período: iterar pelo daily de cada curso usando o range de datas
+  // NÃO depende de DBdates — usa as datas reais do daily do VISAO
+  const de=pdk(_periodoDE), ate=pdk(_periodoATE);
   let inv=0,leads=0;
   cursos.forEach(d=>{
     const daily=d.daily||{};
-    dks.forEach(dk=>{
-      const day=daily[dk];
-      if(day){inv+=day.inv;leads+=day.leads;}
+    Object.entries(daily).forEach(([dk,day])=>{
+      const t=pdk(dk);
+      if(t>=de&&t<=ate){
+        inv+=day.inv||0;
+        leads+=day.leads||0;
+      }
     });
   });
   const cpl=leads>0&&inv>0?inv/leads:0;
