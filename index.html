@@ -1115,27 +1115,38 @@ function parseVisao(txt){
       }
       if(!nomeCurso)return;
 
-      // Procurar "TOTAL" nas linhas seguintes
+      // Ler linhas diárias + TOTAL
+      const daily={};
+      let tLeads=0,tInv=0,tCPL=0;
       for(let j=subHdrRow+1;j<lines.length&&j<=subHdrRow+35;j++){
-        if((lines[j][dataCol]||'').trim().toUpperCase()!=='TOTAL')continue;
-        const tLeads=n(lines[j][colLeads]||'');
-        const tInv  =n(lines[j][colInv]  ||'');
-        const tCPL  =n(lines[j][colCPL]  ||'');
-
-        // Match com curso do BLOCO 1
-        let bestK=null,bestS=0;
-        Object.keys(VISAO.invPorCurso).forEach(k=>{
-          const s=score(nomeCurso,k);if(s>bestS){bestS=s;bestK=k;}
-        });
-        if(bestK&&bestS>0){
-          VISAO.invPorCurso[bestK].leads=tLeads;
-          if(VISAO.invPorCurso[bestK].inv===0&&tInv>0) VISAO.invPorCurso[bestK].inv=tInv;
-          VISAO.invPorCurso[bestK].cpl=tCPL>0?tCPL:(tLeads>0&&VISAO.invPorCurso[bestK].inv>0?VISAO.invPorCurso[bestK].inv/tLeads:0);
-        } else {
-          VISAO.invPorCurso[nomeCurso]={inv:tInv,leads:tLeads,cpl:tCPL,metaInv:0,metaLeads:0};
+        const lbl=(lines[j][dataCol]||'').trim();
+        if(lbl.toUpperCase()==='TOTAL'){
+          tLeads=n(lines[j][colLeads]||'');
+          tInv  =n(lines[j][colInv]  ||'');
+          tCPL  =n(lines[j][colCPL]  ||'');
+          break;
         }
-        break;
+        // linha de data dd/mm/aaaa
+        const dm=lbl.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if(!dm)continue;
+        const dk=dm[1].padStart(2,'0')+'/'+dm[2].padStart(2,'0')+'/'+dm[3];
+        const dLeads=n(lines[j][colLeads]||'');
+        const dInv  =n(lines[j][colInv]  ||'');
+        const dCPL  =n(lines[j][colCPL]  ||'');
+        daily[dk]={leads:dLeads,inv:dInv,cpl:dCPL>0?dCPL:(dLeads>0&&dInv>0?dInv/dLeads:0)};
       }
+
+      // Match com curso do BLOCO 1
+      let bestK=null,bestS=0;
+      Object.keys(VISAO.invPorCurso).forEach(k=>{
+        const s=score(nomeCurso,k);if(s>bestS){bestS=s;bestK=k;}
+      });
+      const key=bestK&&bestS>0?bestK:nomeCurso;
+      if(!VISAO.invPorCurso[key]) VISAO.invPorCurso[key]={inv:0,leads:0,cpl:0,metaInv:0,metaLeads:0};
+      VISAO.invPorCurso[key].leads=tLeads;
+      VISAO.invPorCurso[key].daily=daily;
+      if(VISAO.invPorCurso[key].inv===0&&tInv>0) VISAO.invPorCurso[key].inv=tInv;
+      VISAO.invPorCurso[key].cpl=tCPL>0?tCPL:(tLeads>0&&VISAO.invPorCurso[key].inv>0?VISAO.invPorCurso[key].inv/tLeads:0);
     });
   }
 
@@ -1167,7 +1178,209 @@ function parseVisao(txt){
 function raf(fn){setTimeout(()=>requestAnimationFrame(fn),50);}
 function badge(txt,cls){return`<span class="badge ${cls}">${txt}</span>`;}
 function vBadge(val,inv){const good=inv?(val<=0):(val>=0);const sym=val<=0?'▼':'▲';return badge(sym+Math.abs(val).toFixed(1)+'%',good?'pos':'neg');}
-function getCPL(nome){const seed=nome.split('').reduce((a,c)=>a+c.charCodeAt(0),0);const g=42+(seed%34)+((seed*7)%100)/100;return{g,h:g*(0.88+((seed*3)%24)/100),d1:g*(0.91+((seed*5)%18)/100)};}
+function getCPL(nome){
+  // Usar dados reais da planilha (VISAO) se disponível
+  const stop=new Set(['para','com','de','da','do','em','e','a','o','das','dos','nos','nas','saude','saúde']);
+  const sc=(a,b)=>{
+    const wa=a.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!stop.has(w));
+    const wb=new Set(b.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!stop.has(w)));
+    return wa.filter(w=>wb.has(w)).length;
+  };
+  let bestK=null,bestS=0;
+  Object.keys(VISAO.invPorCurso||{}).forEach(k=>{const s=sc(nome,k);if(s>bestS){bestS=s;bestK=k;}});
+  if(bestK&&bestS>0){
+    const d=VISAO.invPorCurso[bestK];
+    const g=d.cpl>0?d.cpl:(d.leads>0&&d.inv>0?d.inv/d.leads:0);
+    return{g,h:g,d1:g,key:bestK};
+  }
+  // fallback simulado
+  const seed=nome.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const g=42+(seed%34)+((seed*7)%100)/100;
+  return{g,h:g*(0.88+((seed*3)%24)/100),d1:g*(0.91+((seed*5)%18)/100),key:null};
+}
+
+// Retorna {inv, leads, cpl} para período e curso ativos
+// cursoKey = chave em VISAO.invPorCurso, ou null = todos
+// ══════════════════════════════════════════════════════════════════
+// calcCtx() — contexto unificado para período + curso ativos
+// Retorna objeto com TODOS os valores que os painéis precisam
+// Chamar UMA vez por refreshAll; cada painel lê de _ctx
+// ══════════════════════════════════════════════════════════════════
+var _ctx={};
+function calcCtx(){
+  const hk=dkOf(new Date());
+  const hDB=DBdates.length>0;
+  const dks=getDatesInPeriodo();          // null = geral
+  const isCurso=_cursoFiltro!=='__all__';
+  const vKey=isCurso?visaoKeyFor(_cursoFiltro):null;
+
+  // ── 1. LEADS (do DB) ──
+  let leads=0, leadsHoje=0, qual=0;
+  if(dks!==null){
+    if(isCurso){
+      leads=dks.reduce((s,dk)=>s+cntCurso(dk,_cursoFiltro),0);
+    } else {
+      leads=dks.reduce((s,dk)=>s+cntDate(dk),0);
+    }
+  } else {
+    if(isCurso){
+      const r=_ss.find(r=>cl(r[_cC])===_cursoFiltro);
+      leads=r?n(r[_cT]):0;
+    } else {
+      leads=_ss.reduce((s,r)=>s+n(r[_cT]),0);
+    }
+  }
+  // leads hoje sempre do DB
+  leadsHoje=isCurso?cntCurso(hk,_cursoFiltro):cntDate(hk);
+
+  // qualificação (usa taxa % da aba DB)
+  if(isCurso){
+    const r=_ss.find(r=>cl(r[_cC])===_cursoFiltro);
+    qual=Math.round(leads*(r?n(r[_cQ])/100:0));
+  } else {
+    _ss.forEach(r=>{
+      const cnt=dks
+        ? dks.reduce((s,dk)=>s+cntCurso(dk,cl(r[_cC])),0)
+        : n(r[_cT]);
+      qual+=Math.round(cnt*(n(r[_cQ])/100));
+    });
+  }
+  const taxaQual=leads>0?qual/leads*100:0;
+
+  // ── 2. INVESTIMENTO (do VISAO.daily) ──
+  // Totais do período
+  const vp=getVisaoPeriodo(vKey);
+  const inv=vp.inv, leadsVis=vp.leads;
+
+  // Investimento hoje: do daily do curso/total
+  let invHoje=0;
+  if(isCurso&&vKey){
+    const vd=VISAO.invPorCurso[vKey];
+    invHoje=(vd&&vd.daily&&vd.daily[hk])?vd.daily[hk].inv:0;
+  } else {
+    Object.values(VISAO.invPorCurso).forEach(d=>{
+      if(d.daily&&d.daily[hk]) invHoje+=d.daily[hk].inv;
+    });
+  }
+
+  // ── 3. CPL ──
+  // CPL do período = inv / leads do período (preferência) ou do VISAO
+  const cpl=vp.cpl>0?vp.cpl:(leads>0&&inv>0?inv/leads:0);
+
+  // CPL hoje = invHoje / leadsHoje
+  const cplHoje=leadsHoje>0&&invHoje>0?invHoje/leadsHoje:0;
+
+  // ── 4. METAS ──
+  // Meta de leads: total ou por curso
+  let metaLeads=0, metaInv=0, metaLeadsHoje=0, metaInvHoje=0;
+  if(isCurso){
+    const vd=vKey?VISAO.invPorCurso[vKey]:null;
+    metaInv=vd?vd.metaInv:0;
+    metaLeads=vd?vd.metaLeads:0;
+    if(!metaLeads){const mc=matchMetaCurso(_cursoFiltro);metaLeads=mc?mc.metaTotal:0;}
+    // meta do dia para o curso
+    if(META.found){
+      const mc=matchMetaCurso(_cursoFiltro);
+      metaLeadsHoje=mc?(mc.dailyMetas[hk]||0):0;
+    }
+    // meta investimento hoje: proporcional (metaInv / diasLancamento * 1)
+    // não temos daily de meta de inv, então deixamos 0 por ora
+    metaInvHoje=0;
+  } else {
+    metaInv=VISAO.invMeta||0;
+    metaLeads=META.found&&META.totalMeta>0?META.totalMeta:(VISAO.invLeadsMeta||0);
+    metaLeadsHoje=META.found
+      ? (Object.values(META.cursos).reduce((s,c)=>s+(c.dailyMetas[hk]||0),0)||META.totalDaily[hk]||0)
+      : 0;
+    metaInvHoje=0;
+  }
+  const cplMeta=VISAO.cplIdeal||50;
+
+  // ── 5. DIARIZADO — por curso, por dia ──
+  // Para cada curso: daily = {dk: {leads(DB), inv(VISAO), cpl}}
+  const cursosDiario=_ss.map((r,i)=>{
+    const nm=cl(r[_cC]);
+    const vk=visaoKeyFor(nm);
+    const vd=vk?VISAO.invPorCurso[vk]:null;
+    const vDly=vd?vd.daily||{}:{};
+    const color=COLORS[i%COLORS.length];
+    // leads acumulado do período
+    const leadsAcum=dks
+      ? dks.reduce((s,dk)=>s+cntCurso(dk,nm),0)
+      : n(r[_cT]);
+    // inv acumulado do período
+    let invAcum=0;
+    if(dks){
+      dks.forEach(dk=>{if(vDly[dk])invAcum+=vDly[dk].inv;});
+    } else {
+      invAcum=vd?vd.inv:0;
+    }
+    const cplAcum=leadsAcum>0&&invAcum>0?invAcum/leadsAcum:0;
+    const metaL=vd?vd.metaLeads:0;
+    const metaI=vd?vd.metaInv:0;
+    // daily combinado: todos os dias com dados
+    const allDks=new Set([...DBdates,...Object.keys(vDly)]);
+    const daily=[...allDks].sort((a,b)=>pdk(b)-pdk(a)).map(dk=>{
+      const dbL=cntCurso(dk,nm);
+      const vDay=vDly[dk]||null;
+      const dInv=vDay?vDay.inv:0;
+      const dCpl=vDay?vDay.cpl:(dbL>0&&dInv>0?dInv/dbL:0);
+      if(dbL===0&&dInv===0)return null;
+      return{dk,leads:dbL,inv:dInv,cpl:dCpl};
+    }).filter(Boolean);
+    return{nm,color,vk,leadsAcum,invAcum,cplAcum,metaL,metaI,daily};
+  });
+
+  _ctx={
+    hk,hDB,dks,isCurso,vKey,
+    leads,leadsHoje,qual,taxaQual,
+    inv,invHoje,
+    cpl,cplHoje,cplMeta,
+    metaLeads,metaInv,metaLeadsHoje,metaInvHoje,
+    cursosDiario,
+  };
+  return _ctx;
+}
+
+function getVisaoPeriodo(cursoKey){
+  const dks=getDatesInPeriodo(); // null = geral (sem filtro de data)
+  const cursos=cursoKey
+    ? (VISAO.invPorCurso[cursoKey]?[VISAO.invPorCurso[cursoKey]]:[])
+    : Object.values(VISAO.invPorCurso);
+
+  if(!dks){
+    // Geral: usar totais acumulados
+    const inv=cursos.reduce((s,d)=>s+d.inv,0);
+    const leads=cursos.reduce((s,d)=>s+d.leads,0);
+    const cpl=leads>0&&inv>0?inv/leads:0;
+    return{inv,leads,cpl};
+  }
+
+  // Período filtrado: somar dias do daily
+  let inv=0,leads=0;
+  cursos.forEach(d=>{
+    const daily=d.daily||{};
+    dks.forEach(dk=>{
+      const day=daily[dk];
+      if(day){inv+=day.inv;leads+=day.leads;}
+    });
+  });
+  const cpl=leads>0&&inv>0?inv/leads:0;
+  return{inv,leads,cpl};
+}
+
+// Achar chave VISAO para um nome de curso
+function visaoKeyFor(nome){
+  const stop=new Set(['para','com','de','da','do','em','e','a','o','das','dos','nos','nas','saude','saúde']);
+  const sc=(a,b)=>{
+    const wa=a.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!stop.has(w));
+    const wb=new Set(b.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!stop.has(w)));
+    return wa.filter(w=>wb.has(w)).length;
+  };
+  let bestK=null,bestS=0;
+  Object.keys(VISAO.invPorCurso||{}).forEach(k=>{const s=sc(nome,k);if(s>bestS){bestS=s;bestK=k;}});
+  return bestS>0?bestK:null;
+}
 function dayQual(nome,dk,baseRate){const seed=(nome+dk).split('').reduce((a,c)=>a+c.charCodeAt(0),0);return Math.min(100,Math.max(0,baseRate+(((seed*3)%30)-15)));}
 function progBar(pct,col,height){const p=Math.min(pct,100);return`<div class="pb-track" style="height:${height||6}px"><div class="pb-fill" style="background:${col};width:${p.toFixed(1)}%"></div></div>`;}
 function metaRing(pct,col,sz){sz=sz||100;const sw=8,rc=(sz/2-sw/2).toFixed(1);const circ=2*Math.PI*parseFloat(rc);const fill=(Math.min(pct,100)/100)*circ;
@@ -1180,24 +1393,15 @@ function buildResumo(){
   const hk=dkOf(new Date());
   const box=(ttl,val,sub,col,sub2)=>`<div style="display:grid;grid-template-columns:1fr auto;align-items:center;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden"><div style="padding:9px 12px;border-left:3px solid ${col}"><div style="font-size:8px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px">${ttl}</div><div style="font-family:var(--fn);font-size:18px;font-weight:800;letter-spacing:-.04em;color:${col};line-height:1">${val}</div></div><div style="padding:8px 12px;border-left:1px solid var(--bd);min-width:90px;max-width:120px;text-align:right"><div style="font-size:10px;font-weight:700;color:var(--tx);line-height:1.3;word-break:break-word">${sub}</div>${sub2?`<div style="font-size:9px;color:var(--tx3);margin-top:3px">${sub2}</div>`:''}</div></div>`;
   if(_cursoFiltro!=='__all__'){
-    const rC=_ss.find(r=>cl(r[_cC])===_cursoFiltro);
+    const c=_ctx;
     const colC=COLORS[_ss.findIndex(r=>cl(r[_cC])===_cursoFiltro)%COLORS.length]||COLORS[0];
-    const leadsC=rC?n(rC[_cT]):0;
-    const cplC=getCPL(_cursoFiltro);
-    const ck=Object.keys(VISAO.invPorCurso||{}).find(k=>{
-      const a=k.toLowerCase(),b=_cursoFiltro.toLowerCase();
-      return a===b||a.split(' ').some(w=>w.length>3&&b.includes(w));
-    });
-    const visC=ck?(VISAO.invPorCurso||{})[ck]:null;
-    const invC=visC?visC.inv:0;
-    const metaLC=visC?visC.metaLeads:0;
-    const metaIC=visC?visC.metaInv:0;
-    const pctLC=metaLC>0?Math.min(leadsC/metaLC*100,100):null;
-    const pctIC=metaIC>0?Math.min(invC/metaIC*100,100):null;
+    const pctLC=c.metaLeads>0?Math.min(c.leads/c.metaLeads*100,100):null;
+    const pctIC=c.metaInv>0?Math.min(c.inv/c.metaInv*100,100):null;
+    const periodoLabel=c.dks?(_periodoAtual==='hoje'?'Hoje':_periodoAtual==='ontem'?'Ontem':'Período'):'Acumulado';
     el.innerHTML=`<div style="display:flex;flex-direction:column;gap:5px">
-      ${box('Leads Captados',fmt(leadsC),metaLC>0?'Meta: '+fmt(metaLC):'Acumulado',colC,pctLC!==null?'Ating.: '+pctLC.toFixed(0)+'%':null)}
-      ${box('Investimento',fmtR(invC),metaIC>0?'Meta: '+fmtR(metaIC):'Realizado',colC,pctIC!==null?'Ating.: '+pctIC.toFixed(0)+'%':null)}
-      ${box('CPL',fmtR(cplC.g),_cursoFiltro.split(' ').slice(0,2).join(' '),colC,null)}
+      ${box('Leads '+periodoLabel,fmt(c.leads),c.metaLeads>0?'Meta: '+fmt(c.metaLeads):'Acumulado',colC,pctLC!==null?'Ating.: '+pctLC.toFixed(0)+'%':null)}
+      ${box('Investimento',fmtR(c.inv),c.metaInv>0?'Meta: '+fmtR(c.metaInv):'Realizado',colC,pctIC!==null?'Ating.: '+pctIC.toFixed(0)+'%':null)}
+      ${box('CPL',fmtR(c.cpl||0),c.cplHoje>0?'Hoje: '+fmtR(c.cplHoje):_cursoFiltro.split(' ').slice(0,2).join(' '),colC,null)}
     </div>`;
     return;
   }
@@ -1304,86 +1508,16 @@ function renderHeroes(){
   var el=document.getElementById('kpi-row');
   if(!el)return;
 
-  // ── Calcular leads e qualificação ──
-  var dks=getDatesInPeriodo(); // null = sem filtro de período
-  var tL=0, tQ=0;
+  // ── Ler contexto centralizado ──
+  var c=_ctx;
+  var tL=c.leads||0, tQ=c.qual||0, aT=c.taxaQual||0;
+  var inv=c.inv||0, cpl=c.cpl||0;
+  var metaLeads=c.metaLeads||0, invMeta=c.metaInv||0;
+  var cplMeta=c.cplMeta||50;
 
-  if(dks!==null){
-    // Período ativo: contar do DB dia a dia
-    if(_cursoFiltro==='__all__'){
-      tL=dks.reduce(function(s,dk){return s+cntDate(dk);},0);
-      _ss.forEach(function(r){
-        var cnt=dks.reduce(function(s,dk){return s+cntCurso(dk,cl(r[_cC]));},0);
-        tQ+=Math.round(cnt*(n(r[_cQ])/100));
-      });
-    } else {
-      tL=dks.reduce(function(s,dk){return s+cntCurso(dk,_cursoFiltro);},0);
-      var rCp=_ss.find(function(r){return cl(r[_cC])===_cursoFiltro;});
-      tQ=Math.round(tL*(rCp?n(rCp[_cQ])/100:0));
-    }
-  } else {
-    // Geral: usar totais da aba Summary
-    if(_cursoFiltro==='__all__'){
-      tL=_ss.reduce(function(s,r){return s+n(r[_cT]);},0);
-      tQ=_ss.reduce(function(s,r){return s+Math.round(n(r[_cT])*n(r[_cQ])/100);},0);
-    } else {
-      var rCg=_ss.find(function(r){return cl(r[_cC])===_cursoFiltro;});
-      tL=rCg?n(rCg[_cT]):0;
-      tQ=rCg?Math.round(tL*n(rCg[_cQ])/100):0;
-    }
-  }
-  var aT=tL>0?(tQ/tL)*100:0;
+  var fmtBRL=function(v){return v>0?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';};
 
-  // ── Investimento: sempre "até hoje" da aba Visão ──
-  // (não muda com filtro de período — é acumulado)
-  var inv=0, invMeta=0, metaLeads=0;
-  var stop=new Set(['para','com','de','da','do','em','e','a','o','das','dos','nos','nas']);
-  var scoreNome=function(a,b){
-    var wa=a.toLowerCase().split(/\s+/).filter(function(w){return w.length>3&&!stop.has(w);});
-    var wb=new Set(b.toLowerCase().split(/\s+/).filter(function(w){return w.length>3&&!stop.has(w);}));
-    return wa.filter(function(w){return wb.has(w);}).length;
-  };
-
-  if(_cursoFiltro!=='__all__'){
-    // Buscar dados do curso no VISAO.invPorCurso
-    var bestK=null, bestS=0;
-    Object.keys(VISAO.invPorCurso).forEach(function(k){
-      var s=scoreNome(_cursoFiltro,k);
-      if(s>bestS){bestS=s;bestK=k;}
-    });
-    var cd=bestK&&bestS>0?VISAO.invPorCurso[bestK]:null;
-    inv    =cd?cd.inv    :0;
-    invMeta=cd?cd.metaInv:0;
-    metaLeads=cd?cd.metaLeads:0;
-    // fallback metaLeads: aba Meta
-    if(!metaLeads){var mc=matchMetaCurso(_cursoFiltro);metaLeads=mc?mc.metaTotal:0;}
-  } else {
-    inv      =VISAO.invTotal   ||0;
-    invMeta  =VISAO.invMeta    ||0;
-    metaLeads=META.found&&META.totalMeta>0?META.totalMeta:(VISAO.invLeadsMeta||0);
-  }
-
-  // ── CPL: inv real / leads reais da planilha ──
-  var cpl=null;
-  if(_cursoFiltro!=='__all__'){
-    var bestK2=null,bestS2=0;
-    Object.keys(VISAO.invPorCurso).forEach(function(k){
-      var s=scoreNome(_cursoFiltro,k);if(s>bestS2){bestS2=s;bestK2=k;}
-    });
-    var cd2=bestK2&&bestS2>0?VISAO.invPorCurso[bestK2]:null;
-    if(cd2&&cd2.cpl>0) cpl=cd2.cpl;
-    else if(cd2&&cd2.leads>0&&cd2.inv>0) cpl=cd2.inv/cd2.leads;
-    else if(tL>0&&inv>0) cpl=inv/tL;
-  } else {
-    if(VISAO.cplGeral>0) cpl=VISAO.cplGeral;
-    else if(tL>0&&inv>0) cpl=inv/tL;
-  }
-  var cplMeta=VISAO.cplIdeal||50;
-
-  // ── Formatação ──
-  var fmtBRL=function(v){return v!=null&&v>0?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';};
-
-  // % atingimento leads — 0 se sem meta (barra aparece vazia)
+  // % atingimento leads
   var pctL=metaLeads>0?Math.min(tL/metaLeads*100,100):0;
   var colL=metaLeads>0?(pctL>=100?'var(--pos)':pctL>=70?'var(--wrn)':'var(--neg)'):'var(--tx3)';
 
@@ -1391,23 +1525,15 @@ function renderHeroes(){
   var pctI=invMeta>0?Math.min(inv/invMeta*100,100):0;
   var colI=invMeta>0?(pctI>=100?'var(--pos)':pctI>=70?'var(--wrn)':'var(--neg)'):'var(--tx3)';
 
-  // % CPL: menor=melhor → meta/cpl*100
-  var pctC=cpl!=null&&cpl>0?Math.min((cplMeta/cpl)*100,100):0;
-  var colC=cpl!=null&&cpl<=cplMeta?'var(--pos)':'var(--neg)';
+  // % CPL: menor=melhor
+  var pctC=cpl>0&&cplMeta>0?Math.min((cplMeta/cpl)*100,100):0;
+  var colC=cpl>0&&cpl<=cplMeta?'var(--pos)':'var(--neg)';
 
-  // ── CPL: sempre inv/leads (com fallback para planilha) ──
-  if(!cpl&&inv>0&&tL>0) cpl=inv/tL;
-  var cplMeta=VISAO.cplIdeal||50;
-  var pctC=cpl!=null&&cplMeta>0?Math.min((cplMeta/cpl)*100,100):null;
-  var colC=cpl!=null&&cpl<=cplMeta?'var(--pos)':'var(--neg)';
-
-  // % qualificação — mostra quanto está acima/abaixo da meta
+  // % qualificação
   var qualMeta=90;
-  // pctQ = % do atingimento em relação à meta (pode passar de 100%)
   var pctQraw=qualMeta>0?(aT/qualMeta)*100:0;
-  var pctQbar=Math.min(pctQraw,100); // barra limitada a 100%
+  var pctQbar=Math.min(pctQraw,100);
   var colQ=aT>=qualMeta?'var(--pos)':aT>=70?'var(--wrn)':'var(--neg)';
-  // label: se acima da meta, mostra "+X% acima"
   var qualLbl;
   if(aT>=qualMeta){
     var acimaP=((aT-qualMeta)/qualMeta*100).toFixed(0);
@@ -1725,82 +1851,98 @@ function applyCustomPeriodo(){
 function buildInvestimento(){
   const el=document.getElementById('inv-panel');
   if(!el)return;
-  if(!VISAO||!VISAO.invTotal){el.innerHTML='<div style="padding:16px;color:var(--tx3);font-size:12px">Dados de investimento não disponíveis</div>';return;}
-
+  const c=_ctx;
+  if(!c||!c.cursosDiario||!c.cursosDiario.length){
+    el.innerHTML='<div style="padding:16px;color:var(--tx3);font-size:12px">Dados de investimento não disponíveis</div>';return;
+  }
   const fmtB=v=>v>0?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';
+  const colFor=p=>p>=100?'var(--pos)':p>=70?'var(--wrn)':'var(--neg)';
   const bar=(pct,col)=>{
     const p=Math.max(0,Math.min(pct||0,100));
-    return `<div style="display:flex;align-items:center;gap:8px;margin-top:6px">
-      <div style="flex:1;height:5px;background:var(--grd);border-radius:999px;overflow:visible;position:relative">
-        <div style="height:100%;width:${p.toFixed(1)}%;background:${col};border-radius:999px;position:relative">
-          <div style="position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:${col};box-shadow:0 0 0 2px var(--cd)"></div>
-        </div>
+    return`<div style="display:flex;align-items:center;gap:8px;margin-top:5px">
+      <div style="flex:1;height:5px;background:var(--grd);border-radius:999px;overflow:hidden">
+        <div style="height:100%;width:${p.toFixed(1)}%;background:${col};border-radius:999px;transition:width .5s ease"></div>
       </div>
-      <span style="font-family:var(--fn);font-size:10px;font-weight:800;color:${col};min-width:30px;text-align:right">${p.toFixed(0)}%</span>
+      <span style="font-family:var(--fn);font-size:11px;font-weight:800;color:${col};min-width:34px;text-align:right">${p.toFixed(0)}%</span>
     </div>`;
   };
-  const hDB=DBdates.length>0;
-  const colFor=p=>p>=100?'var(--pos)':p>=70?'var(--wrn)':'var(--neg)';
 
-  // Filtrar por curso se necessário
-  const cursos = _cursoFiltro==='__all__'
-    ? Object.entries(VISAO.invPorCurso)
-    : Object.entries(VISAO.invPorCurso).filter(([k])=>{
-        const wa=k.toLowerCase().split(/\s+/).filter(w=>w.length>3);
-        const wb=new Set(_cursoFiltro.toLowerCase().split(/\s+/).filter(w=>w.length>3));
-        return wa.filter(w=>wb.has(w)).length>0;
-      });
+  // Label do período ativo
+  const periodoLbl=c.dks?(_periodoAtual==='hoje'?'HOJE':_periodoAtual==='ontem'?'ONTEM':`${_periodoDE} – ${_periodoATE}`):'Acumulado';
 
-  const invTot = _cursoFiltro==='__all__' ? VISAO.invTotal : (cursos[0]?.[1]?.inv||0);
-  const invMeta= _cursoFiltro==='__all__' ? VISAO.invMeta  : (cursos[0]?.[1]?.metaInv||0);
-  const pctTot = invMeta>0 ? Math.min(invTot/invMeta*100,100) : null;
-  const colTot = pctTot!=null ? colFor(pctTot) : 'var(--acc)';
+  // Totais (topo)
+  const invTot=c.inv, leadsTot=c.leads||0, cplTot=c.cpl;
+  const invMeta=c.metaInv;
+  const pctTot=invMeta>0?Math.min(invTot/invMeta*100,100):0;
+  const colTot=invMeta>0?colFor(pctTot):'var(--tx3)';
 
-  // Total geral no topo
-  let html=`<div style="padding:16px 20px 12px;border-bottom:1px solid var(--bd)">
-    <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Total Investido</div>
-    <div style="font-family:var(--fn);font-size:26px;font-weight:800;letter-spacing:-.04em;color:var(--tx)">${fmtB(invTot)}</div>
-    ${invMeta>0?`<div style="font-size:10px;color:var(--tx3);margin-top:2px">Meta: ${fmtB(invMeta)}</div>`:''}
-    ${pctTot!=null?bar(pctTot,colTot):''}
+  // Hoje
+  const invHoje=c.invHoje, leadsHoje=c.leadsHoje, cplHoje=c.cplHoje;
+
+  let html=`<div style="padding:14px 18px 12px;border-bottom:1px solid var(--bd)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+      <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em">Investimento · ${periodoLbl}</div>
+    </div>
+    <div style="font-family:var(--fn);font-size:24px;font-weight:800;letter-spacing:-.04em;color:var(--tx)">${fmtB(invTot)}</div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:4px">
+      ${invMeta>0?`<span style="font-size:10px;color:var(--tx3)">Meta: ${fmtB(invMeta)}</span>`:''}
+      ${leadsTot>0?`<span style="font-size:10px;color:var(--tx3)">${fmt(leadsTot)} leads</span>`:''}
+      ${cplTot>0?`<span style="font-size:10px;color:var(--acc);font-weight:700">CPL: ${fmtB(cplTot)}</span>`:''}
+    </div>
+    ${invMeta>0?bar(pctTot,colTot):''}
+    ${invHoje>0||leadsHoje>0?`<div style="display:flex;gap:16px;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)">
+      <div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em">Inv. Hoje</div>
+        <div style="font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx)">${fmtB(invHoje)}</div></div>
+      <div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em">Leads Hoje</div>
+        <div style="font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx)">${fmt(leadsHoje)}</div></div>
+      ${cplHoje>0?`<div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em">CPL Hoje</div>
+        <div style="font-family:var(--fn);font-size:13px;font-weight:800;color:var(--acc)">${fmtB(cplHoje)}</div></div>`:''}
+    </div>`:''}
   </div>`;
 
-  // Lista por curso
-  if(_cursoFiltro==='__all__' && cursos.length>0){
-    html+=`<div style="padding:8px 0">`;
-    cursos.forEach(([nome,d],i)=>{
-      const col=COLORS[i%COLORS.length];
-      const p=d.metaInv>0?Math.min(d.inv/d.metaInv*100,100):null;
-      const cpl=d.inv>0&&d.leads>0?d.inv/d.leads:null;
-      html+=`<div style="padding:10px 20px;border-bottom:1px solid var(--bd)">
+  // Lista por curso (só se visão geral)
+  const cursos=c.isCurso?c.cursosDiario.filter(d=>d.nm===_cursoFiltro):c.cursosDiario;
+  if(cursos.length>0){
+    html+=`<div style="padding:4px 0">`;
+    cursos.forEach((d,i)=>{
+      const colC=COLORS[i%COLORS.length];
+      const p=d.metaI>0?Math.min(d.invAcum/d.metaI*100,100):0;
+      const barCol=d.metaI>0?colFor(p):'var(--tx3)';
+      // CPL hoje deste curso
+      const vd=d.vk?VISAO.invPorCurso[d.vk]:null;
+      const dayH=vd&&vd.daily?vd.daily[c.hk]:null;
+      const dInvH=dayH?dayH.inv:0;
+      const dLeadsH=cntCurso(c.hk,d.nm);
+      const dCplH=dLeadsH>0&&dInvH>0?dInvH/dLeadsH:0;
+
+      html+=`<div style="padding:10px 18px;border-bottom:1px solid var(--bd)">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
           <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0">
-            <div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0"></div>
-            <div style="font-size:11px;font-weight:600;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nome}</div>
+            <div style="width:8px;height:8px;border-radius:50%;background:${colC};flex-shrink:0"></div>
+            <div style="font-size:11px;font-weight:600;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.nm}</div>
           </div>
           <div style="text-align:right;flex-shrink:0">
-            <div style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--tx)">${fmtB(d.inv)}</div>
-            ${d.metaInv>0?`<div style="font-size:9px;color:var(--tx3)">Meta: ${fmtB(d.metaInv)}</div>`:''}
+            <div style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--tx)">${fmtB(d.invAcum)}</div>
+            ${d.metaI>0?`<div style="font-size:9px;color:var(--tx3)">Meta: ${fmtB(d.metaI)}</div>`:''}
           </div>
         </div>
-        ${p!=null?bar(p,colFor(p)):''}
-        ${(()=>{
-          // CPL real: d.cpl da planilha (linha TOTAL da imagem 3)
-          // Fallback: d.inv / d.leads (ambos da planilha)
-          const cplV=d.cpl>0?d.cpl:(d.leads>0&&d.inv>0?d.inv/d.leads:0);
-          const leadsStr=d.leads>0?`<span style="font-size:9px;color:var(--tx3);margin-left:8px">${fmt(d.leads)} leads</span>`:'';
-          return cplV>0?`<div style="font-size:9px;color:var(--tx3);margin-top:4px">CPL: ${cplV.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}${leadsStr}</div>`:'';
-        })()}
+        ${d.metaI>0?bar(p,barCol):''}
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px">
+          ${d.leadsAcum>0?`<span style="font-size:9px;color:var(--tx3)">${fmt(d.leadsAcum)} leads</span>`:''}
+          ${d.cplAcum>0?`<span style="font-size:9px;color:var(--tx2);font-weight:600">CPL período: ${fmtB(d.cplAcum)}</span>`:''}
+          ${dCplH>0?`<span style="font-size:9px;color:var(--acc);font-weight:600">CPL hoje: ${fmtB(dCplH)}</span>`:''}
+        </div>
       </div>`;
     });
     html+=`</div>`;
   }
-
   el.innerHTML=html;
 }
 
 
 function refreshAll(){
   if(!_ss||!_ss.length)return;
+  calcCtx();
   renderHeroes();
   buildDatePanel();buildTaxa();buildCPL();
   buildMeta();
@@ -2128,11 +2270,12 @@ function buildMeta(tL,hk,hDB){
         </div>
       </div>
     </div>
-    <!-- KPI: meta/real do dia -->
-    <!-- KPI: meta/real do dia (sem descrição) -->
+    <!-- KPI: meta/real do dia + investimento + CPL do dia -->
     <div class="meta-kpis" style="margin-bottom:10px">
-      <div class="meta-kpi hi"><div class="meta-kpi-l">Meta do Dia</div><div class="meta-kpi-v">${fmt(metaHoje)}</div></div>
-      <div class="meta-kpi"><div class="meta-kpi-l">Realizado Hoje</div><div class="meta-kpi-v" style="color:${hojeColor}">${fmt(leadsHoje)}</div><div class="meta-kpi-s" style="color:${hojeColor}">${pctHoje.toFixed(0)}% · restam ${fmt(restanteHoje)}</div></div>
+      <div class="meta-kpi hi"><div class="meta-kpi-l">Meta Leads Hoje</div><div class="meta-kpi-v">${fmt(metaHoje)}</div></div>
+      <div class="meta-kpi"><div class="meta-kpi-l">Leads Hoje</div><div class="meta-kpi-v" style="color:${hojeColor}">${fmt(leadsHoje)}</div><div class="meta-kpi-s" style="color:${hojeColor}">${pctHoje.toFixed(0)}% · faltam ${fmt(restanteHoje)}</div></div>
+      ${_ctx.invHoje>0?`<div class="meta-kpi hi"><div class="meta-kpi-l">Inv. Hoje</div><div class="meta-kpi-v">${_ctx.invHoje.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div></div>`:''}
+      ${_ctx.cplHoje>0?`<div class="meta-kpi"><div class="meta-kpi-l">CPL Hoje</div><div class="meta-kpi-v" style="color:var(--acc)">${_ctx.cplHoje.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div><div class="meta-kpi-s">meta: ${(_ctx.cplMeta||50).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div></div>`:''}
     </div>
     <!-- PACE: esperado / captado até D-1 -->
     <div class="meta-pace-boxes">
@@ -2288,17 +2431,36 @@ function buildCPL(){
   }
   const isTotal=_cplSel==='__total__';
   const data=_ss.map((r,i)=>{
-    const nm=cl(r[_cC]),totGeral=n(r[_cT]),c=getCPL(nm);
+    const nm=cl(r[_cC]),totGeral=n(r[_cT]);
     const tot=isTotal?totGeral:cntCurso(_cplSel,nm);
-    const seed=nm.split('').reduce((a,ch)=>a+ch.charCodeAt(0),0);
-    const dS=DBdates.length>0?DBdates:(()=>{const arr=[];for(let j=0;j<14;j++){const d=new Date();d.setDate(d.getDate()-j);arr.push(dkOf(d));}return arr;})();
     const baseQ=_cQ?n(r[_cQ]):80;
-    /* daily usa totGeral para simular de forma consistente */
-    const daily=dS.map((dk,j)=>{const real=cntCurso(dk,nm);const sim=real>0?real:Math.max(0,Math.round(totGeral*0.03+((seed*(j+2))%18)-6));if(sim===0)return null;return{dk,cnt:sim,cpl:c.g*(0.84+((seed*(j+4))%32)/100),custo:sim*c.g*(0.84+((seed*(j+4))%32)/100),qual:dayQual(nm,dk,baseQ)};}).filter(Boolean);
-    /* CPL do dia selecionado: busca no daily estável */
-    const displayCPL=isTotal?c.g:(()=>{const entry=daily.find(x=>x.dk===_cplSel);return entry?entry.cpl:c.g;})();
-    const vHP=c.g>0?(c.h-c.g)/c.g*100:0,vD1P=c.g>0?(c.d1-c.g)/c.g*100:0;
-    return{nm,color:COLORS[i%COLORS.length],tot,g:c.g,displayCPL,h:c.h,d1:c.d1,vHP,vD1P,daily,baseQ};
+    // CPL real da planilha
+    const vKey=visaoKeyFor(nm);
+    const vd=vKey?VISAO.invPorCurso[vKey]:null;
+    const vDaily=vd?vd.daily||{}:{};
+    // CPL geral do curso
+    const gCpl=vd&&vd.cpl>0?vd.cpl:(vd&&vd.leads>0&&vd.inv>0?vd.inv/vd.leads:0);
+    // daily real com leads do DB + inv/cpl do VISAO
+    const dS=DBdates.length>0?DBdates:[];
+    const daily=dS.map(dk=>{
+      const dbLeads=cntCurso(dk,nm);
+      const dayV=vDaily[dk]||null;
+      const dInv=dayV?dayV.inv:0;
+      const dCpl=dayV?dayV.cpl:(dbLeads>0&&dInv>0?dInv/dbLeads:gCpl);
+      if(dbLeads===0&&dInv===0)return null;
+      return{dk,cnt:dbLeads,cpl:dCpl,custo:dInv,qual:dayQual(nm,dk,baseQ)};
+    }).filter(Boolean);
+    // CPL do período selecionado: filtrar daily
+    let displayCPL=gCpl;
+    if(!isTotal){
+      const dayEntry=vDaily[_cplSel];
+      displayCPL=dayEntry?dayEntry.cpl:(gCpl||0);
+    } else if(_periodoDE&&_periodoATE){
+      // período filtrado: calcular CPL do período
+      const vp=getVisaoPeriodo(vKey);
+      displayCPL=vp.cpl>0?vp.cpl:gCpl;
+    }
+    return{nm,color:COLORS[i%COLORS.length],tot,g:gCpl,displayCPL,vDaily,daily,baseQ,vKey};
   }).sort((a,b)=>a.displayCPL-b.displayCPL);
   const dataF=_cursoFiltro==='__all__'?data:data.filter(d=>d.nm===_cursoFiltro);
 
@@ -2311,7 +2473,7 @@ function buildCPL(){
           <div class="cpl-nome">${d.nm}</div>
           <div class="cpl-kpis-inline">
             <div style="text-align:right">
-              <div class="cpl-ml">${isTotal?"CPL Geral":"CPL "+dkLbl(_cplSel)}</div>
+              <div class="cpl-ml">${_periodoDE&&_periodoATE&&isTotal?'CPL '+ (_periodoAtual==='hoje'?'Hoje':_periodoAtual==='ontem'?'Ontem':_periodoDE+' – '+_periodoATE):isTotal?'CPL Geral':'CPL '+dkLbl(_cplSel)}</div>
               <div class="cpl-mv">${fmtR(d.displayCPL)}</div>
             </div>
           </div>
