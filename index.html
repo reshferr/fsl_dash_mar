@@ -8,8 +8,8 @@
 <style>
 :root{--f:'Inter',system-ui,sans-serif;--fn:'Inter',system-ui,sans-serif;--tr:.18s ease;--r:14px;--rs:10px;--nh:68px;}
 [data-theme=dark]{--bg:#0c0c10;--sf:#16161c;--cd:#19191f;--cdh:#21212a;--nav:rgba(12,12,16,.97);--bd:rgba(255,255,255,.1);--bda:rgba(255,255,255,.18);--tx:#f0f0f8;--tx2:#a8a8c8;--tx3:#6868a0;--acc:#7c5cfc;--accg:rgba(124,92,252,.16);--pos:#34d399;--neg:#f87171;--wrn:#fbbf24;--tagt:#a78bfa;--grd:rgba(255,255,255,.06);--sh:0 6px 28px rgba(0,0,0,.6);--sh2:0 1px 6px rgba(0,0,0,.35);}
-[data-theme=light]{--bg:#f5f5f5;--sf:#ffffff;--cd:#ffffff;--cdh:#f9f9f9;--nav:rgba(245,245,245,.97);--bd:rgba(0,0,0,.08);--bda:rgba(0,0,0,.13);--tx:#111111;--tx2:#444444;--tx3:#888888;--acc:#5e38ec;--accg:rgba(94,56,236,.06);--pos:#1a6e48;--neg:#a82828;--wrn:#7a5000;--tagt:#5e38ec;--grd:rgba(0,0,0,.04);--sh:0 2px 12px rgba(0,0,0,.07);--sh2:0 1px 3px rgba(0,0,0,.04);}
-[data-theme=beige]{--bg:#ddd4c6;--sf:#f0e8da;--cd:#f0e8da;--cdh:#e6ddd0;--nav:rgba(221,212,198,.97);--bd:rgba(100,70,30,.16);--bda:rgba(80,50,15,.22);--tx:#1c1208;--tx2:#5a3e20;--tx3:#7a5e40;--acc:#5a3a18;--accg:rgba(90,58,24,.10);--pos:#1e4025;--neg:#5e1818;--wrn:#5a3800;--tagt:#5a3a18;--grd:rgba(80,50,15,.06);--sh:0 2px 10px rgba(30,15,4,.14);--sh2:0 1px 3px rgba(30,15,4,.08);}
+[data-theme=light]{--bg:#f0f0f8;--sf:#ffffff;--cd:#ffffff;--cdh:#f6f6fc;--nav:rgba(240,240,248,.97);--bd:rgba(0,0,0,.07);--bda:rgba(0,0,0,.11);--tx:#0e0e1a;--tx2:#4a4a68;--tx3:#7878a8;--acc:#5e38ec;--accg:rgba(94,56,236,.06);--pos:#1a6e48;--neg:#a82828;--wrn:#7a5000;--tagt:#5e38ec;--grd:rgba(0,0,0,.03);--sh:0 2px 12px rgba(0,0,0,.06);--sh2:0 1px 3px rgba(0,0,0,.04);}
+[data-theme=beige]{--bg:#e8dfd4;--sf:#fdf6ed;--cd:#fdf6ed;--cdh:#f3e9dc;--nav:rgba(232,223,212,.97);--bd:rgba(110,80,40,.13);--bda:rgba(90,60,20,.18);--tx:#1c1208;--tx2:#6b4e2e;--tx3:#907050;--acc:#7a5530;--accg:rgba(122,85,48,.08);--pos:#2a5030;--neg:#782020;--wrn:#7a5000;--tagt:#7a5530;--grd:rgba(90,60,20,.05);--sh:0 2px 10px rgba(40,22,6,.11);--sh2:0 1px 3px rgba(40,22,6,.07);}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{font-size:14px;scroll-behavior:smooth;width:100%;-webkit-text-size-adjust:100%;}
 body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100dvh;-webkit-font-smoothing:antialiased;transition:background var(--tr),color var(--tr);width:100%;box-sizing:border-box;}
@@ -1259,7 +1259,7 @@ function calcCtx(){
       qual += Math.round(cnt*(n(r[_cQ])/100));
     });
   }
-  const taxaQual = leads>0 ? Math.min(100, qual/leads*100) : 0;
+  const taxaQual = leads>0 ? qual/leads*100 : 0;
 
   // ── 3. Investimento e CPL do período (via daily do VISAO) ──
   const vp   = getVisaoPeriodo(vKey);
@@ -1278,76 +1278,22 @@ function calcCtx(){
   const cplHoje = invHoje>0&&leadsHoje>0 ? invHoje/leadsHoje
                 : invHoje>0&&leadsVisaoHoje>0 ? invHoje/leadsVisaoHoje : 0;
 
-  // ── 4. Metas ajustadas por período ──
-  const cplMeta = VISAO.cplIdeal||50;
+  // ── 4. Metas ──
   let metaLeads=0, metaInv=0, metaLeadsHoje=0;
-
-  // Helper: soma metas de leads de um curso em um range de datas
-  const somaMetaLeadsPeriodo = (mc, de, ate) => {
-    if(!mc||!mc.dailyMetas) return mc?mc.metaTotal:0;
-    return Object.entries(mc.dailyMetas).reduce((s,[dk,v])=>{
-      const t=pdk(dk); return (t>=de&&t<=ate)?s+v:s;
-    },0);
-  };
-
-  // Meta de leads hoje
-  const metaLeadsHojeGlobal = META.found
-    ? (Object.values(META.cursos).reduce((s,c)=>s+(c.dailyMetas[hk]||0),0)||META.totalDaily[hk]||0)
-    : 0;
-  metaLeadsHoje = isCurso
-    ? (META.found?(matchMetaCurso(_cursoFiltro)||{}).dailyMetas?.[hk]||0:0)
-    : metaLeadsHojeGlobal;
-
-  if(_periodoAtual==='hoje'){
-    // HOJE: meta = meta do dia
-    metaLeads = isCurso
-      ? (META.found?(matchMetaCurso(_cursoFiltro)||{}).dailyMetas?.[hk]||0:0)
-      : metaLeadsHojeGlobal;
-    // meta inv hoje = cplMeta × meta leads hoje (por curso ou total)
-    if(isCurso){
-      const vd=vKey?VISAO.invPorCurso[vKey]:null;
-      const cplC=vd&&vd.metaInv&&vd.metaLeads?vd.metaInv/vd.metaLeads:cplMeta;
-      metaInv=cplC*metaLeads;
-    } else {
-      metaInv=cplMeta*metaLeads;
-    }
-  } else if(_periodoDE&&_periodoATE){
-    // PERÍODO CUSTOM: somar metas diárias do intervalo
-    const de=pdk(_periodoDE), ate=pdk(_periodoATE);
-    if(isCurso){
-      const mc=META.found?matchMetaCurso(_cursoFiltro):null;
-      metaLeads=somaMetaLeadsPeriodo(mc,de,ate);
-      const vd=vKey?VISAO.invPorCurso[vKey]:null;
-      const cplC=vd&&vd.metaInv&&vd.metaLeads?vd.metaInv/vd.metaLeads:cplMeta;
-      metaInv=cplC*metaLeads;
-    } else {
-      metaLeads=META.found
-        ? Object.values(META.cursos).reduce((s,mc)=>s+somaMetaLeadsPeriodo(mc,de,ate),0)
-        : 0;
-      // meta inv global: soma por curso = cplCurso × metaLeadsCurso no período
-      metaInv=0;
-      _ss.forEach(r=>{
-        const nm=cl(r[_cC]);
-        const vk2=visaoKeyFor(nm);
-        const vd2=vk2?VISAO.invPorCurso[vk2]:null;
-        const mc2=META.found?matchMetaCurso(nm):null;
-        const mL=somaMetaLeadsPeriodo(mc2,de,ate);
-        const cplC2=vd2&&vd2.metaInv&&vd2.metaLeads?vd2.metaInv/vd2.metaLeads:cplMeta;
-        metaInv+=cplC2*mL;
-      });
-    }
+  if(isCurso){
+    const vd = vKey ? VISAO.invPorCurso[vKey] : null;
+    metaInv   = vd ? vd.metaInv   : 0;
+    metaLeads = vd ? vd.metaLeads : 0;
+    if(!metaLeads){ const mc=matchMetaCurso(_cursoFiltro); metaLeads=mc?mc.metaTotal:0; }
+    if(META.found){ const mc=matchMetaCurso(_cursoFiltro); metaLeadsHoje=mc?(mc.dailyMetas[hk]||0):0; }
   } else {
-    // GERAL: meta total do lançamento
-    if(isCurso){
-      const vd=vKey?VISAO.invPorCurso[vKey]:null;
-      metaInv=vd?vd.metaInv:0;
-      metaLeads=vd?vd.metaLeads:0;
-      if(!metaLeads){const mc=matchMetaCurso(_cursoFiltro);metaLeads=mc?mc.metaTotal:0;}
-    } else {
-      metaInv=VISAO.invMeta||0;
-      metaLeads=META.found&&META.totalMeta>0?META.totalMeta:(VISAO.invLeadsMeta||0);
-    }
+    metaInv        = VISAO.invMeta||0;
+    metaLeads      = META.found&&META.totalMeta>0 ? META.totalMeta : (VISAO.invLeadsMeta||0);
+    metaLeadsHoje  = META.found
+      ? (Object.values(META.cursos).reduce((s,c)=>s+(c.dailyMetas[hk]||0),0) || META.totalDaily[hk]||0)
+      : 0;
   }
+  const cplMeta = VISAO.cplIdeal||50;
 
   // ── 5. Diarizado por curso ──
   const cursosDiario = _ss.map((r,i)=>{
@@ -1423,7 +1369,7 @@ function visaoKeyFor(nome){
   Object.keys(VISAO.invPorCurso||{}).forEach(k=>{const s=sc(nome,k);if(s>bestS){bestS=s;bestK=k;}});
   return bestS>0?bestK:null;
 }
-function dayQual(nome,dk,baseRate){return Math.min(100,Math.max(0,baseRate));}
+function dayQual(nome,dk,baseRate){const seed=(nome+dk).split('').reduce((a,c)=>a+c.charCodeAt(0),0);return Math.min(100,Math.max(0,baseRate+(((seed*3)%30)-15)));}
 function progBar(pct,col,height){const p=Math.min(pct,100);return`<div class="pb-track" style="height:${height||6}px"><div class="pb-fill" style="background:${col};width:${p.toFixed(1)}%"></div></div>`;}
 function metaRing(pct,col,sz){sz=sz||100;const sw=8,rc=(sz/2-sw/2).toFixed(1);const circ=2*Math.PI*parseFloat(rc);const fill=(Math.min(pct,100)/100)*circ;
   return`<div class="meta-ring" style="width:${sz}px;height:${sz}px"><svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${rc}" fill="none" stroke="var(--grd)" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${rc}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-dasharray="${fill.toFixed(2)} ${(circ-fill).toFixed(2)}" stroke-linecap="round" transform="rotate(-90 ${sz/2} ${sz/2})"/></svg><div class="meta-ring-pct" style="color:${col}">${pct.toFixed(0)}<span style="font-size:11px">%</span><span class="meta-ring-sub">da meta</span></div></div>`;}
@@ -1550,67 +1496,55 @@ function renderHeroes(){
   var el=document.getElementById('kpi-row');
   if(!el)return;
 
+  // ── Ler contexto centralizado ──
   var c=_ctx;
-  var tL=c.leads||0, aT=c.taxaQual||0;
+  var tL=c.leads||0, tQ=c.qual||0, aT=c.taxaQual||0;
   var inv=c.inv||0, cpl=c.cpl||0;
   var metaLeads=c.metaLeads||0, invMeta=c.metaInv||0;
   var cplMeta=c.cplMeta||50;
-  var B=function(v){return v>0?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';};
 
-  // ── Card Leads: barra normal ──
+  var fmtBRL=function(v){return v>0?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';};
+
+  // % atingimento leads
   var pctL=metaLeads>0?Math.min(tL/metaLeads*100,100):0;
   var colL=metaLeads>0?(pctL>=100?'var(--pos)':pctL>=70?'var(--wrn)':'var(--neg)'):'var(--tx3)';
 
-  // ── Card Investimento: barra com cor por faixa 90-105% ──
-  var rawI=invMeta>0?(inv/invMeta*100):0;
-  var pctIbar=Math.min(rawI,105); // barra vai até 105%
-  var colI;
-  if(!invMeta){ colI='var(--tx3)'; }
-  else if(rawI>=90&&rawI<=105){ colI='var(--pos)'; }
-  else if(rawI>=75&&rawI<90||rawI>105&&rawI<=120){ colI='var(--wrn)'; }
-  else { colI='var(--neg)'; }
+  // % atingimento investimento
+  var pctI=invMeta>0?Math.min(inv/invMeta*100,100):0;
+  var colI=invMeta>0?(pctI>=100?'var(--pos)':pctI>=70?'var(--wrn)':'var(--neg)'):'var(--tx3)';
 
-  // ── Card CPL: só pílula de variação vs meta fixa ──
-  var cplVar=cpl>0&&cplMeta>0?((cpl-cplMeta)/cplMeta*100):null;
-  var colC=cplVar!==null&&cplVar<=0?'var(--pos)':'var(--neg)';
-  var cplLbl=cplVar===null?'—':(cplVar>=0?'+':'')+cplVar.toFixed(1)+'%';
+  // % CPL: menor=melhor
+  var pctC=cpl>0&&cplMeta>0?Math.min((cplMeta/cpl)*100,100):0;
+  var colC=cpl>0&&cpl<=cplMeta?'var(--pos)':'var(--neg)';
 
-  // ── Card Qualificação: só pílula de variação vs 90% fixo ──
+  // % qualificação
   var qualMeta=90;
-  var qualVar=((aT-qualMeta)/qualMeta*100);
+  var pctQraw=qualMeta>0?(aT/qualMeta)*100:0;
+  var pctQbar=Math.min(pctQraw,100);
   var colQ=aT>=qualMeta?'var(--pos)':aT>=70?'var(--wrn)':'var(--neg)';
-  var qualLbl=(qualVar>=0?'+':'')+qualVar.toFixed(1)+'%';
-
-  // helper pílula inline
-  var pilula=function(lbl,col){
-    return '<span style="display:inline-flex;align-items:center;gap:4px;background:'+col+'22;border-radius:999px;padding:2px 9px;font-family:var(--fn);font-size:11px;font-weight:800;color:'+col+'">'+lbl+'</span>';
-  };
-
-  // Card CPL sem barra — usa khBarDot mas sem barra (pct=null) e metaVal como pílula
-  var cplCard='<div class="kh">'+
-    '<div class="kh-lbl">CPL Médio</div>'+
-    '<div class="kh-val md">'+B(cpl)+'</div>'+
-    '<div class="kh-meta-row"><div class="kh-meta-lbl">Meta</div><div class="kh-meta-val">'+B(cplMeta)+'</div></div>'+
-    '<div class="kh-foot" style="display:flex;justify-content:flex-end">'+pilula(cplLbl,colC)+'</div>'+
-    '</div>';
-
-  // Card Qual sem barra
-  var qualCard='<div class="kh">'+
-    '<div class="kh-lbl">Qualificação</div>'+
-    '<div class="kh-val md">'+aT.toFixed(1)+'%</div>'+
-    '<div class="kh-meta-row"><div class="kh-meta-lbl">Meta</div><div class="kh-meta-val">'+qualMeta+'%</div></div>'+
-    '<div class="kh-foot" style="display:flex;justify-content:flex-end">'+pilula(qualLbl,colQ)+'</div>'+
-    '</div>';
+  var qualLbl;
+  if(aT>=qualMeta){
+    var acimaP=((aT-qualMeta)/qualMeta*100).toFixed(0);
+    qualLbl='+'+acimaP+'% acima';
+  } else {
+    qualLbl=pctQraw.toFixed(0)+'% da meta';
+  }
 
   el.innerHTML=
     khBarDot('Leads Captados', fmt(tL), 'big',
       'Meta', metaLeads>0?fmt(metaLeads):null,
       pctL, colL, true)+
-    khBarDot('Investimento', B(inv), 'sm',
-      'Meta', invMeta>0?B(invMeta):null,
-      Math.min(rawI,100), colI, false)+
-    cplCard+
-    qualCard;
+
+    khBarDot('Investimento', fmtBRL(inv||null), 'sm',
+      'Meta', invMeta>0?fmtBRL(invMeta):null,
+      pctI, colI, false)+
+
+    khBarDot('CPL', fmtBRL(cpl), 'md',
+      'Meta', fmtBRL(cplMeta),
+      pctC, colC, false)+
+
+    khQual('Qualificação', aT.toFixed(1)+'%',
+      'Meta '+qualMeta+'%', qualLbl, pctQbar, colQ);
 }
 
 
@@ -1726,21 +1660,7 @@ function renderAll(){
   document.getElementById('kpi-diario').innerHTML=
     leadsHojeCard+
     kdFull('Captados D-1',hDB?fmt(d1C):'—',pctD1.toFixed(0)+'%',metaD1>0?'Meta '+fmt(metaD1):null,pctD1,pctD1Color)+
-    (function(){
-      var _ch=cplHoje, _cm=cplMeta;
-      var _cv=_ch>0&&_cm>0?((_ch-_cm)/_cm*100):null;
-      var _cc=_cv!==null&&_cv<=0?'var(--pos)':'var(--neg)';
-      var _cl=_cv===null?'—':(_cv>=0?'+':'')+_cv.toFixed(1)+'%';
-      var _pill='<span style="display:inline-flex;align-items:center;background:'+_cc+'22;border-radius:999px;padding:2px 9px;font-family:var(--fn);font-size:11px;font-weight:800;color:'+_cc+'">'+_cl+'</span>';
-      return '<div class="kd kd-full">'+
-        '<div class="kd-lbl">CPL Hoje</div>'+
-        '<div class="kd-num" style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.05em;color:var(--tx);line-height:1;margin-bottom:auto">'+(_ch>0?fmtR(_ch):'—')+'</div>'+
-        '<div class="kd-foot" style="display:flex;justify-content:space-between;align-items:center">'+
-          '<span style="font-size:9px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.06em">Meta '+(_cm>0?fmtR(_cm):'')+'</span>'+
-          _pill+
-        '</div>'+
-        '</div>';
-    }())+
+    kdFull('CPL Hoje',fmtR(cplHoje),cplHoje<=cplMeta?'✓ OK':'▲ Alto',null,0,'var(--tx3)')+
     kdFull('Qualif. Hoje',hDB?fmt(qualHojeQ):'—',qualHojePct.toFixed(1)+'%','Meta '+qualMeta+'%',qualPct,qualPctColor)+
     `<div class="kd kd-wide" style="padding:12px 13px">
       <div style="font-family:var(--fn);font-size:12px;font-weight:800;letter-spacing:-.02em;color:var(--tx);margin-bottom:10px">Resumo</div>
