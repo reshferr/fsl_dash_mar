@@ -789,17 +789,14 @@ main{max-width:1200px;margin:0 auto;padding-top:0;padding-left:16px;padding-righ
       <!-- Linha 2: CPL e Taxa sem descrição -->
       <div class="rp-top-row">
         <div class="rp-kpi"><div class="rp-kl">CPL</div><div class="rp-kv" id="rp-cpl">—</div></div>
-        <div class="rp-kpi" style="cursor:pointer;transition:background var(--tr)" onmouseenter="this.style.background='var(--accg)'" onmouseleave="this.style.background=''" onclick="setResumoView('leads')" title="Ver leads captados por curso"><div class="rp-kl" style="color:var(--acc)">Qualif. ↗ leads</div><div class="rp-kv" id="rp-taxa">—</div></div>
+        <div id="rp-btn-qualif" class="rp-kpi" style="cursor:pointer;transition:background var(--tr)" onmouseenter="this.style.background='var(--accg)'" onmouseleave="this.style.background=''" onclick="setResumoView('toggle')" title="Alternar entre qualificação e leads"><div class="rp-kl" style="color:var(--acc)">Qualif. ↗ leads</div><div class="rp-kv" id="rp-taxa">—</div></div>
       </div>
       <div class="rp-divider"></div>
       <div id="rp-view-cursos">
         <div class="rp-cursos" id="rp-cursos"></div>
       </div>
       <div id="rp-view-leads" style="display:none">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <span style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em">Leads Captados por Curso</span>
-          <button onclick="setResumoView('cursos')" style="font-size:9px;font-weight:700;color:var(--acc);background:none;border:none;cursor:pointer;padding:0">← voltar</button>
-        </div>
+        <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px">Leads Captados por Curso</div>
         <div id="rp-leads-list" style="display:flex;flex-direction:column;gap:4px"></div>
       </div>
     </div>
@@ -1587,10 +1584,10 @@ function renderHeroes(){
   var colC=cplVar!==null&&cplVar<=0?'var(--pos)':'var(--neg)';
   var cplLbl=cplVar===null?'—':(cplVar>0?'+':'')+cplVar.toFixed(1)+'%';
 
-  // ── Qualificação: só pílula, sem barra. Acima da meta = ruim (vermelho) ──
+  // ── Qualificação: só pílula, sem barra. Acima de 90% = verde (bom) ──
   var qualMeta=90;
-  var qualDiff=aT-qualMeta; // diferença em pontos percentuais
-  var colQ=qualDiff>=0?'var(--neg)':'var(--pos)'; // acima=ruim
+  var qualDiff=aT-qualMeta; // diferença em pontos percentuais vs meta
+  var colQ=aT>=qualMeta?'var(--pos)':aT>=70?'var(--wrn)':'var(--neg)';
   var qualLbl=(qualDiff>=0?'+':'')+qualDiff.toFixed(1)+'pp';
 
   // Card Investimento com khBarDot (passa rawI sem cap — helper já cuida da barra)
@@ -1928,91 +1925,103 @@ function buildInvestimento(){
   if(!el)return;
   const c=_ctx;
   if(!c||!c.cursosDiario||!c.cursosDiario.length){
-    el.innerHTML='<div style="padding:20px;color:var(--tx3);font-size:12px;text-align:center">Dados de investimento não disponíveis</div>';return;
+    el.innerHTML='<div style="padding:20px;color:var(--tx3);font-size:12px;text-align:center">Dados não disponíveis</div>';return;
   }
   const B=v=>v>0?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}):'—';
   const pLbl=_periodoAtual==='hoje'?'Hoje':_periodoAtual==='ontem'?'Ontem':c.dks?`${_periodoDE} – ${_periodoATE}`:'Acumulado';
-
-  // Cor por faixa 90-105%
   const invColor=p=>{
-    if(!p||p===0) return 'var(--tx3)';
+    if(!p) return 'var(--tx3)';
     if(p>=90&&p<=105) return 'var(--pos)';
     if((p>=75&&p<90)||(p>105&&p<=125)) return 'var(--wrn)';
     return 'var(--neg)';
   };
-  // Barra: física capped 100%, label mostra real
-  const bar=(raw,col,h=4)=>{
+  const miniBar=(raw,col)=>{
     const w=Math.max(0,Math.min(raw,100));
-    return`<div style="height:${h}px;background:var(--grd);border-radius:999px;overflow:hidden;margin-top:6px">
+    return`<div style="height:3px;background:var(--grd);border-radius:999px;overflow:hidden;margin-top:7px">
       <div style="height:100%;width:${w}%;background:${col};border-radius:999px;transition:width .5s ease"></div>
     </div>`;
   };
   const pill=(txt,col)=>`<span style="display:inline-flex;align-items:center;background:${col}22;color:${col};font-family:var(--fn);font-size:10px;font-weight:800;border-radius:999px;padding:2px 8px">${txt}</span>`;
 
-  // ── CABEÇALHO TOTAL ──
+  // ── TOTAL (sempre visível) ──
   const invTot=c.inv||0, invMeta=c.metaInv||0;
   const rawTot=invMeta>0?invTot/invMeta*100:0;
   const colTot=invMeta>0?invColor(rawTot):'var(--tx3)';
   const invH=c.invHoje||0, lH=c.leadsHoje||0, cplH=c.cplHoje||0;
 
-  let html=`
-  <div style="padding:18px 20px 16px;border-bottom:1px solid var(--bd)">
+  let html=`<div style="padding:18px 20px 16px;border-bottom:1px solid var(--bd)">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
       <div style="flex:1;min-width:0">
         <div style="font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Total · ${pLbl}</div>
         <div style="font-family:var(--fn);font-size:28px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1">${B(invTot)}</div>
         ${invMeta>0?`<div style="font-size:10px;color:var(--tx3);margin-top:3px">de ${B(invMeta)} previstos</div>`:''}
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
         ${invMeta>0?pill(Math.round(rawTot)+'%',colTot):''}
         ${c.cpl>0?`<div style="text-align:right"><div style="font-size:8px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.07em">CPL período</div><div style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--acc)">${B(c.cpl)}</div></div>`:''}
       </div>
     </div>
-    ${invMeta>0?bar(rawTot,colTot,5):''}
-    ${invH>0?`
-    <div style="display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:20px;margin-top:14px;padding-top:12px;border-top:1px solid var(--bd)">
+    ${invMeta>0?miniBar(rawTot,colTot):''}
+    ${invH>0?`<div style="display:flex;gap:20px;margin-top:14px;padding-top:12px;border-top:1px solid var(--bd)">
       <div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Inv. Hoje</div><div style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--tx)">${B(invH)}</div></div>
       ${lH>0?`<div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Leads Hoje</div><div style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--tx)">${fmt(lH)}</div></div>`:''}
       ${cplH>0?`<div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">CPL Hoje</div><div style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--acc)">${B(cplH)}</div></div>`:''}
     </div>`:''}
   </div>`;
 
-  // ── CURSOS ──
-  const cursos=c.isCurso?c.cursosDiario.filter(d=>d.nm===_cursoFiltro):c.cursosDiario.filter(d=>d.invAcum>0||d.metaI>0);
+  // ── CURSOS como accordion ──
+  const cursos=c.isCurso
+    ?c.cursosDiario.filter(d=>d.nm===_cursoFiltro)
+    :c.cursosDiario.filter(d=>d.invAcum>0||d.metaI>0);
+
   if(cursos.length>0){
-    html+=`<div>`;
+    // estado de open: usar _cplOpen reutilizado (ou Set próprio)
+    if(!window._invOpen) window._invOpen=new Set();
+    html+=`<div style="display:flex;flex-direction:column;gap:0">`;
     cursos.forEach((d,i)=>{
       const dot=COLORS[i%COLORS.length];
       const rawC=d.metaI>0?d.invAcum/d.metaI*100:0;
       const colC=d.metaI>0?invColor(rawC):'var(--tx3)';
-      // CPL hoje do curso via VISAO.daily
+      const isOpen=window._invOpen.has(d.nm);
+      // CPL hoje do curso
       const vd=d.vk?VISAO.invPorCurso[d.vk]:null;
       const dayH=vd&&vd.daily?vd.daily[c.hk]:null;
       const dInvH=dayH?dayH.inv:0;
-      const dLH=(cntCurso(c.hk,d.nm)||0)+(dayH&&dayH.leads?dayH.leads:0);
+      const dLH=cntCurso(c.hk,d.nm)||(dayH?dayH.leads:0);
       const dCplH=dInvH>0&&dLH>0?dInvH/dLH:0;
 
-      html+=`<div style="padding:13px 20px;border-bottom:1px solid var(--bd)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-          <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
-            <div style="width:3px;height:32px;border-radius:2px;background:${dot};flex-shrink:0"></div>
-            <div>
-              <div style="font-size:11px;font-weight:700;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px">${d.nm}</div>
-              ${d.leadsAcum>0?`<div style="font-size:9px;color:var(--tx3);margin-top:1px">${fmt(d.leadsAcum)} leads${d.cplAcum>0?' · CPL '+B(d.cplAcum):''}</div>`:''}
-            </div>
+      const safeNm=d.nm.replace(/'/g,"\\'");
+      html+=`<div style="border-bottom:1px solid var(--bd)">
+        <!-- Linha clicável (sempre visível) -->
+        <div onclick="window._invOpen.has('${safeNm}')?window._invOpen.delete('${safeNm}'):window._invOpen.add('${safeNm}');buildInvestimento()"
+             style="display:flex;align-items:center;gap:10px;padding:12px 20px;cursor:pointer;user-select:none;transition:background var(--tr)"
+             onmouseenter="this.style.background='var(--cdh)'" onmouseleave="this.style.background=''">
+          <div style="width:3px;height:36px;border-radius:2px;background:${dot};flex-shrink:0"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:11px;font-weight:700;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.nm}</div>
+            <div style="font-size:9px;color:var(--tx3);margin-top:2px">${d.leadsAcum>0?fmt(d.leadsAcum)+' leads':'sem leads'}</div>
           </div>
           <div style="text-align:right;flex-shrink:0">
-            <div style="font-family:var(--fn);font-size:15px;font-weight:800;color:var(--tx)">${B(d.invAcum)}</div>
-            <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;margin-top:3px">
-              ${d.metaI>0?`<span style="font-size:9px;color:var(--tx3)">/ ${B(d.metaI)}</span>`:''}
-              ${d.metaI>0?pill(Math.round(rawC)+'%',colC):''}
-            </div>
+            <div style="font-family:var(--fn);font-size:14px;font-weight:800;color:var(--tx)">${B(d.invAcum)}</div>
+            ${d.metaI>0?`<div style="margin-top:3px">${pill(Math.round(rawC)+'%',colC)}</div>`:''}
           </div>
+          <div style="font-size:12px;color:var(--tx3);flex-shrink:0;transform:rotate(${isOpen?90:0}deg);transition:transform .2s">›</div>
         </div>
-        ${d.metaI>0?bar(rawC,colC,3):''}
-        ${dInvH>0||dCplH>0?`<div style="display:flex;gap:14px;margin-top:8px">
-          ${dInvH>0?`<div style="font-size:9px;color:var(--tx3)">Hoje: <span style="font-weight:700;color:var(--tx)">${B(dInvH)}</span></div>`:''}
-          ${dCplH>0?`<div style="font-size:9px;color:var(--tx3)">CPL hoje: <span style="font-weight:700;color:var(--acc)">${B(dCplH)}</span></div>`:''}
+        <!-- Detalhe expandido -->
+        ${isOpen?`<div style="padding:0 20px 14px;background:var(--cdh)">
+          ${d.metaI>0?`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:9px;color:var(--tx3)">Meta ${B(d.metaI)}</span>
+            <span style="font-size:9px;color:${colC};font-weight:700">${Math.round(rawC)}% atingido</span>
+          </div>
+          ${miniBar(rawC,colC)}`:''}
+          ${d.cplAcum>0?`<div style="display:flex;gap:20px;margin-top:10px">
+            <div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">CPL período</div>
+            <div style="font-family:var(--fn);font-size:13px;font-weight:800;color:var(--acc)">${B(d.cplAcum)}</div></div>
+            ${dInvH>0?`<div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Inv. Hoje</div>
+            <div style="font-family:var(--fn);font-size:13px;font-weight:800;color:var(--tx)">${B(dInvH)}</div></div>`:''}
+            ${dCplH>0?`<div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">CPL Hoje</div>
+            <div style="font-family:var(--fn);font-size:13px;font-weight:800;color:var(--acc)">${B(dCplH)}</div></div>`:''}
+          </div>`:''}
         </div>`:''}
       </div>`;
     });
@@ -2458,32 +2467,64 @@ function buildTaxa(){
 
   const sQ=[..._ss].map((r,i)=>{
     const nm=cl(r[_cC]);
-    const taxaReal=Math.min(100,Math.max(0,n(r[_cQ]))); // taxa real da planilha, sem simulação
-    const tot=_dksTx?_dksTx.reduce((s,dk)=>s+cntCurso(dk,nm),0):n(r[_cT]);
-    const qual=Math.min(tot,Math.round(tot*(taxaReal/100)));
+    // Taxa real da planilha (coluna qualificação) — valor acumulado do lançamento
+    const taxaReal=Math.min(100,Math.max(0,n(r[_cQ])));
+    // Total de leads: respeita período selecionado
+    const totPeriodo=_dksTx
+      ?_dksTx.reduce((s,dk)=>s+cntCurso(dk,nm),0)
+      :n(r[_cT]);
+    // Total acumulado sempre (para mostrar contexto)
+    const totAcum=n(r[_cT]);
+    // Qualificados: aplica taxa real ao total acumulado (dado real da planilha)
+    const qualAcum=Math.min(totAcum,Math.round(totAcum*(taxaReal/100)));
+    // Qualificados estimados no período: mesma taxa aplicada ao período
+    const qualPeriodo=Math.min(totPeriodo,Math.round(totPeriodo*(taxaReal/100)));
     const ws=nm.split(/\s+/);
-    const nmA=ws.length>3?ws[0]+' '+ws.slice(1).map(w=>_skip.has(w.toLowerCase())?'':w[0].toUpperCase()+'.').filter(Boolean).join(' '):nm;
-    return{nm,nmA,v:taxaReal,tot,qual,color:COLORS[i%COLORS.length]};
-  }).sort((a,b)=>b.v-a.v);
+    const nmA=ws.length>3
+      ?ws[0]+' '+ws.slice(1).map(w=>_skip.has(w.toLowerCase())?'':w[0].toUpperCase()+'.').filter(Boolean).join(' ')
+      :nm;
+    return{nm,nmA,v:taxaReal,totPeriodo,totAcum,qualAcum,qualPeriodo,color:COLORS[i%COLORS.length]};
+  }).filter(d=>d.totAcum>0||d.totPeriodo>0)
+    .sort((a,b)=>b.v-a.v); // ordena por taxa (maior primeiro)
 
   const sQf=_cursoFiltro==='__all__'?sQ:sQ.filter(x=>x.nm===_cursoFiltro);
+  const isPeriodo=!!_dksTx;
 
-  const listHTML=sQf.map(({nm,nmA,v,tot,qual,color})=>{
+  const listHTML=sQf.map(({nm,nmA,v,totPeriodo,totAcum,qualAcum,qualPeriodo,color})=>{
     const col=v>=90?'var(--pos)':v>=70?'var(--wrn)':'var(--neg)';
     const isOpen=_txOpen.has(nm);
+    const tot=isPeriodo?totPeriodo:totAcum;
+    const qual=isPeriodo?qualPeriodo:qualAcum;
 
-    // Linhas diárias: usa leads reais do DB + taxa acumulada (sem simulação)
+    // Linhas diárias: leads reais do DB + taxa acumulada aplicada
     const dailyRows=isOpen?DBdates.slice(0,20).map(dk=>{
       const dc=cntCurso(dk,nm); if(dc===0)return'';
       const dq=Math.min(dc,Math.round(dc*(v/100)));
-      const c2=v>=90?'var(--pos)':'var(--neg)';
-      return`<div class="txd-tr"><div class="txd-td txd-date">${dkLbl(dk)}</div><div class="txd-td">${fmt(dc)}</div><div class="txd-td" style="color:${c2}">${fmt(dq)}</div><div class="txd-td" style="color:${c2}">${v.toFixed(1)}%</div></div>`;
+      const c2=v>=90?'var(--pos)':v>=70?'var(--wrn)':'var(--neg)';
+      return`<div class="txd-tr">
+        <div class="txd-td txd-date">${dkLbl(dk)}</div>
+        <div class="txd-td">${fmt(dc)}</div>
+        <div class="txd-td" style="color:${c2}">${fmt(dq)}</div>
+        <div class="txd-td" style="color:${c2}">${v.toFixed(1)}%</div>
+      </div>`;
     }).filter(Boolean).join(''):'';
 
-    const expandedKpis=isOpen?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 14px;border-top:1px solid var(--bd);background:var(--cd)">
-      <div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Leads</div><div style="font-family:var(--fn);font-size:15px;font-weight:700;color:var(--tx)">${fmt(tot)}</div></div>
-      <div><div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Qualificados</div><div style="font-family:var(--fn);font-size:15px;font-weight:700;color:${col}">${fmt(qual)}</div></div>
-    </div>`:'';
+    const expandedKpis=isOpen?`
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 14px;border-top:1px solid var(--bd);background:var(--cd)">
+        <div>
+          <div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Leads ${isPeriodo?'Período':'Total'}</div>
+          <div style="font-family:var(--fn);font-size:15px;font-weight:700;color:var(--tx)">${fmt(tot)}</div>
+        </div>
+        <div>
+          <div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Qualificados</div>
+          <div style="font-family:var(--fn);font-size:15px;font-weight:700;color:${col}">${fmt(qual)}</div>
+        </div>
+        <div>
+          <div style="font-size:8px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Taxa real</div>
+          <div style="font-family:var(--fn);font-size:15px;font-weight:700;color:${col}">${v.toFixed(1)}%</div>
+        </div>
+      </div>
+    `:'';
 
     return`<div class="txl-row${isOpen?' open':''}">
       <div class="txl-top" onclick="toggleTaxa('${nm.replace(/'/g,"\\'")}')">
@@ -2497,13 +2538,20 @@ function buildTaxa(){
         <div class="txl-chev${isOpen?' open':''}">›</div>
       </div>
       ${isOpen?expandedKpis+`<div class="txd-body"><div class="txd-scroll"><div class="txd-tbl">
-        <div class="txd-head"><div>Data</div><div>Leads</div><div>Qualif.</div><div>Taxa</div></div>${dailyRows}
+        <div class="txd-head"><div>Data</div><div>Leads</div><div>Qualif. est.</div><div>Taxa</div></div>
+        ${dailyRows}
       </div></div></div>`:''}
     </div>`;
   }).join('');
 
   document.getElementById('taxa-grid').innerHTML=
-    `<div class="txl-hdr-row"><div class="txl-hdr-col">Curso</div><div class="txl-hdr-col">Total</div><div class="txl-hdr-col hide-m">Qualif.</div><div class="txl-hdr-col">Taxa</div><div></div></div>`+listHTML;
+    `<div class="txl-hdr-row">
+      <div class="txl-hdr-col">Curso</div>
+      <div class="txl-hdr-col">${isPeriodo?'Período':'Total'}</div>
+      <div class="txl-hdr-col hide-m">Qualif.</div>
+      <div class="txl-hdr-col">Taxa</div>
+      <div></div>
+    </div>`+listHTML;
 }
 function setTaxaSel(dk){_txSel=dk;closeDD();buildTaxa();}
 function toggleTaxa(nm){if(_txOpen.has(nm))_txOpen.delete(nm);else _txOpen.add(nm);buildTaxa();}
@@ -2770,9 +2818,16 @@ function fillResumo(tab){
 function setResumoView(view){
   const vC=document.getElementById('rp-view-cursos');
   const vL=document.getElementById('rp-view-leads');
+  const btn=document.getElementById('rp-btn-qualif');
   if(!vC||!vL)return;
-  if(view==='leads'){vC.style.display='none';vL.style.display='block';}
-  else{vC.style.display='block';vL.style.display='none';}
+  const goLeads=view==='leads'||(view==='toggle'&&vL.style.display==='none');
+  vC.style.display=goLeads?'none':'block';
+  vL.style.display=goLeads?'block':'none';
+  if(btn){
+    // alterna apenas o indicador visual — sem seta voltar
+    btn.querySelector('.rp-kl').textContent=goLeads?'Leads captados ✦':'Qualif. ↗ leads';
+    btn.querySelector('.rp-kl').style.color='var(--acc)';
+  }
 }
 function setResumoTab(tab){fillResumo(tab);}
 function toggleNav(){
